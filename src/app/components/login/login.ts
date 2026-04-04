@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../services/authService';
 import { FormValidators } from '../../validators/formValidators';
+import { UserService } from '../../services/userService';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule ],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -15,7 +16,9 @@ export class LoginComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router,
+    private userService: UserService,
   ) {
     this.loginForm = this.formBuilder.group({
       email: [
@@ -44,16 +47,27 @@ export class LoginComponent {
 
     const loginData = this.loginForm.value;
 
-    this.authService.login(loginData).subscribe({
+    this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
-        console.log('Login correcto', response);
 
         localStorage.setItem('token', response.accessToken);
         localStorage.setItem('refreshToken', response.refreshToken);
         localStorage.setItem('user', JSON.stringify(response.user));
+
+        this.userService.getCounters().subscribe({
+          next: (statsResponse: any) => {
+            localStorage.setItem('stats', JSON.stringify(statsResponse));
+            this.router.navigate(['/']);
+          },
+          error: (error: any) => {
+            console.error('Error counters', error);
+            this.router.navigate(['/']);
+          }
+        });
+
       },
       error: (error) => {
-        console.error('Error en el login', error);
+        console.error('Error login', error);
       }
     });
   }

@@ -19,4 +19,32 @@ export class AuthService {
   login(user: { email: string; password: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, user);
   }
+
+  getIdentity(): any {
+    const user = localStorage.getItem('user');
+
+    if (user && user !== 'undefined') {
+      return JSON.parse(user);
+    } else {
+      return null;
+    }
+  }
+
+  getToken(): string | null {
+    const token = localStorage.getItem('token');
+
+    if (token && token !== 'undefined') {
+      return token;
+    } else {
+      return null;
+    }
+  }
+
+  logout(): void {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+    }
+
+
 }
