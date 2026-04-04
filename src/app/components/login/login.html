@@ -1,38 +1,86 @@
-<h1>Login</h1>
+<section class="auth-page">
+  <div class="page-container">
+    <div class="auth-wrapper">
+      <div class="card-base auth-card">
 
-<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <h1 class="title-section auth-title">
+          Inicia sesión en <span class="title-highlight">Cookee</span>
+        </h1>
 
-  <div>
-    <label>Email</label>
-    <input type="email" formControlName="email">
+        <p class="auth-subtitle">
+          Entra para descubrir recetas, seguir personas y compartir tus platos.
+        </p>
 
-    @if (loginForm.get('email')?.touched) {
-    @if (loginForm.get('email')?.errors?.['required']) {
-    <p>El email es obligatorio</p>
-    }
-    @if (loginForm.get('email')?.errors?.['email']) {
-    <p>Email no válido</p>
-    }
-    }
+        <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+          <div class="form-group">
+            <label class="form-label">Correo electrónico</label>
+            <input
+              type="email"
+              class="input-base"
+              formControlName="email"
+              placeholder="Escribe tu correo"
+            />
+
+            @if (loginForm.get('email')?.touched) {
+            <div class="form-error">
+              @if (loginForm.get('email')?.errors?.['required']) {
+              <p>El correo es obligatorio</p>
+              }
+              @if (loginForm.get('email')?.errors?.['email']) {
+              <p>El formato del correo no es válido</p>
+              }
+            </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Contraseña</label>
+
+            <div class="password-wrapper">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                class="input-base"
+                formControlName="password"
+                placeholder="Escribe tu contraseña"
+              />
+
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePassword()"
+              >
+                {{ showPassword ? 'Ocultar' : 'Ver' }}
+              </button>
+            </div>
+
+            @if (loginForm.get('password')?.touched) {
+            <div class="form-error">
+              @if (loginForm.get('password')?.errors?.['required']) {
+              <p>La contraseña es obligatoria</p>
+              }
+              @if (loginForm.get('password')?.errors?.['minlength']) {
+              <p>Debe tener al menos 6 caracteres</p>
+              }
+              @if (loginForm.get('password')?.errors?.['notOnlyWhiteSpace']) {
+              <p>No puede contener solo espacios</p>
+              }
+            </div>
+            }
+          </div>
+
+          <button type="submit" class="btn btn-primary auth-submit">
+            Iniciar sesión
+          </button>
+
+        </form>
+
+        <p class="auth-footer-text">
+          ¿Todavía no tienes cuenta?
+          <a class="auth-link" routerLink="/register">Crear cuenta</a>
+        </p>
+
+      </div>
+    </div>
   </div>
-
-  <div>
-    <label>Password</label>
-    <input type="password" formControlName="password">
-
-    @if (loginForm.get('password')?.touched) {
-    @if (loginForm.get('password')?.errors?.['required']) {
-    <p>La contraseña es obligatoria</p>
-    }
-    @if (loginForm.get('password')?.errors?.['minlength']) {
-    <p>Mínimo 6 caracteres</p>
-    }
-    @if (loginForm.get('password')?.errors?.['notOnlyWhiteSpace']) {
-    <p>No puede ser solo espacios</p>
-    }
-    }
-  </div>
-
-  <button type="submit">Iniciar sesión</button>
-
-</form>
+</section>

@@ -13,6 +13,7 @@ import { UserService } from '../../services/userService';
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  showPassword: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -70,5 +71,9 @@ export class LoginComponent {
         console.error('Error login', error);
       }
     });
+  }
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
   }
 }
