@@ -17,4 +17,8 @@ export class PublicationService {
   getFeed(page: number = 1): Observable<any> {
     return this.http.get(`${this.apiUrl}/feed/${page}`);
   }
+
+  deletePublication(id: string): Observable<any> {
+      return this.http.delete(`${this.apiUrl}/remove/${id}`);
+    }
 }

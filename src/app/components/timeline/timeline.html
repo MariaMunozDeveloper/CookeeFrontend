@@ -1,0 +1,109 @@
+<div class="page-container timeline-page">
+
+  <aside class="timeline-sidebar">
+    <app-user-card
+      [user]="identity"
+      [stats]="stats"
+      [showStats]="true"
+      [buttonText]="'Mis datos'"
+      [buttonLink]="'/my-data'"
+    />
+  </aside>
+
+  <main class="timeline-main">
+
+    <div class="card-base publication-form">
+      @if (identity?.image) {
+      <img
+        [src]="'http://localhost:3000/uploads/avatars/' + identity.image"
+        class="form-avatar"
+        alt="tu avatar"
+      />
+      } @else {
+      <div class="form-avatar form-avatar-placeholder"></div>
+      }
+
+      <div class="form-content">
+        <textarea
+          class="input-base form-textarea"
+          [(ngModel)]="publicationText"
+          placeholder="¿Qué estás cocinando hoy?"
+          rows="3"
+        ></textarea>
+
+        @if (errorMessage) {
+        <p class="form-error">{{ errorMessage }}</p>
+        }
+
+        <div class="form-actions">
+          <button class="btn btn-primary" (click)="savePublication()" [disabled]="sending">
+            {{ sending ? 'Publicando...' : 'Publicar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="publications-list">
+
+      @for (publication of publications; track publication._id) {
+      <div class="card-base publication-item">
+
+        <div class="publication-header">
+          @if (getAuthor(publication)?.image) {
+          <img
+            [src]="'http://localhost:3000/uploads/avatars/' + getAuthor(publication).image"
+            class="publication-avatar"
+            alt="avatar"
+          />
+          } @else {
+          <div class="publication-avatar publication-avatar-placeholder"></div>
+          }
+
+          <div class="publication-meta">
+            <span class="publication-name">
+              {{ getAuthor(publication)?.name }} {{ getAuthor(publication)?.surname }}
+            </span>
+            <span class="publication-nick">@{{ getAuthor(publication)?.nick }}</span>
+            <span class="publication-date">{{ getTimeAgo(publication.createdAt) }}</span>
+          </div>
+
+          @if (isMyPublication(publication)) {
+          <button class="publication-delete" (click)="deletePublication(publication._id)" title="Eliminar">
+            ✕
+          </button>
+          }
+        </div>
+
+        <p class="publication-text">{{ publication.text }}</p>
+
+      </div>
+      }
+
+      @if (loading) {
+      <div class="loading-state">
+        <span class="spinner"></span>
+        <p>Cargando publicaciones...</p>
+      </div>
+      }
+
+      @if (hasMore && !loading) {
+      <button class="btn btn-outline load-more-btn" (click)="getPublications()">
+        Ver más
+      </button>
+      }
+
+      @if (!hasMore && publications.length > 0 && !loading) {
+      <p class="feed-end">Ya has visto todo por hoy 🍳</p>
+      }
+
+      @if (publications.length === 0 && !loading) {
+      <div class="card-base feed-empty">
+        <p>Aún no hay publicaciones. ¡Sé el primero o sigue a alguien!</p>
+      </div>
+      }
+
+    </div>
+
+  </main>
+
+</div>
