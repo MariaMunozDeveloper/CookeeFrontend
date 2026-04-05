@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { UserService } from '../../services/userService';
 import { UserCardComponent } from '../user-card/user-card';
 import { FollowService } from '../../services/followService';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-people',
   standalone: true,
-  imports: [UserCardComponent],
+  imports: [UserCardComponent, RouterLink],
   templateUrl: './people.html',
   styleUrl: './people.css'
 })
@@ -42,11 +43,11 @@ export class PeopleComponent {
         this.followed = response.followed || [];
         this.loading = false;
 
-        console.log('Usuarios cargados', response);
+        console.log(response);
       },
       error: (error: any) => {
         this.loading = false;
-        console.error('Error al cargar usuarios', error);
+        console.error(error);
       }
     });
   }
@@ -77,10 +78,10 @@ export class PeopleComponent {
     this.followService.followUser(userId).subscribe({
       next: (response: any) => {
         this.following.push(userId);
-        console.log('Usuario seguido correctamente', response);
+        console.log(response);
       },
       error: (error: any) => {
-        console.error('Error al seguir usuario', error);
+        console.error(error);
       }
     });
   }
@@ -89,10 +90,10 @@ export class PeopleComponent {
     this.followService.unfollowUser(userId).subscribe({
       next: (response: any) => {
         this.following = this.following.filter(id => id !== userId);
-        console.log('Has dejado de seguir al usuario', response);
+        console.log(response);
       },
       error: (error: any) => {
-        console.error('Error al dejar de seguir usuario', error);
+        console.error(error);
       }
     });
   }

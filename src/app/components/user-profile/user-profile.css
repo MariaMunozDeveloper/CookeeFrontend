@@ -1,0 +1,154 @@
+/* src/app/components/user-profile/user-profile.css */
+.profile-page {
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.profile-loading,
+.profile-empty {
+  text-align: center;
+  color: var(--color-muted);
+}
+
+/* cabecera */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.profile-avatar,
+.profile-avatar-placeholder {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+}
+
+.profile-avatar-placeholder {
+  background-color: var(--color-accent);
+  border: 2px solid var(--color-border);
+}
+
+.profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.profile-nick {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.profile-counters {
+  display: flex;
+  gap: var(--space-lg);
+  margin-top: var(--space-xs);
+}
+
+.counter-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.counter-item strong {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.counter-item span {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.profile-actions {
+  margin-left: auto;
+}
+
+/* sección publicaciones */
+.profile-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+  color: var(--color-text);
+}
+
+.profile-publications {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.profile-pub-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.profile-pub-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.profile-pub-avatar,
+.profile-pub-avatar-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.profile-pub-avatar {
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+}
+
+.profile-pub-avatar-placeholder {
+  background-color: var(--color-accent);
+  border: 2px solid var(--color-border);
+}
+
+.profile-pub-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile-pub-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.profile-pub-date {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.profile-pub-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}

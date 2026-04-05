@@ -35,7 +35,7 @@
 
         @if (showUserMenu) {
         <div class="navbar-dropdown">
-          <a class="navbar-dropdown-link" routerLink="/profile" (click)="closeUserMenu()">
+          <a class="navbar-dropdown-link" [routerLink]="['/profile', identity._id]" (click)="closeUserMenu()">
             Mi perfil
           </a>
 

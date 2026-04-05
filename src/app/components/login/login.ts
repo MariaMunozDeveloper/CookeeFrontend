@@ -61,14 +61,14 @@ export class LoginComponent {
             this.router.navigate(['/']);
           },
           error: (error: any) => {
-            console.error('Error counters', error);
+            console.error(error);
             this.router.navigate(['/']);
           }
         });
 
       },
       error: (error) => {
-        console.error('Error login', error);
+        console.error(error);
       }
     });
   }

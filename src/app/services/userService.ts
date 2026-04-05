@@ -42,4 +42,8 @@ export class UserService {
   getUsers(page: number = 1, limit: number = 10): Observable<any> {
     return this.http.get(`${this.apiUrl}?page=${page}&limit=${limit}`);
   }
+
+  getUserById(userId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/user/${userId}`);
+  }
 }

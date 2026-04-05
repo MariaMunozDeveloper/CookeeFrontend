@@ -64,15 +64,15 @@ export class MyDataComponent {
             next: (avatarResponse: any) => {
               this.identity = avatarResponse.user;
               localStorage.setItem('user', JSON.stringify(avatarResponse.user));
-              console.log('Avatar subido correctamente', avatarResponse);
+              console.log(avatarResponse);
             },
             error: (error: any) => {
-              console.error('Error al subir avatar', error);
+              console.error(error);
             }
           });
         }
 
-        console.log('Usuario actualizado correctamente', response);
+        console.log(response);
       },
       error: (error: any) => {
         if (error.status === 409) {
@@ -96,7 +96,7 @@ export class MyDataComponent {
 
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
-      console.log('Archivo seleccionado:', this.selectedFile);
+      console.log(this.selectedFile);
     }
   }
 }

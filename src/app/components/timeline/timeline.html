@@ -6,8 +6,7 @@
       [stats]="stats"
       [showStats]="true"
       [buttonText]="'Mis datos'"
-      [buttonLink]="'/my-data'"
-    />
+      [buttonLink]="'/my-data'"></app-user-card>
   </aside>
 
   <main class="timeline-main">
@@ -46,7 +45,8 @@
     <div class="publications-list">
 
       @for (publication of publications; track publication._id) {
-      <div class="card-base publication-item">
+      <div class="card-base publication-item" [routerLink]="['/profile', getAuthor(publication)?._id]"
+           style="cursor:pointer">
 
         <div class="publication-header">
           @if (getAuthor(publication)?.image) {

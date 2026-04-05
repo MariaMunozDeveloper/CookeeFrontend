@@ -6,6 +6,7 @@ import { MyDataComponent } from './components/my-data/my-data';
 import { authGuard } from './guards/auth-guard';
 import { PeopleComponent } from './components/people/people';
 import { TimelineComponent } from './components/timeline/timeline';
+import { UserProfileComponent } from './components/user-profile/user-profile';
 
 
 export const routes: Routes = [
@@ -24,6 +25,7 @@ export const routes: Routes = [
 
   // PÚBLICA
   { path: 'people', component: PeopleComponent },
+  { path: 'profile/:id', component: UserProfileComponent, canActivate: [authGuard] },
 
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

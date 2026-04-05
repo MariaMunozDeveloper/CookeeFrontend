@@ -5,11 +5,12 @@ import { AuthService } from '../../services/authService';
 import { PublicationService } from '../../services/publicationService';
 import { UserCardComponent } from '../user-card/user-card';
 import { Publication } from '../../common/interfaces/publication';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserCardComponent],
+  imports: [CommonModule, FormsModule, UserCardComponent, RouterLink],
   templateUrl: './timeline.html',
   styleUrl: './timeline.css'
 })

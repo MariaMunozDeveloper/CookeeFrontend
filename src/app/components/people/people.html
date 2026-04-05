@@ -20,7 +20,7 @@
     @for (user of users; track user._id) {
     <div class="card-base people-row">
 
-      <div class="people-user-info">
+      <div class="people-user-info" [routerLink]="['/profile', user._id]" style="cursor:pointer">
         @if (user.image) {
         <img
           [src]="'http://localhost:3000/uploads/avatars/' + user.image"
