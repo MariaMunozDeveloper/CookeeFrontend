@@ -5,6 +5,7 @@ import { HomeComponent } from './components/home/home';
 import { MyDataComponent } from './components/my-data/my-data';
 import { authGuard } from './guards/auth-guard';
 import { PeopleComponent } from './components/people/people';
+import { TimelineComponent } from './components/timeline/timeline';
 
 
 export const routes: Routes = [
@@ -12,7 +13,7 @@ export const routes: Routes = [
   { path: '', component: HomeComponent },
 
   // FEED PRIVADO
-  { path: 'feed', component: HomeComponent, canActivate: [authGuard] },
+  { path: 'feed', component: TimelineComponent, canActivate: [authGuard] },
 
   // AUTH
   { path: 'login', component: LoginComponent },
