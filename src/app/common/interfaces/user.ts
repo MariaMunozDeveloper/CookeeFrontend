@@ -7,6 +7,7 @@ export interface User {
   password?: string;
   role?: string;
   image?: string | null;
+  privacy?: 'public' | 'private' | 'friends';
   createdAt?: string;
   updatedAt?: string;
 }

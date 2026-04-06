@@ -31,6 +31,7 @@ export class TimelineComponent implements OnInit {
 
   selectedImage: File | null = null;
   imagePreview: string | null = null;
+  publicationVisibility: 'public' | 'friends' | 'private' = 'public';
 
   constructor(
     private authService: AuthService,
@@ -84,7 +85,7 @@ export class TimelineComponent implements OnInit {
     this.sending = true;
     this.errorMessage = '';
 
-    const data = { tipo: 'texto', text: this.publicationText.trim() };
+    const data = { tipo: 'texto', text: this.publicationText.trim(), visibility: this.publicationVisibility };
 
     this.publicationService.savePublication(data).subscribe({
       next: (response: any) => {
@@ -96,6 +97,7 @@ export class TimelineComponent implements OnInit {
               next: () => {
                 this.selectedImage = null;
                 this.imagePreview = null;
+                this.publicationVisibility = 'public';
                 this.publicationText = '';
                 this.getPublications(true);
                 this.sending = false;
@@ -171,6 +173,16 @@ export class TimelineComponent implements OnInit {
   removeSelectedImage(): void {
     this.selectedImage = null;
     this.imagePreview = null;
+  }
+
+  toggleVisibility(): void {
+    if (this.publicationVisibility === 'public') {
+      this.publicationVisibility = 'friends';
+    } else if (this.publicationVisibility === 'friends') {
+      this.publicationVisibility = 'private';
+    } else {
+      this.publicationVisibility = 'public';
+    }
   }
 
 }

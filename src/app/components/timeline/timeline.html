@@ -39,11 +39,21 @@
         }
 
         <div class="form-actions">
-          <!-- botón adjuntar imagen -->
           <label class="btn btn-outline form-attach-btn" title="Adjuntar imagen">
             📷
             <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden/>
           </label>
+
+          <button
+            type="button"
+            class="btn btn-outline form-visibility-btn"
+            (click)="toggleVisibility()"
+            [title]="publicationVisibility === 'public' ? 'Visible para todos' :
+           publicationVisibility === 'friends' ? 'Solo amigos' : 'Solo tú'"
+          >
+            {{ publicationVisibility === 'public' ? '🌍' :
+            publicationVisibility === 'friends' ? '👥' : '🔒' }}
+          </button>
 
           <button class="btn btn-primary" (click)="savePublication()" [disabled]="sending">
             {{ sending ? 'Publicando...' : 'Publicar' }}

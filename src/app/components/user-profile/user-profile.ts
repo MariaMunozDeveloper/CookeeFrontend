@@ -25,6 +25,7 @@ export class UserProfileComponent {
   isFollowing: boolean = false;
   isFriend: boolean = false;
   isOwnProfile: boolean = false;
+  restricted: boolean = false;
 
   loading: boolean = true;
 
@@ -56,6 +57,7 @@ export class UserProfileComponent {
         // following/followed son los del usuario logueado
         this.isFollowing = response.following === true;
         this.isFriend = response.following === true && response.followed === true;
+        this.restricted = response.restricted === true;
 
         this.userService.getCounters(userId).subscribe({
           next: (countersRes: any) => {

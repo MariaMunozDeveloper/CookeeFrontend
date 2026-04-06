@@ -44,7 +44,8 @@ export class MyDataComponent {
       email: [
         this.identity?.email || '',
         [Validators.required, Validators.email]
-      ]
+      ],
+      privacy: [this.identity?.privacy || 'public']
     });
   }
 
