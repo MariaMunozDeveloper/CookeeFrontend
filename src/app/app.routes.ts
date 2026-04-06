@@ -7,6 +7,9 @@ import { authGuard } from './guards/auth-guard';
 import { PeopleComponent } from './components/people/people';
 import { TimelineComponent } from './components/timeline/timeline';
 import { UserProfileComponent } from './components/user-profile/user-profile';
+import { FollowsComponent } from './components/follows/follows';
+import { MessagesComponent } from './components/messages/messages';
+import { SendMessageComponent } from './components/send-message/send-message';
 
 
 export const routes: Routes = [
@@ -22,6 +25,12 @@ export const routes: Routes = [
 
   // PRIVADAS
   { path: 'my-data', component: MyDataComponent, canActivate: [authGuard] },
+
+  { path: 'follows/:modo', component: FollowsComponent, canActivate: [authGuard] },
+  { path: 'follows/:modo/:id', component: FollowsComponent, canActivate: [authGuard] },
+
+  { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
+  { path: 'messages/send/:id', component: SendMessageComponent, canActivate: [authGuard] },
 
   // PÚBLICA
   { path: 'people', component: PeopleComponent },

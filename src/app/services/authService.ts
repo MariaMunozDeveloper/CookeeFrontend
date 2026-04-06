@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../common/interfaces/user';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  // url del backend
-  private apiUrl = 'http://localhost:3000/api/user';
+  private apiUrl = `${environment.apiUrl}/user`;
+
+  private identitySubject = new BehaviorSubject<any>(this.getIdentity());
+  identity$ = this.identitySubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -22,29 +25,29 @@ export class AuthService {
 
   getIdentity(): any {
     const user = localStorage.getItem('user');
-
     if (user && user !== 'undefined') {
       return JSON.parse(user);
-    } else {
-      return null;
     }
+    return null;
   }
 
   getToken(): string | null {
     const token = localStorage.getItem('token');
-
     if (token && token !== 'undefined') {
       return token;
-    } else {
-      return null;
     }
+    return null;
+  }
+
+  setIdentity(user: any): void {
+    localStorage.setItem('user', JSON.stringify(user));
+    this.identitySubject.next(user);
   }
 
   logout(): void {
-      localStorage.removeItem('token');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('user');
-    }
-
-
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    this.identitySubject.next(null);
+  }
 }

@@ -3,10 +3,36 @@
     <div class="auth-wrapper">
       <div class="card-base auth-card">
 
-        <app-user-card
-          [user]="identity"
-          [showEmail]="true">
-        </app-user-card>
+        <div class="mydata-avatar-wrap">
+          <div class="mydata-avatar-preview-wrap">
+            @if (previewUrl) {
+            <img [src]="previewUrl" class="mydata-avatar" alt="preview"/>
+            } @else if (identity?.image) {
+            <img
+              [src]="'http://localhost:3000/uploads/avatars/' + identity.image"
+              class="mydata-avatar"
+              alt="avatar"
+            />
+            } @else {
+            <div class="mydata-avatar mydata-avatar-placeholder"></div>
+            }
+
+            <label class="mydata-avatar-edit-btn" title="Cambiar foto">
+              ✏️
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden/>
+            </label>
+          </div>
+
+          <div class="mydata-avatar-info">
+            <p class="mydata-name">{{ identity?.name }} {{ identity?.surname }}</p>
+            <p class="mydata-nick">@{{ identity?.nick }}</p>
+            @if (previewUrl) {
+            <button type="button" class="btn btn-outline mydata-cancel-btn" (click)="cancelAvatarChange()">
+              Cancelar cambio de foto
+            </button>
+            }
+          </div>
+        </div>
 
         <h1 class="title-section auth-title">
           Mis <span class="title-highlight">datos</span>
@@ -102,15 +128,6 @@
             }
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Avatar</label>
-            <input
-              type="file"
-              class="input-base"
-              accept="image/*"
-              (change)="onFileSelected($event)"
-            />
-          </div>
 
           <button type="submit" class="btn btn-primary auth-submit">
             Guardar cambios

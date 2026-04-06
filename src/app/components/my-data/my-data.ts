@@ -19,6 +19,7 @@ export class MyDataComponent {
   status: string = '';
   errorMessage: string = '';
   selectedFile: File | null = null;
+  previewUrl: string | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -63,8 +64,9 @@ export class MyDataComponent {
           this.userService.uploadAvatar(this.selectedFile).subscribe({
             next: (avatarResponse: any) => {
               this.identity = avatarResponse.user;
-              localStorage.setItem('user', JSON.stringify(avatarResponse.user));
-              console.log(avatarResponse);
+              this.authService.setIdentity(avatarResponse.user);  // si ya aplicaste el BehaviorSubject
+              this.previewUrl = null;                              // ← limpiar preview
+              this.selectedFile = null;
             },
             error: (error: any) => {
               console.error(error);
@@ -93,10 +95,19 @@ export class MyDataComponent {
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
-      console.log(this.selectedFile);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(this.selectedFile);
     }
+  }
+
+  cancelAvatarChange(): void {
+    this.selectedFile = null;
+    this.previewUrl = null;
   }
 }

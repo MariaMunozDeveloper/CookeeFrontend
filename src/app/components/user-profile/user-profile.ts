@@ -6,11 +6,12 @@ import { FollowService } from '../../services/followService';
 import { PublicationService } from '../../services/publicationService';
 import { AuthService } from '../../services/authService';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, RouterLink],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css'
 })
@@ -19,6 +20,7 @@ export class UserProfileComponent {
   counters: any = null;
   publications: any[] = [];
   identity: any = null;
+  publicationsCount: number = 0;
 
   isFollowing: boolean = false;
   isFriend: boolean = false;
@@ -58,6 +60,12 @@ export class UserProfileComponent {
         this.userService.getCounters(userId).subscribe({
           next: (countersRes: any) => {
             this.counters = countersRes;
+          }
+        });
+
+        this.publicationService.getPublicationCounters(userId).subscribe({
+          next: (res: any) => {
+            this.publicationsCount = res.total ?? 0;
           }
         });
 

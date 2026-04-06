@@ -62,3 +62,71 @@
   border-bottom: 1px solid var(--color-border);
 }
 
+.mydata-avatar-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mydata-avatar-preview-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.mydata-avatar,
+.mydata-avatar-placeholder {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-border);
+  display: block;
+}
+
+.mydata-avatar-placeholder {
+  background-color: var(--color-accent);
+}
+
+.mydata-avatar-edit-btn {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s ease;
+}
+
+.mydata-avatar-edit-btn:hover {
+  background-color: var(--color-accent);
+}
+
+.mydata-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mydata-nick {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.mydata-cancel-btn {
+  margin-top: var(--space-sm);
+  font-size: 13px;
+  min-height: 34px;
+  padding: 0 14px;
+}
+

@@ -30,6 +30,26 @@
           rows="3"
         ></textarea>
 
+        @if (imagePreview) {
+        <div class="form-image-preview">
+          <img [src]="imagePreview" class="form-preview-img" alt="preview"/>
+          <button type="button" class="form-remove-image" (click)="removeSelectedImage()" title="Quitar imagen">✕
+          </button>
+        </div>
+        }
+
+        <div class="form-actions">
+          <!-- botón adjuntar imagen -->
+          <label class="btn btn-outline form-attach-btn" title="Adjuntar imagen">
+            📷
+            <input type="file" accept="image/*" (change)="onImageSelected($event)" hidden/>
+          </label>
+
+          <button class="btn btn-primary" (click)="savePublication()" [disabled]="sending">
+            {{ sending ? 'Publicando...' : 'Publicar' }}
+          </button>
+        </div>
+
         @if (errorMessage) {
         <p class="form-error">{{ errorMessage }}</p>
         }
@@ -49,19 +69,23 @@
            style="cursor:pointer">
 
         <div class="publication-header">
-          @if (getAuthor(publication)?.image) {
-          <img
-            [src]="'http://localhost:3000/uploads/avatars/' + getAuthor(publication).image"
-            class="publication-avatar"
-            alt="avatar"
-          />
-          } @else {
-          <div class="publication-avatar publication-avatar-placeholder"></div>
-          }
+          <a [routerLink]="['/profile', getAuthor(publication)?._id]" class="publication-avatar-link">
+            @if (getAuthor(publication)?.image) {
+            <img
+              [src]="'http://localhost:3000/uploads/avatars/' + getAuthor(publication).image"
+              class="publication-avatar"
+              alt="avatar"
+            />
+            } @else {
+            <div class="publication-avatar publication-avatar-placeholder"></div>
+            }
+          </a>
 
           <div class="publication-meta">
-            <span class="publication-name">
-              {{ getAuthor(publication)?.name }} {{ getAuthor(publication)?.surname }}
+            <span
+              class="publication-name publication-name-link"
+              [routerLink]="['/profile', getAuthor(publication)?._id]"
+            >{{ getAuthor(publication)?.name }} {{ getAuthor(publication)?.surname }}
             </span>
             <span class="publication-nick">@{{ getAuthor(publication)?.nick }}</span>
             <span class="publication-date">{{ getTimeAgo(publication.createdAt) }}</span>
@@ -75,6 +99,17 @@
         </div>
 
         <p class="publication-text">{{ publication.text }}</p>
+        @if (publication.images && publication.images.length > 0) {
+        <div class="publication-images">
+          @for (img of publication.images; track img) {
+          <img
+            [src]="'http://localhost:3000/uploads/publications/' + img"
+            class="publication-img"
+            alt="imagen de publicación"
+          />
+          }
+        </div>
+        }
 
       </div>
       }

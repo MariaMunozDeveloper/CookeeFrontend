@@ -53,7 +53,7 @@ export class LoginComponent {
 
         localStorage.setItem('token', response.accessToken);
         localStorage.setItem('refreshToken', response.refreshToken);
-        localStorage.setItem('user', JSON.stringify(response.user));
+        this.authService.setIdentity(response.user);
 
         this.userService.getCounters().subscribe({
           next: (statsResponse: any) => {

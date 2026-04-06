@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FollowService {
-  private apiUrl = 'http://localhost:3000/api/follow';
+ private apiUrl = `${environment.apiUrl}/follow`;
 
   constructor(private http: HttpClient) {}
 
@@ -16,6 +17,20 @@ export class FollowService {
 
   unfollowUser(followedId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${followedId}`);
+  }
+
+  getFollowing(userId?: string, page: number = 1): Observable<any> {
+    const url = userId
+      ? `${this.apiUrl}/following/${userId}?page=${page}`
+      : `${this.apiUrl}/following?page=${page}`;
+    return this.http.get(url);
+  }
+
+  getFollowers(userId?: string, page: number = 1): Observable<any> {
+    const url = userId
+      ? `${this.apiUrl}/followers/${userId}?page=${page}`
+      : `${this.apiUrl}/followers?page=${page}`;
+    return this.http.get(url);
   }
 
 

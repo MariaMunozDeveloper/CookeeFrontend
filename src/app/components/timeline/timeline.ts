@@ -29,6 +29,9 @@ export class TimelineComponent implements OnInit {
   sending: boolean = false;
   errorMessage: string = '';
 
+  selectedImage: File | null = null;
+  imagePreview: string | null = null;
+
   constructor(
     private authService: AuthService,
     private publicationService: PublicationService
@@ -73,27 +76,45 @@ export class TimelineComponent implements OnInit {
   }
 
   savePublication(): void {
-    if (!this.publicationText.trim()) {
-      this.errorMessage = 'Escribe algo antes de publicar.';
+    if (!this.publicationText.trim() && !this.selectedImage) {
+      this.errorMessage = 'Escribe algo o adjunta una imagen antes de publicar.';
       return;
     }
 
     this.sending = true;
     this.errorMessage = '';
 
-    const data = {
-      tipo: 'texto',
-      text: this.publicationText.trim()
-    };
+    const data = { tipo: 'texto', text: this.publicationText.trim() };
 
     this.publicationService.savePublication(data).subscribe({
       next: (response: any) => {
         if (response.status) {
-          this.publicationText = '';
-          this.getPublications(true);
+          const publicationId = response.publication._id;
+
+          if (this.selectedImage) {
+            this.publicationService.uploadImage(publicationId, this.selectedImage).subscribe({
+              next: () => {
+                this.selectedImage = null;
+                this.imagePreview = null;
+                this.publicationText = '';
+                this.getPublications(true);
+                this.sending = false;
+              },
+              error: () => {
+                this.errorMessage = 'Publicado pero no se pudo subir la imagen.';
+                this.getPublications(true);
+                this.sending = false;
+              }
+            });
+          } else {
+            this.publicationText = '';
+            this.imagePreview = null;
+            this.getPublications(true);
+            this.sending = false;
+          }
+
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-        this.sending = false;
       },
       error: () => {
         this.errorMessage = 'No se pudo publicar. Inténtalo de nuevo.';
@@ -133,6 +154,23 @@ export class TimelineComponent implements OnInit {
     if (diff < 86400) return `hace ${Math.floor(diff / 3600)} h`;
     if (diff < 604800) return `hace ${Math.floor(diff / 86400)} días`;
     return created.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+  }
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedImage = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(this.selectedImage);
+    }
+  }
+
+  removeSelectedImage(): void {
+    this.selectedImage = null;
+    this.imagePreview = null;
   }
 
 }
