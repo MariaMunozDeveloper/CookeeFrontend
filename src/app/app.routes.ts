@@ -10,6 +10,8 @@ import { UserProfileComponent } from './components/user-profile/user-profile';
 import { FollowsComponent } from './components/follows/follows';
 import { MessagesComponent } from './components/messages/messages';
 import { SendMessageComponent } from './components/send-message/send-message';
+import { CreateRecipeComponent } from './components/create-recipe/create-recipe';
+
 
 
 export const routes: Routes = [
@@ -31,6 +33,7 @@ export const routes: Routes = [
 
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
   { path: 'messages/send/:id', component: SendMessageComponent, canActivate: [authGuard] },
+  { path: 'create-recipe', component: CreateRecipeComponent, canActivate: [authGuard] },
 
   // PÚBLICA
   { path: 'people', component: PeopleComponent },

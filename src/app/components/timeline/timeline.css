@@ -104,6 +104,16 @@
   font-size: 16px;
 }
 
+.form-recipe-link {
+  display: flex;
+}
+
+.form-recipe-btn {
+  font-size: 13px;
+  min-height: 34px;
+  padding: 0 14px;
+}
+
 
 /* publicaciones */
 .publications-list {

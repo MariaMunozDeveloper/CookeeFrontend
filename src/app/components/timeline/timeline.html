@@ -30,6 +30,12 @@
           rows="3"
         ></textarea>
 
+        <div class="form-recipe-link">
+          <button type="button" class="btn btn-outline form-recipe-btn" routerLink="/create-recipe">
+            📋 Crear receta completa
+          </button>
+        </div>
+
         @if (imagePreview) {
         <div class="form-image-preview">
           <img [src]="imagePreview" class="form-preview-img" alt="preview"/>

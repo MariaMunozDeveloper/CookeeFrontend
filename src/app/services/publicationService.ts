@@ -38,6 +38,12 @@ export class PublicationService {
     return this.http.post(`${this.apiUrl}/upload/${publicationId}`, formData);
   }
 
+  uploadStepImage(publicationId: string, stepIndex: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file0', file);
+    return this.http.post(`${this.apiUrl}/upload-step/${publicationId}/${stepIndex}`, formData);
+  }
+
   getPublicationCounters(userId?: string): Observable<any> {
     if (userId) {
       return this.http.get(`${this.apiUrl}/count/${userId}`);
