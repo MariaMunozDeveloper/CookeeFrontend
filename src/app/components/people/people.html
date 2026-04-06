@@ -9,15 +9,13 @@
     </p>
   </div>
 
-  @if (loading) {
-  <div class="card-base people-empty-state">
-    <p>Cargando usuarios...</p>
-  </div>
+  @if (loading()) {
+  <app-loading-spinner/>
   }
 
-  @if (!loading && users.length > 0) {
+  @if (!loading() && users().length > 0) {
   <div class="people-list">
-    @for (user of users; track user._id) {
+    @for (user of users(); track user._id) {
     <div class="card-base people-row">
 
       <div class="people-user-info" [routerLink]="['/profile', user._id]" style="cursor:pointer">
@@ -72,7 +70,7 @@
   </div>
   }
 
-  @if (!loading && users.length === 0) {
+  @if (!loading() && users().length === 0) {
   <div class="card-base people-empty-state">
     <p>No hay usuarios para mostrar.</p>
   </div>

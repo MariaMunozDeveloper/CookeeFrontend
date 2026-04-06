@@ -1,44 +1,29 @@
-import { Component } from '@angular/core';
+import { inject, Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink, Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/authService';
-import { FormValidators } from '../../validators/formValidators';
 import { UserService } from '../../services/userService';
+import { FormValidators } from '../../validators/formValidators';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule ],
+  standalone: true,
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
 export class LoginComponent {
-  loginForm: FormGroup;
+  private readonly authService: AuthService = inject(AuthService);
+  private readonly userService: UserService = inject(UserService);
+  private readonly router: Router = inject(Router);
+  private readonly formBuilder: FormBuilder = inject(FormBuilder);
+
   showPassword: boolean = false;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private authService: AuthService,
-    private router: Router,
-    private userService: UserService,
-  ) {
-    this.loginForm = this.formBuilder.group({
-      email: [
-        '',
-        [
-          Validators.required,
-          Validators.email
-        ]
-      ],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(6),
-          FormValidators.notOnlyWhiteSpace
-        ]
-      ]
-    });
-  }
+  loginForm: FormGroup = this.formBuilder.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6), FormValidators.notOnlyWhiteSpace]]
+  });
 
   onSubmit(): void {
     if (this.loginForm.invalid) {
@@ -46,11 +31,8 @@ export class LoginComponent {
       return;
     }
 
-    const loginData = this.loginForm.value;
-
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
-
         localStorage.setItem('token', response.accessToken);
         localStorage.setItem('refreshToken', response.refreshToken);
         this.authService.setIdentity(response.user);
@@ -60,12 +42,10 @@ export class LoginComponent {
             localStorage.setItem('stats', JSON.stringify(statsResponse));
             this.router.navigate(['/']);
           },
-          error: (error: any) => {
-            console.error(error);
+          error: () => {
             this.router.navigate(['/']);
           }
         });
-
       },
       error: (error) => {
         console.error(error);

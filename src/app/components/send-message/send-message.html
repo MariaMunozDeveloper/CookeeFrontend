@@ -1,9 +1,9 @@
 <div class="page-container send-message-page">
   <div class="card-base send-message-card">
 
-    @if (receiver) {
+    @if (receiver()) {
     <h1 class="title-section">
-      Mensaje a <span class="title-highlight">@{{ receiver.nick }}</span>
+      Mensaje a <span class="title-highlight">@{{ receiver()?.nick }}</span>
     </h1>
 
     @if (sent) {

@@ -1,60 +1,53 @@
-// src/app/components/user-profile/user-profile.ts
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { inject, Component, signal, WritableSignal } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UserService } from '../../services/userService';
 import { FollowService } from '../../services/followService';
 import { PublicationService } from '../../services/publicationService';
 import { AuthService } from '../../services/authService';
 import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Publication } from '../../common/interfaces/publication';
+import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, LoadingSpinner],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css'
 })
 export class UserProfileComponent {
+  private readonly route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly userService: UserService = inject(UserService);
+  private readonly followService: FollowService = inject(FollowService);
+  private readonly publicationService: PublicationService = inject(PublicationService);
+  private readonly authService: AuthService = inject(AuthService);
+
+  identity: any = this.authService.getIdentity();
+
   profileUser: any = null;
   counters: any = null;
-  publications: any[] = [];
-  identity: any = null;
+  publications: WritableSignal<Publication[]> = signal<Publication[]>([]);
   publicationsCount: number = 0;
 
   isFollowing: boolean = false;
   isFriend: boolean = false;
   isOwnProfile: boolean = false;
   restricted: boolean = false;
-
-  loading: boolean = true;
-
-  constructor(
-    private route: ActivatedRoute,
-    private userService: UserService,
-    private followService: FollowService,
-    private publicationService: PublicationService,
-    private authService: AuthService
-  ) {}
+  loading: WritableSignal<boolean> = signal<boolean>(true);
 
   ngOnInit(): void {
-    this.identity = this.authService.getIdentity();
-
     this.route.params.subscribe(params => {
-      const userId = params['id'];
-      this.loadProfile(userId);
+      this.loadProfile(params['id']);
     });
   }
 
   loadProfile(userId: string): void {
-    this.loading = true;
+    this.loading.set(true);
 
     this.userService.getUserById(userId).subscribe({
       next: (response: any) => {
         this.profileUser = response.user;
         this.isOwnProfile = this.identity?._id === userId;
-
-        // following/followed son los del usuario logueado
         this.isFollowing = response.following === true;
         this.isFriend = response.following === true && response.followed === true;
         this.restricted = response.restricted === true;
@@ -72,18 +65,17 @@ export class UserProfileComponent {
         });
 
         this.publicationService.getPublicationsByUser(userId).subscribe({
-          next: (pubRes: any) => {
-            this.publications = pubRes.publications || [];
-            this.loading = false;
+          next: (publications: Publication[]) => {
+            this.publications.set(publications);
+            this.loading.set(false);
           },
           error: () => {
-            this.loading = false;
+            this.loading.set(false);
           }
         });
       },
-      error: (err: any) => {
-        console.error('Error cargando perfil', err);
-        this.loading = false;
+      error: () => {
+        this.loading.set(false);
       }
     });
   }

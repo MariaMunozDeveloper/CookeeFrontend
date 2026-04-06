@@ -1,30 +1,35 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { Publication } from '../common/interfaces/publication';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PublicationService {
-  private apiUrl = `${environment.apiUrl}/publication`;
-
-  constructor(private http: HttpClient) {}
+  private readonly http: HttpClient = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/publication`;
 
   savePublication(publication: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/save`, publication);
   }
 
-  getFeed(page: number = 1): Observable<any> {
-    return this.http.get(`${this.apiUrl}/feed/${page}`);
+  getFeed(page: number = 1): Observable<Publication[]> {
+    return this.http.get<any>(`${this.apiUrl}/feed/${page}`).pipe(
+      map(data => data.publications)
+    );
   }
 
   deletePublication(id: string): Observable<any> {
-      return this.http.delete(`${this.apiUrl}/remove/${id}`);
+    return this.http.delete(`${this.apiUrl}/remove/${id}`);
   }
 
-  getPublicationsByUser(userId: string, page: number = 1): Observable<any> {
-    return this.http.get(`${this.apiUrl}/user/${userId}/${page}`);
+  getPublicationsByUser(userId: string, page: number = 1): Observable<Publication[]> {
+    return this.http.get<any>(`${this.apiUrl}/user/${userId}/${page}`).pipe(
+      map(data => data.publications)
+    );
   }
 
   uploadImage(publicationId: string, file: File): Observable<any> {

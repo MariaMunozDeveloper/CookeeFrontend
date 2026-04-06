@@ -1,40 +1,39 @@
-import { Component } from '@angular/core';
+import { inject, Component, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FollowService } from '../../services/followService';
+import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-follows',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, LoadingSpinner],
   templateUrl: './follows.html',
   styleUrl: './follows.css'
 })
 export class FollowsComponent {
-modo: 'following' | 'followers' = 'following';
+  private readonly route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly followService: FollowService = inject(FollowService);
+
+  modo: 'following' | 'followers' = 'following';
   userId: string = '';
 
-  users: any[] = [];
+  users: WritableSignal<any[]> = signal<any[]>([]);
+  loading: WritableSignal<boolean> = signal<boolean>(false);
   page: number = 1;
   totalPages: number = 1;
-  loading: boolean = false;
-
-  constructor(
-    private route: ActivatedRoute,
-    private followService: FollowService
-  ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.userId = params['id'] || '';
       this.modo = params['modo'] === 'followers' ? 'followers' : 'following';
       this.page = 1;
-      this.users = [];
+      this.users.set([]);
       this.loadUsers();
     });
   }
 
   loadUsers(): void {
-    this.loading = true;
+    this.loading.set(true);
 
     const request = this.modo === 'following'
       ? this.followService.getFollowing(this.userId || undefined, this.page)
@@ -42,15 +41,14 @@ modo: 'following' | 'followers' = 'following';
 
     request.subscribe({
       next: (response: any) => {
-        // following devuelve el campo 'followed', followers devuelve 'user'
-        this.users = response.follows.map((f: any) =>
+        this.users.set(response.follows.map((f: any) =>
           this.modo === 'following' ? f.followed : f.user
-        );
+        ));
         this.totalPages = response.pages;
-        this.loading = false;
+        this.loading.set(false);
       },
       error: () => {
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }

@@ -1,13 +1,11 @@
 <!-- src/app/components/user-profile/user-profile.html -->
 <div class="page-container profile-page">
 
-  @if (loading) {
-  <div class="card-base profile-loading">
-    <p>Cargando perfil...</p>
-  </div>
+  @if (loading()) {
+  <app-loading-spinner/>
   }
 
-  @if (!loading && profileUser) {
+  @if (!loading() && profileUser) {
 
   @if (restricted) {
   <div class="card-base profile-restricted">
@@ -94,6 +92,7 @@
       </button>
     </div>
     }
+
   </div>
 
   <!-- publicaciones del usuario -->
@@ -101,13 +100,13 @@
 
     <h2 class="profile-section-title">Publicaciones</h2>
 
-    @if (publications.length === 0) {
+    @if (publications().length === 0) {
     <div class="card-base profile-empty">
       <p>Este usuario todavía no ha publicado nada.</p>
     </div>
     }
 
-    @for (pub of publications; track pub._id) {
+    @for (pub of publications(); track pub._id) {
     <div class="card-base profile-pub-item">
       <div class="profile-pub-header">
         @if (profileUser.image) {
@@ -127,8 +126,11 @@
       <p class="profile-pub-text">{{ pub.text }}</p>
     </div>
     }
+
   </div>
+
   }
+
   }
 
 </div>

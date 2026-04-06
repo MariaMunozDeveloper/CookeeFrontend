@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -7,9 +7,8 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class FollowService {
- private apiUrl = `${environment.apiUrl}/follow`;
-
-  constructor(private http: HttpClient) {}
+  private readonly http: HttpClient = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/follow`;
 
   followUser(followedId: string): Observable<any> {
     return this.http.post(this.apiUrl, { followed: followedId });
@@ -32,8 +31,4 @@ export class FollowService {
       : `${this.apiUrl}/followers?page=${page}`;
     return this.http.get(url);
   }
-
-
-
-
 }

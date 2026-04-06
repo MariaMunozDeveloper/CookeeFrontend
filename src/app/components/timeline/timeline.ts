@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { inject, Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/authService';
@@ -6,23 +6,27 @@ import { PublicationService } from '../../services/publicationService';
 import { UserCardComponent } from '../user-card/user-card';
 import { Publication } from '../../common/interfaces/publication';
 import { RouterLink } from '@angular/router';
+import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserCardComponent, RouterLink],
+  imports: [CommonModule, FormsModule, UserCardComponent, RouterLink, LoadingSpinner],
   templateUrl: './timeline.html',
   styleUrl: './timeline.css'
 })
 export class TimelineComponent implements OnInit {
+  private readonly authService: AuthService = inject(AuthService);
+  private readonly publicationService: PublicationService = inject(PublicationService);
 
-  identity: any;
-  stats: any;
+  identity: any = this.authService.getIdentity();
+  stats: any = JSON.parse(localStorage.getItem('stats') || 'null');
 
-  publications: Publication[] = [];
+  publications: WritableSignal<Publication[]> = signal<Publication[]>([]);
+  loading: WritableSignal<boolean> = signal<boolean>(false);
+
   page: number = 1;
   totalPages: number = 1;
-  loading: boolean = false;
   hasMore: boolean = true;
 
   publicationText: string = '';
@@ -33,45 +37,30 @@ export class TimelineComponent implements OnInit {
   imagePreview: string | null = null;
   publicationVisibility: 'public' | 'friends' | 'private' = 'public';
 
-  constructor(
-    private authService: AuthService,
-    private publicationService: PublicationService
-  ) {}
-
   ngOnInit(): void {
-    this.identity = this.authService.getIdentity();
-
-    const savedStats = localStorage.getItem('stats');
-    if (savedStats) {
-      this.stats = JSON.parse(savedStats);
-    }
-
     this.getPublications();
   }
 
   getPublications(reset: boolean = false): void {
-    if (this.loading || (!this.hasMore && !reset)) return;
+    if (this.loading() || (!this.hasMore && !reset)) return;
 
     if (reset) {
       this.page = 1;
-      this.publications = [];
+      this.publications.set([]);
       this.hasMore = true;
     }
 
-    this.loading = true;
+    this.loading.set(true);
 
     this.publicationService.getFeed(this.page).subscribe({
-      next: (response: any) => {
-        if (response.status) {
-          this.publications = [...this.publications, ...response.publications];
-          this.totalPages = response.totalPages;
-          this.hasMore = this.page < response.totalPages;
-          this.page++;
-        }
-        this.loading = false;
+      next: (publications: Publication[]) => {
+        this.publications.update(current => [...current, ...publications]);
+        this.hasMore = this.page < this.totalPages;
+        this.page++;
+        this.loading.set(false);
       },
       error: () => {
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
@@ -85,7 +74,11 @@ export class TimelineComponent implements OnInit {
     this.sending = true;
     this.errorMessage = '';
 
-    const data = { tipo: 'texto', text: this.publicationText.trim(), visibility: this.publicationVisibility };
+    const data = {
+      tipo: 'texto',
+      text: this.publicationText.trim(),
+      visibility: this.publicationVisibility
+    };
 
     this.publicationService.savePublication(data).subscribe({
       next: (response: any) => {
@@ -95,10 +88,7 @@ export class TimelineComponent implements OnInit {
           if (this.selectedImage) {
             this.publicationService.uploadImage(publicationId, this.selectedImage).subscribe({
               next: () => {
-                this.selectedImage = null;
-                this.imagePreview = null;
-                this.publicationVisibility = 'public';
-                this.publicationText = '';
+                this.resetForm();
                 this.getPublications(true);
                 this.sending = false;
               },
@@ -109,8 +99,7 @@ export class TimelineComponent implements OnInit {
               }
             });
           } else {
-            this.publicationText = '';
-            this.imagePreview = null;
+            this.resetForm();
             this.getPublications(true);
             this.sending = false;
           }
@@ -125,11 +114,18 @@ export class TimelineComponent implements OnInit {
     });
   }
 
+  private resetForm(): void {
+    this.publicationText = '';
+    this.imagePreview = null;
+    this.selectedImage = null;
+    this.publicationVisibility = 'public';
+  }
+
   deletePublication(id: string): void {
     this.publicationService.deletePublication(id).subscribe({
       next: (response: any) => {
         if (response.status) {
-          this.publications = this.publications.filter(p => p._id !== id);
+          this.publications.update(current => current.filter(p => p._id !== id));
         }
       },
       error: () => {}
@@ -184,5 +180,4 @@ export class TimelineComponent implements OnInit {
       this.publicationVisibility = 'public';
     }
   }
-
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../common/interfaces/user';
@@ -8,12 +8,11 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = `${environment.apiUrl}/user`;
+  private readonly http: HttpClient = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/user`;
 
-  private identitySubject = new BehaviorSubject<any>(this.getIdentity());
-  identity$ = this.identitySubject.asObservable();
-
-  constructor(private http: HttpClient) {}
+  private readonly identitySubject = new BehaviorSubject<any>(this.getIdentity());
+  readonly identity$ = this.identitySubject.asObservable();
 
   register(user: User): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, user);

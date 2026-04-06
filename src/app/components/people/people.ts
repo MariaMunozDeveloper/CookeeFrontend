@@ -1,53 +1,52 @@
-import { Component } from '@angular/core';
+import { inject, Component } from '@angular/core';
 import { UserService } from '../../services/userService';
 import { UserCardComponent } from '../user-card/user-card';
 import { FollowService } from '../../services/followService';
 import { RouterLink } from '@angular/router';
+import { signal, WritableSignal } from '@angular/core';
+import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-people',
   standalone: true,
-  imports: [UserCardComponent, RouterLink],
+  imports: [UserCardComponent, RouterLink, LoadingSpinner],
   templateUrl: './people.html',
   styleUrl: './people.css'
 })
 export class PeopleComponent {
-  users: any[] = [];
+  private readonly userService: UserService = inject(UserService);
+  private readonly followService: FollowService = inject(FollowService);
+
+  users: WritableSignal<any[]> = signal<any[]>([]);
+  loading: WritableSignal<boolean> = signal<boolean>(false);
   page: number = 1;
   totalPages: number = 1;
-  loading: boolean = false;
-
   following: string[] = [];
   followed: string[] = [];
-
-  constructor(private userService: UserService, private followService: FollowService) {}
 
   ngOnInit(): void {
     this.loadUsers();
   }
 
   loadUsers(): void {
-    this.loading = true;
+    this.loading.set(true);
 
     this.userService.getUsers(this.page).subscribe({
       next: (response: any) => {
         const identity = localStorage.getItem('user');
         const currentUser = identity ? JSON.parse(identity) : null;
 
-        this.users = response.users.filter(
+        this.users.set(response.users.filter(
           (user: any) => user._id !== currentUser?._id
-        );
+        ));
 
         this.totalPages = response.totalPages;
         this.following = response.following || [];
         this.followed = response.followed || [];
-        this.loading = false;
-
-        console.log(response);
+        this.loading.set(false);
       },
-      error: (error: any) => {
-        this.loading = false;
-        console.error(error);
+      error: () => {
+        this.loading.set(false);
       }
     });
   }
@@ -76,9 +75,8 @@ export class PeopleComponent {
 
   follow(userId: string): void {
     this.followService.followUser(userId).subscribe({
-      next: (response: any) => {
+      next: () => {
         this.following.push(userId);
-        console.log(response);
       },
       error: (error: any) => {
         console.error(error);
@@ -88,9 +86,8 @@ export class PeopleComponent {
 
   unfollow(userId: string): void {
     this.followService.unfollowUser(userId).subscribe({
-      next: (response: any) => {
+      next: () => {
         this.following = this.following.filter(id => id !== userId);
-        console.log(response);
       },
       error: (error: any) => {
         console.error(error);

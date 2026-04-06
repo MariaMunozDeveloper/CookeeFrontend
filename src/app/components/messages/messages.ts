@@ -1,56 +1,54 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterOutlet, Router } from '@angular/router';
+import { inject, Component, signal, WritableSignal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { MessageService } from '../../services/messageService';
 import { AuthService } from '../../services/authService';
+import { Message } from '../../common/interfaces/message';
+import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-messages',
   standalone: true,
-  imports: [RouterLink, RouterOutlet],
+  imports: [RouterLink, LoadingSpinner],
   templateUrl: './messages.html',
   styleUrl: './messages.css'
 })
 export class MessagesComponent {
+  private readonly messageService: MessageService = inject(MessageService);
+  private readonly authService: AuthService = inject(AuthService);
+
+  identity: any = this.authService.getIdentity();
   activeTab: 'received' | 'sent' = 'received';
-  messages: any[] = [];
+
+  messages: WritableSignal<Message[]> = signal<Message[]>([]);
+  loading: WritableSignal<boolean> = signal<boolean>(false);
   page: number = 1;
   totalPages: number = 1;
-  loading: boolean = false;
-  identity: any;
-
-  constructor(
-    private messageService: MessageService,
-    private authService: AuthService,
-    private router: Router
-  ) {}
 
   ngOnInit(): void {
-    this.identity = this.authService.getIdentity();
     this.loadMessages();
   }
 
   setTab(tab: 'received' | 'sent'): void {
     this.activeTab = tab;
     this.page = 1;
-    this.messages = [];
+    this.messages.set([]);
     this.loadMessages();
   }
 
   loadMessages(): void {
-    this.loading = true;
+    this.loading.set(true);
 
     const request = this.activeTab === 'received'
       ? this.messageService.getReceived(this.page)
       : this.messageService.getSent(this.page);
 
     request.subscribe({
-      next: (response: any) => {
-        this.messages = response.messages || [];
-        this.totalPages = response.totalPages || 1;
-        this.loading = false;
+      next: (msgs: Message[]) => {
+        this.messages.set(msgs);
+        this.loading.set(false);
       },
       error: () => {
-        this.loading = false;
+        this.loading.set(false);
       }
     });
   }
@@ -73,7 +71,7 @@ export class MessagesComponent {
     return this.activeTab === 'received' ? message.emitter : message.receiver;
   }
 
-  getTimeAgo(date: string): string {
+  getTimeAgo(date: string | undefined): string {
     if (!date) return '';
     const now = new Date();
     const created = new Date(date);

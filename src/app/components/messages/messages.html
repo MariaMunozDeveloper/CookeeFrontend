@@ -23,21 +23,19 @@
     </button>
   </div>
 
-  @if (loading) {
-  <div class="card-base messages-empty">
-    <p>Cargando mensajes...</p>
-  </div>
+  @if (loading()) {
+  <app-loading-spinner/>
   }
 
-  @if (!loading && messages.length === 0) {
+  @if (!loading() && messages().length === 0) {
   <div class="card-base messages-empty">
     <p>{{ activeTab === 'received' ? 'No tienes mensajes recibidos.' : 'No has enviado ningún mensaje.' }}</p>
   </div>
   }
 
-  @if (!loading && messages.length > 0) {
+  @if (!loading() && messages().length > 0) {
   <div class="messages-list">
-    @for (msg of messages; track msg._id) {
+    @for (msg of messages(); track msg._id) {
     <div class="card-base message-item" [class.message-unread]="activeTab === 'received' && !msg.viewed">
 
       <div class="message-user">

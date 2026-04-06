@@ -1,35 +1,33 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { inject, Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/authService';
+import { MessageService } from '../../services/messageService';
 import { Subscription } from 'rxjs';
-import { MessageService } from '../../services/messageService'
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
 export class NavbarComponent implements OnInit, OnDestroy {
+  private readonly authService: AuthService = inject(AuthService);
+  private readonly router: Router = inject(Router);
+  private readonly messageService: MessageService = inject(MessageService);
+
   identity: any = null;
   showUserMenu = false;
   unreadMessages: number = 0;
-  private unreadInterval: any;
-  private identitySub!: Subscription;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private messageService: MessageService
-  ) {}
+  private identitySub!: Subscription;
+  private unreadInterval: any;
 
   ngOnInit(): void {
     this.identitySub = this.authService.identity$.subscribe(user => {
       this.identity = user;
       if (user) {
         this.loadUnreadCount();
-        // comprueba cada 30 segundos
         this.unreadInterval = setInterval(() => this.loadUnreadCount(), 30000);
       } else {
         clearInterval(this.unreadInterval);
@@ -43,6 +41,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
     clearInterval(this.unreadInterval);
   }
 
+  loadUnreadCount(): void {
+    this.messageService.getUnreadCount().subscribe({
+      next: (count: number) => {
+        this.unreadMessages = count;
+      },
+      error: () => {}
+    });
+  }
+
   toggleUserMenu(): void {
     this.showUserMenu = !this.showUserMenu;
   }
@@ -54,14 +61,5 @@ export class NavbarComponent implements OnInit, OnDestroy {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
-  }
-
-  loadUnreadCount(): void {
-    this.messageService.getUnreadCount().subscribe({
-      next: (response: any) => {
-        this.unreadMessages = response.count || 0;
-      },
-      error: () => {}
-    });
   }
 }

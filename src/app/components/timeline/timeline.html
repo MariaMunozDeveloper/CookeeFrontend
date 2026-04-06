@@ -74,7 +74,7 @@
 
     <div class="publications-list">
 
-      @for (publication of publications; track publication._id) {
+      @for (publication of publications(); track publication._id) {
       <div class="card-base publication-item" [routerLink]="['/profile', getAuthor(publication)?._id]"
            style="cursor:pointer">
 
@@ -124,11 +124,8 @@
       </div>
       }
 
-      @if (loading) {
-      <div class="loading-state">
-        <span class="spinner"></span>
-        <p>Cargando publicaciones...</p>
-      </div>
+      @if (loading()) {
+      <app-loading-spinner/>
       }
 
       @if (hasMore && !loading) {

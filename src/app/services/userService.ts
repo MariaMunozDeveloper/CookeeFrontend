@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -7,36 +7,31 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = `${environment.apiUrl}/user`;
-
-  constructor(private http: HttpClient) {}
+  private readonly http: HttpClient = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/user`;
 
   getCounters(userId?: string): Observable<any> {
     if (userId) {
       return this.http.get(`${this.apiUrl}/counters/${userId}`);
     }
-
     return this.http.get(`${this.apiUrl}/counters`);
   }
 
   getStats(): any {
     const stats = localStorage.getItem('stats');
-
     if (stats && stats !== 'undefined') {
       return JSON.parse(stats);
     }
-
     return null;
   }
 
   updateUser(userData: any): Observable<any> {
-      return this.http.put(`${this.apiUrl}/update`, userData);
+    return this.http.put(`${this.apiUrl}/update`, userData);
   }
 
   uploadAvatar(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('avatar', file);
-
     return this.http.post(`${this.apiUrl}/upload-avatar`, formData);
   }
 

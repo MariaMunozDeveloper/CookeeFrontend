@@ -1,5 +1,4 @@
-// src/app/components/send-message/send-message.ts
-import { Component } from '@angular/core';
+import { inject, Component, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from '../../services/messageService';
@@ -13,24 +12,22 @@ import { UserService } from '../../services/userService';
   styleUrl: './send-message.css'
 })
 export class SendMessageComponent {
-  receiver: any = null;
+  private readonly route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly router: Router = inject(Router);
+  private readonly messageService: MessageService = inject(MessageService);
+  private readonly userService: UserService = inject(UserService);
+
+  receiver: WritableSignal<any> = signal<any>(null);
   messageText: string = '';
   sending: boolean = false;
   sent: boolean = false;
   errorMessage: string = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private messageService: MessageService,
-    private userService: UserService
-  ) {}
-
   ngOnInit(): void {
     const userId = this.route.snapshot.params['id'];
     this.userService.getUserById(userId).subscribe({
       next: (response: any) => {
-        this.receiver = response.user;
+        this.receiver.set(response.user);
       }
     });
   }
@@ -44,7 +41,7 @@ export class SendMessageComponent {
     this.sending = true;
     this.errorMessage = '';
 
-    this.messageService.sendMessage(this.receiver._id, this.messageText.trim()).subscribe({
+    this.messageService.sendMessage(this.receiver()._id, this.messageText.trim()).subscribe({
       next: () => {
         this.sent = true;
         this.messageText = '';
