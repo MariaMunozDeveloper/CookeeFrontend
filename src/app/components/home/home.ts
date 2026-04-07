@@ -1,15 +1,47 @@
-import { Component } from '@angular/core';
+import { inject, Component, signal, WritableSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { UserCardComponent } from '../user-card/user-card';
-import { LoginComponent } from '../login/login';
+import { PublicationService } from '../../services/publicationService';
+import { Publication } from '../../common/interfaces/publication';
+import { AsAnyPipe } from '../../pipes/as-any.pipe';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [UserCardComponent, LoginComponent, RouterLink],
+  imports: [RouterLink, AsAnyPipe],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
 export class HomeComponent {
+  private readonly publicationService: PublicationService = inject(PublicationService);
+
+  // recetas recientes para mostrar en la home sin estar logueado
+  recetas: WritableSignal<Publication[]> = signal<Publication[]>([]);
+  loaded: WritableSignal<boolean> = signal<boolean>(false);
+
+  ngOnInit(): void {
+    this.loadRecetas();
+  }
+
+  // cargamos las ultimas recetas publicas para el showcase
+  private loadRecetas(): void {
+    this.publicationService.explore(1, 'recent', '').subscribe({
+      next: (publications: Publication[]) => {
+        // solo mostramos las 4 primeras
+        this.recetas.set(publications.slice(0, 4));
+        this.loaded.set(true);
+      },
+      error: () => {
+        this.loaded.set(true);
+      }
+    });
+  }
+
+  // devuelve la portada de la receta si tiene imagen
+  getCover(publication: Publication): string | null {
+    return publication.images && publication.images.length > 0
+      ? publication.images[0]
+      : null;
+  }
+
 
 }

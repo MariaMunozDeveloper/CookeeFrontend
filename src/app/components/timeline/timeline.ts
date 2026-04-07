@@ -1,17 +1,16 @@
 import { inject, Component, OnInit, signal, WritableSignal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/authService';
 import { PublicationService } from '../../services/publicationService';
 import { UserCardComponent } from '../user-card/user-card';
 import { Publication } from '../../common/interfaces/publication';
-import { RouterLink } from '@angular/router';
 import { LoadingSpinner } from '../loading-spinner/loading-spinner';
+import { UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [CommonModule, FormsModule, UserCardComponent, RouterLink, LoadingSpinner],
+  imports: [UserCardComponent, RouterLink, LoadingSpinner, UpperCasePipe],
   templateUrl: './timeline.html',
   styleUrl: './timeline.css'
 })
@@ -19,9 +18,11 @@ export class TimelineComponent implements OnInit {
   private readonly authService: AuthService = inject(AuthService);
   private readonly publicationService: PublicationService = inject(PublicationService);
 
+  // datos del usuario logueado
   identity: any = this.authService.getIdentity();
   stats: any = JSON.parse(localStorage.getItem('stats') || 'null');
 
+  // lista de recetas del feed
   publications: WritableSignal<Publication[]> = signal<Publication[]>([]);
   loading: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -29,18 +30,11 @@ export class TimelineComponent implements OnInit {
   totalPages: number = 1;
   hasMore: boolean = true;
 
-  publicationText: string = '';
-  sending: boolean = false;
-  errorMessage: string = '';
-
-  selectedImage: File | null = null;
-  imagePreview: string | null = null;
-  publicationVisibility: 'public' | 'friends' | 'private' = 'public';
-
   ngOnInit(): void {
     this.getPublications();
   }
 
+  // cargamos las recetas del feed paginadas
   getPublications(reset: boolean = false): void {
     if (this.loading() || (!this.hasMore && !reset)) return;
 
@@ -65,82 +59,25 @@ export class TimelineComponent implements OnInit {
     });
   }
 
-  savePublication(): void {
-    if (!this.publicationText.trim() && !this.selectedImage) {
-      this.errorMessage = 'Escribe algo o adjunta una imagen antes de publicar.';
-      return;
-    }
-
-    this.sending = true;
-    this.errorMessage = '';
-
-    const data = {
-      tipo: 'texto',
-      text: this.publicationText.trim(),
-      visibility: this.publicationVisibility
-    };
-
-    this.publicationService.savePublication(data).subscribe({
-      next: (response: any) => {
-        if (response.status) {
-          const publicationId = response.publication._id;
-
-          if (this.selectedImage) {
-            this.publicationService.uploadImage(publicationId, this.selectedImage).subscribe({
-              next: () => {
-                this.resetForm();
-                this.getPublications(true);
-                this.sending = false;
-              },
-              error: () => {
-                this.errorMessage = 'Publicado pero no se pudo subir la imagen.';
-                this.getPublications(true);
-                this.sending = false;
-              }
-            });
-          } else {
-            this.resetForm();
-            this.getPublications(true);
-            this.sending = false;
-          }
-
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      },
-      error: () => {
-        this.errorMessage = 'No se pudo publicar. Inténtalo de nuevo.';
-        this.sending = false;
-      }
-    });
-  }
-
-  private resetForm(): void {
-    this.publicationText = '';
-    this.imagePreview = null;
-    this.selectedImage = null;
-    this.publicationVisibility = 'public';
-  }
-
-  deletePublication(id: string): void {
-    this.publicationService.deletePublication(id).subscribe({
-      next: (response: any) => {
-        if (response.status) {
-          this.publications.update(current => current.filter(p => p._id !== id));
-        }
-      },
-      error: () => {}
-    });
-  }
-
+  // comprobamos si la receta es del usuario logueado
   isMyPublication(publication: Publication): boolean {
     const author = publication.user as any;
     return author?._id === this.identity?._id || author === this.identity?._id;
   }
 
+  // devuelve el autor de la publicacion como objeto
   getAuthor(publication: Publication): any {
     return publication.user as any;
   }
 
+  // devuelve la portada de la receta si tiene imagenes
+  getCover(publication: Publication): string | null {
+    return publication.images && publication.images.length > 0
+      ? publication.images[0]
+      : null;
+  }
+
+  //formatea la fecha en tiempo relativo
   getTimeAgo(date: string | undefined): string {
     if (!date) return '';
     const now = new Date();
@@ -154,30 +91,28 @@ export class TimelineComponent implements OnInit {
     return created.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
   }
 
-  onImageSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedImage = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result as string;
-      };
-      reader.readAsDataURL(this.selectedImage);
-    }
+  // dar o quitar like a una receta desde el feed
+  toggleLike(id: string, event: Event): void {
+    event.stopPropagation();
+    this.publicationService.toggleLike(id).subscribe({
+      next: (response: any) => {
+        // actualizamos el like en la lista sin recargar
+        this.publications.update(current =>
+          current.map(p => p._id === id
+            ? { ...p, likes: response.hasLike
+                ? [...(p.likes || []), this.identity._id]
+                : (p.likes || []).filter((l: string) => l !== this.identity._id)
+              }
+            : p
+          )
+        );
+      },
+      error: () => {}
+    });
   }
 
-  removeSelectedImage(): void {
-    this.selectedImage = null;
-    this.imagePreview = null;
-  }
-
-  toggleVisibility(): void {
-    if (this.publicationVisibility === 'public') {
-      this.publicationVisibility = 'friends';
-    } else if (this.publicationVisibility === 'friends') {
-      this.publicationVisibility = 'private';
-    } else {
-      this.publicationVisibility = 'public';
-    }
+  // comprobamos si el usuario logueado ya dio like
+  isLiked(publication: Publication): boolean {
+    return (publication.likes || []).some((l: any) => l.toString() === this.identity?._id);
   }
 }

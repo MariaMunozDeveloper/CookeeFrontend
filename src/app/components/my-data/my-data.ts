@@ -8,7 +8,7 @@ import { UserCardComponent } from '../user-card/user-card';
 @Component({
   selector: 'app-my-data',
   standalone: true,
-  imports: [ReactiveFormsModule, UserCardComponent],
+  imports: [ReactiveFormsModule],
   templateUrl: './my-data.html',
   styleUrl: './my-data.css'
 })

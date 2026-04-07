@@ -4,14 +4,13 @@ import { UserService } from '../../services/userService';
 import { FollowService } from '../../services/followService';
 import { PublicationService } from '../../services/publicationService';
 import { AuthService } from '../../services/authService';
-import { DatePipe } from '@angular/common';
 import { Publication } from '../../common/interfaces/publication';
 import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [DatePipe, RouterLink, LoadingSpinner],
+  imports: [RouterLink, LoadingSpinner],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css'
 })

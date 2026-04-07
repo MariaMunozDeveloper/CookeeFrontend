@@ -51,6 +51,22 @@
                     placeholder="Describe brevemente tu receta..." rows="3"></textarea>
         </div>
 
+        <!-- portada integrada -->
+        <div class="form-group">
+          <label class="form-label">Foto de portada</label>
+          @if (coverPreview) {
+          <div class="cover-preview-wrap">
+            <img [src]="coverPreview" class="cover-preview-img" alt="portada"/>
+            <button type="button" class="recipe-remove-img" (click)="removeCover()">✕</button>
+          </div>
+          } @else {
+          <label class="btn btn-outline recipe-upload-btn">
+            📷 Añadir foto de portada
+            <input type="file" accept="image/*" (change)="onCoverSelected($event)" hidden/>
+          </label>
+          }
+        </div>
+
         <div class="recipe-info-row">
           <div class="form-group">
             <label class="form-label">Raciones</label>
@@ -76,6 +92,26 @@
             <div class="form-error"><span>No puede ser negativa</span></div>
             }
           </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Hashtags</label>
+          <input
+            class="input-base"
+            placeholder="Ej: tarta queso chocolate (separados por espacios)"
+            (keyup)="onHashtagInput($event)"
+            [value]="hashtagInput"
+          />
+          @if (hashtags.length > 0) {
+          <div class="hashtag-preview">
+            @for (tag of hashtags; track tag) {
+            <span class="hashtag">#{{ tag }}
+      <button type="button" class="hashtag-remove" (click)="removeHashtag(tag)">✕</button>
+    </span>
+            }
+          </div>
+          }
+          <p class="hashtag-hint">Escribe las palabras y pulsa espacio o Enter</p>
         </div>
 
         <div class="form-group">
@@ -181,39 +217,6 @@
         <button type="button" class="btn btn-outline recipe-add-btn" (click)="addStep()">
           + Añadir paso
         </button>
-
-      </div>
-      }
-
-      <!-- PASO 4 — fotos -->
-      @if (currentStep() === 4) {
-      <div class="recipe-step">
-
-        <label class="btn btn-outline recipe-upload-btn">
-          📷 Añadir fotos
-          <input type="file" accept="image/*" multiple (change)="onImagesSelected($event)" hidden/>
-        </label>
-
-        @if (imagePreviews.length > 0) {
-        <div class="recipe-images-preview">
-          @for (preview of imagePreviews; track $index) {
-          <div class="recipe-image-wrap">
-            <img [src]="preview" class="recipe-preview-img" alt="foto receta"/>
-            <button type="button" class="recipe-remove-img" (click)="removeImage($index)">✕</button>
-          </div>
-          }
-        </div>
-        }
-
-        @if (imagePreviews.length === 0) {
-        <div class="recipe-empty-hint">
-          <p>Puedes añadir fotos del plato terminado. Es opcional.</p>
-        </div>
-        }
-
-        @if (errorMessage) {
-        <p class="form-error">{{ errorMessage }}</p>
-        }
 
       </div>
       }

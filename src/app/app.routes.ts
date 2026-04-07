@@ -11,33 +11,23 @@ import { FollowsComponent } from './components/follows/follows';
 import { MessagesComponent } from './components/messages/messages';
 import { SendMessageComponent } from './components/send-message/send-message';
 import { CreateRecipeComponent } from './components/create-recipe/create-recipe';
-
-
+import { ExploreComponent } from './components/explore/explore';
+import { PublicationDetailComponent } from './components/publication-detail/publication-detail';
 
 export const routes: Routes = [
-  // PÚBLICA
   { path: '', component: HomeComponent },
-
-  // FEED PRIVADO
   { path: 'feed', component: TimelineComponent, canActivate: [authGuard] },
-
-  // AUTH
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-
-  // PRIVADAS
   { path: 'my-data', component: MyDataComponent, canActivate: [authGuard] },
-
+  { path: 'explore', component: ExploreComponent },
+  { path: 'publication/:id', component: PublicationDetailComponent, canActivate: [authGuard] },
   { path: 'follows/:modo', component: FollowsComponent, canActivate: [authGuard] },
   { path: 'follows/:modo/:id', component: FollowsComponent, canActivate: [authGuard] },
-
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
   { path: 'messages/send/:id', component: SendMessageComponent, canActivate: [authGuard] },
   { path: 'create-recipe', component: CreateRecipeComponent, canActivate: [authGuard] },
-
-  // PÚBLICA
   { path: 'people', component: PeopleComponent },
   { path: 'profile/:id', component: UserProfileComponent, canActivate: [authGuard] },
-
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

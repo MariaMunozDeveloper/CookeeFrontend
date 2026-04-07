@@ -9,7 +9,7 @@ import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 @Component({
   selector: 'app-people',
   standalone: true,
-  imports: [UserCardComponent, RouterLink, LoadingSpinner],
+  imports: [ RouterLink, LoadingSpinner],
   templateUrl: './people.html',
   styleUrl: './people.css'
 })

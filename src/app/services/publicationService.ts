@@ -50,4 +50,25 @@ export class PublicationService {
     }
     return this.http.get(`${this.apiUrl}/count`);
   }
+
+  // explorador de recetas con filtros y busqueda por hashtag
+  explore(page: number = 1, sort: string = 'recent', hashtag: string = ''): Observable<Publication[]> {
+    return this.http.get<any>(
+      `${this.apiUrl}/explore?page=${page}&sort=${sort}&hashtag=${hashtag}`
+    ).pipe(
+      map(data => data.publications)
+    );
+  }
+
+  // obtener el detalle de una receta por id
+  getPublicationById(id: string): Observable<Publication> {
+    return this.http.get<any>(`${this.apiUrl}/detail/${id}`).pipe(
+      map(data => data.publication)
+    );
+  }
+
+  // dar o quitar like a una receta
+  toggleLike(id: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/like/${id}`, {});
+  }
 }

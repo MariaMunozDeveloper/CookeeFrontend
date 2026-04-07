@@ -18,33 +18,28 @@ export class CreateRecipeComponent {
   private readonly router: Router = inject(Router);
 
   currentStep: WritableSignal<number> = signal<number>(1);
-  totalSteps = 4;
+  totalSteps = 3;
   sending: boolean = false;
   errorMessage: string = '';
 
-  // imágenes generales de la receta
-  selectedImages: File[] = [];
-  imagePreviews: string[] = [];
   stepImages: (File | null)[] = [];
   stepImagePreviews: (string | null)[] = [];
+  hashtags: string[] = [];
+  hashtagInput: string = '';
+  coverImage: File | null = null;
+  coverPreview: string | null = null;
 
   recipeForm: FormGroup = this.formBuilder.group({
-    // paso 1 - info básica
     title: ['', [Validators.required, Validators.minLength(3), FormValidators.notOnlyWhiteSpace, FormValidators.primeraMayuscula]],
     description: ['', [FormValidators.notOnlyWhiteSpace]],
     raciones: [null, [FormValidators.minValue(1), FormValidators.soloEnteros]],
     tiempoHorno: [null, [FormValidators.minValue(0), FormValidators.soloEnteros]],
     temperaturaHorno: [null, [FormValidators.minValue(0), FormValidators.soloEnteros]],
     visibility: ['public'],
-
-    // paso 2 - ingredientes
     ingredients: this.formBuilder.array([]),
-
-    // paso 3 - pasos
     steps: this.formBuilder.array([])
   });
 
-  // getters para los FormArray
   get ingredients(): FormArray {
     return this.recipeForm.get('ingredients') as FormArray;
   }
@@ -53,7 +48,10 @@ export class CreateRecipeComponent {
     return this.recipeForm.get('steps') as FormArray;
   }
 
-  // ingredientes
+  get unidades(): string[] {
+    return ['g', 'kg', 'ml', 'l', 'cucharadita', 'cucharada', 'taza', 'unidad', 'pizca', 'tbsp', 'cup', 'tsp', 'oz'];
+  }
+
   newIngredient(): FormGroup {
     return this.formBuilder.group({
       name: ['', [Validators.required, FormValidators.notOnlyWhiteSpace]],
@@ -70,7 +68,6 @@ export class CreateRecipeComponent {
     this.ingredients.removeAt(index);
   }
 
-  // pasos
   newStep(): FormGroup {
     return this.formBuilder.group({
       text: ['', [Validators.required, FormValidators.notOnlyWhiteSpace]],
@@ -90,21 +87,6 @@ export class CreateRecipeComponent {
     this.stepImagePreviews.splice(index, 1);
   }
 
-  // imágenes generales
-  onImagesSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      Array.from(input.files).forEach(file => {
-        this.selectedImages.push(file);
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.imagePreviews.push(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-  }
-
   onStepImageSelected(event: Event, index: number): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -122,12 +104,23 @@ export class CreateRecipeComponent {
     this.stepImagePreviews[index] = null;
   }
 
-  removeImage(index: number): void {
-    this.selectedImages.splice(index, 1);
-    this.imagePreviews.splice(index, 1);
+  onCoverSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.coverImage = input.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.coverPreview = reader.result as string;
+      };
+      reader.readAsDataURL(this.coverImage);
+    }
   }
 
-  // navegación entre pasos
+  removeCover(): void {
+    this.coverImage = null;
+    this.coverPreview = null;
+  }
+
   nextStep(): void {
     if (this.currentStep() < this.totalSteps) {
       this.currentStep.update(s => s + 1);
@@ -153,7 +146,26 @@ export class CreateRecipeComponent {
     return true;
   }
 
-  // enviar
+  // procesamos la entrada de hashtags al pulsar espacio o enter
+  onHashtagInput(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim().toLowerCase();
+
+    if ((event.key === ' ' || event.key === 'Enter') && value) {
+      // limpiamos el hashtag de caracteres especiales
+      const clean = value.replace(/[^a-z0-9áéíóúüñ]/g, '');
+      if (clean && !this.hashtags.includes(clean)) {
+        this.hashtags.push(clean);
+      }
+      input.value = '';
+      this.hashtagInput = '';
+    }
+  }
+
+  removeHashtag(tag: string): void {
+    this.hashtags = this.hashtags.filter(h => h !== tag);
+  }
+
   onSubmit(): void {
     if (this.recipeForm.invalid) {
       this.recipeForm.markAllAsTouched();
@@ -173,6 +185,7 @@ export class CreateRecipeComponent {
       visibility: this.recipeForm.value.visibility,
       ingredients: this.recipeForm.value.ingredients,
       steps: this.recipeForm.value.steps,
+      hashtags: this.hashtags,
       text: ''
     };
 
@@ -193,7 +206,10 @@ export class CreateRecipeComponent {
   private uploadAllImages(publicationId: string): void {
     const uploads: Observable<any>[] = [];
 
-    // fotos de pasos
+    if (this.coverImage) {
+      uploads.push(this.publicationService.uploadImage(publicationId, this.coverImage));
+    }
+
     this.stepImages.forEach((file, index) => {
       if (file) {
         uploads.push(
@@ -202,20 +218,12 @@ export class CreateRecipeComponent {
       }
     });
 
-    // fotos generales
-    this.selectedImages.forEach(file => {
-      uploads.push(
-        this.publicationService.uploadImage(publicationId, file)
-      );
-    });
-
     if (uploads.length === 0) {
       this.sending = false;
       this.router.navigate(['/feed']);
       return;
     }
 
-    // subir una a una en secuencia
     this.uploadNext(publicationId, uploads, 0);
   }
 
@@ -230,26 +238,5 @@ export class CreateRecipeComponent {
       next: () => this.uploadNext(publicationId, uploads, index + 1),
       error: () => this.uploadNext(publicationId, uploads, index + 1)
     });
-  }
-
-  private uploadImages(publicationId: string, index: number): void {
-    if (index >= this.selectedImages.length) {
-      this.sending = false;
-      this.router.navigate(['/feed']);
-      return;
-    }
-
-    this.publicationService.uploadImage(publicationId, this.selectedImages[index]).subscribe({
-      next: () => {
-        this.uploadImages(publicationId, index + 1);
-      },
-      error: () => {
-        this.uploadImages(publicationId, index + 1);
-      }
-    });
-  }
-
-  get unidades(): string[] {
-    return ['g', 'kg', 'ml', 'l', 'cucharadita', 'cucharada', 'taza', 'unidad', 'pizca', 'tbsp', 'cup', 'tsp', 'oz'];
   }
 }

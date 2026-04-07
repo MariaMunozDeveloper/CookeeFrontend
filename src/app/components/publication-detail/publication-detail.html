@@ -1,0 +1,234 @@
+<div class="detail-page">
+
+  @if (loading()) {
+  <div class="page-container">
+    <app-loading-spinner/>
+  </div>
+  }
+
+  @if (!loading() && publication()) {
+
+  <!-- portada a ancho completo -->
+  <div class="detail-cover">
+    @if ((publication()!.images?.length ?? 0) > 0) {
+    <img
+      [src]="'http://localhost:3000/uploads/publications/' + publication()!.images[0]"
+      [alt]="publication()!.title"
+      class="detail-cover-img"
+    />
+    } @else {
+    <div class="detail-cover-placeholder">🍳</div>
+    }
+    <div class="detail-cover-overlay"></div>
+  </div>
+
+  <div class="page-container-narrow">
+
+    <!-- cabecera -->
+    <header class="detail-header">
+
+      <!-- autor -->
+      <div class="detail-author">
+        <a [routerLink]="['/profile', (publication()!.user | asAny)?._id]" class="detail-author-link">
+          @if ((publication()!.user | asAny)?.image) {
+          <img
+            [src]="'http://localhost:3000/uploads/avatars/' + (publication()!.user | asAny).image"
+            class="detail-author-avatar"
+            alt="avatar"
+          />
+          } @else {
+          <div class="detail-author-avatar detail-author-avatar-placeholder"></div>
+          }
+          <span class="detail-author-name">
+            {{ (publication()!.user | asAny)?.name }} {{ (publication()!.user | asAny)?.surname }}
+          </span>
+          <span class="detail-author-nick">@{{ (publication()!.user | asAny)?.nick }}</span>
+        </a>
+        <span class="detail-date">{{ getTimeAgo(publication()!.createdAt) }}</span>
+      </div>
+
+      <!-- titulo -->
+      <h1 class="detail-title">{{ publication()!.title }}</h1>
+
+      <!-- datos rapidos -->
+      <div class="detail-stats">
+        @if (publication()!.raciones) {
+        <span class="recipe-stat">🍽️ <strong>{{ publication()!.raciones }}</strong> raciones</span>
+        }
+        @if (publication()!.tiempoHorno) {
+        <span class="recipe-stat">⏱️ <strong>{{ publication()!.tiempoHorno }}</strong> min horno</span>
+        }
+        @if (publication()!.temperaturaHorno) {
+        <span class="recipe-stat">🌡️ <strong>{{ publication()!.temperaturaHorno }}</strong>°C</span>
+        }
+        @if (publication()!.ingredients?.length) {
+        <span class="recipe-stat">🧂 <strong>{{ publication()!.ingredients.length }}</strong> ingredientes</span>
+        }
+        @if (publication()!.steps?.length) {
+        <span class="recipe-stat">👣 <strong>{{ publication()!.steps.length }}</strong> pasos</span>
+        }
+      </div>
+
+      <!-- likes y hashtags -->
+      <div class="detail-actions">
+        <button
+          class="detail-like-btn"
+          [class.detail-like-btn-active]="hasLike()"
+          (click)="toggleLike()"
+        >
+          {{ hasLike() ? '❤️' : '🤍' }} {{ likesCount() }} me gusta
+        </button>
+
+        @if (publication()!.hashtags && publication()!.hashtags.length > 0) {
+        <div class="detail-hashtags">
+          @for (tag of publication()!.hashtags; track tag) {
+          <span class="hashtag">#{{ tag }}</span>
+          }
+        </div>
+        }
+      </div>
+
+    </header>
+
+    <!-- introduccion -->
+    @if (publication()!.text) {
+    <section class="detail-section">
+      <p class="detail-intro">{{ publication()!.text }}</p>
+    </section>
+    }
+
+    <!-- descripcion -->
+    @if (publication()!.description) {
+    <section class="detail-section">
+      <p class="detail-description">{{ publication()!.description }}</p>
+    </section>
+    }
+
+    <!-- galeria adicional -->
+    @if ((publication()!.images?.length ?? 0) > 1) {
+    <section class="detail-section">
+      <div class="detail-gallery">
+        @for (img of publication()!.images.slice(1); track img) {
+        <img
+          [src]="'http://localhost:3000/uploads/publications/' + img"
+          class="detail-gallery-img"
+          alt="foto receta"
+        />
+        }
+      </div>
+    </section>
+    }
+
+    <hr class="divider"/>
+
+    <!-- ingredientes -->
+    @if ((publication()!.ingredients?.length ?? 0) > 0) {
+    <section class="detail-section">
+      <h2 class="section-title">Ingredientes</h2>
+      <ul class="detail-ingredients">
+        @for (ing of publication()!.ingredients; track $index) {
+        <li class="detail-ingredient">
+          <span class="detail-ingredient-name">{{ ing.name }}</span>
+          @if (ing.quantity) {
+          <span class="detail-ingredient-qty">{{ ing.quantity }} {{ ing.unit }}</span>
+          }
+        </li>
+        }
+      </ul>
+    </section>
+    }
+
+    <hr class="divider"/>
+
+    <!-- elaboracion -->
+    @if ((publication()!.steps?.length ?? 0) > 0) {
+    <section class="detail-section">
+      <h2 class="section-title">Elaboración</h2>
+      <div class="detail-steps">
+        @for (step of publication()!.steps; track $index) {
+        <div class="detail-step">
+          <div class="detail-step-number">{{ $index + 1 }}</div>
+          <div class="detail-step-content">
+            <p class="detail-step-text">{{ step.text }}</p>
+            @if (step.image) {
+            <img
+              [src]="'http://localhost:3000/uploads/publications/' + step.image"
+              class="detail-step-img"
+              alt="paso {{ $index + 1 }}"
+            />
+            }
+          </div>
+        </div>
+        }
+      </div>
+    </section>
+    }
+
+    <!-- recomendaciones -->
+    @if ((publication() | asAny)?.recommendations) {
+    <section class="detail-section detail-recommendations">
+      <h2 class="section-title">💡 Recomendaciones</h2>
+      <p class="detail-recommendations-text">{{ (publication() | asAny)?.recommendations }}</p>
+    </section>
+    }
+
+    <hr class="divider"/>
+
+    <section class="detail-section">
+      <h2 class="section-title">{{ comments().length }} Comentarios</h2>
+
+      <div class="comments-form">
+    <textarea
+      class="input-base comments-textarea"
+      [(ngModel)]="commentText"
+      placeholder="Escribe un comentario..."
+      rows="3"
+    ></textarea>
+        <button class="btn btn-primary" (click)="saveComment()" [disabled]="sendingComment">
+          {{ sendingComment ? 'Enviando...' : 'Comentar' }}
+        </button>
+      </div>
+
+      @if (comments().length === 0) {
+      <p class="comments-empty">Sé el primero en comentar esta receta.</p>
+      }
+
+      <div class="comments-list">
+        @for (comment of comments(); track comment._id) {
+        <div class="comment-item">
+          <a [routerLink]="['/profile', comment.user?._id]" class="comment-avatar-link">
+            @if (comment.user?.image) {
+            <img
+              [src]="'http://localhost:3000/uploads/avatars/' + comment.user.image"
+              class="comment-avatar"
+              alt="avatar"
+            />
+            } @else {
+            <div class="comment-avatar comment-avatar-placeholder"></div>
+            }
+          </a>
+
+          <div class="comment-body">
+            <div class="comment-header">
+              <a [routerLink]="['/profile', comment.user?._id]" class="comment-author">
+                {{ comment.user?.name }} {{ comment.user?.surname }}
+              </a>
+              <span class="comment-nick">@{{ comment.user?.nick }}</span>
+              <span class="comment-date">{{ getTimeAgo(comment.createdAt) }}</span>
+              @if (isMyComment(comment)) {
+              <button class="comment-delete" (click)="deleteComment(comment._id)">✕</button>
+              }
+            </div>
+            <p class="comment-text">{{ comment.text }}</p>
+          </div>
+        </div>
+        }
+      </div>
+    </section>
+
+  </div>
+
+
+  }
+
+</div>

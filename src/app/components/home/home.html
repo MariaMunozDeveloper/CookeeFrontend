@@ -1,23 +1,143 @@
-<section class="home-page">
+<!-- hero principal -->
+<section class="home-hero">
+  <div class="home-hero-content">
+    <p class="home-hero-eyebrow">Tu recetario en la nube</p>
+    <h1 class="home-hero-title">
+      Comparte tus recetas<br>
+      con el <em>mundo</em>
+    </h1>
+    <p class="home-hero-subtitle">
+      Cookee es la red social para los amantes de la cocina.
+      Crea tu recetario, sigue a otros cocinillas y descubre
+      recetas increíbles cada día.
+    </p>
+    <div class="home-hero-actions">
+      <a class="btn btn-primary btn-lg" routerLink="/register">
+        Empezar gratis
+      </a>
+      <a class="btn btn-outline btn-lg" routerLink="/explore">
+        Explorar recetas
+      </a>
+    </div>
+  </div>
+
+  <!-- decoracion -->
+  <div class="home-hero-decoration">
+    <div class="home-hero-circle"></div>
+  </div>
+</section>
+
+<!-- seccion de recetas recientes -->
+@if (loaded() && recetas().length > 0) {
+<section class="home-showcase">
   <div class="page-container">
-    <div class="card-base home-hero">
-      <h1 class="title-section">
-        Bienvenido a <span class="title-highlight">Cookee</span>
-      </h1>
+    <div class="home-showcase-header">
+      <h2 class="home-showcase-title">
+        Últimas <em>recetas</em>
+      </h2>
+      <a class="btn btn-ghost btn-sm" routerLink="/explore">
+        Ver todas →
+      </a>
+    </div>
 
-      <p class="home-text">
-        Descubre recetas, comparte platos y conecta con otros foodies 🍝
-      </p>
+    <div class="home-recipes-grid">
+      @for (receta of recetas(); track receta._id) {
+      <div class="home-recipe-card card-hover" [routerLink]="['/publication', receta._id]">
 
-      <div class="home-actions">
-        <button class="btn btn-primary" routerLink="/register">
-          Crear cuenta
-        </button>
+        <!-- portada -->
+        <div class="home-recipe-cover">
+          @if (getCover(receta)) {
+          <img
+            [src]="'http://localhost:3000/uploads/publications/' + getCover(receta)"
+            [alt]="receta.title"
+            class="home-recipe-img"
+          />
+          } @else {
+          <div class="home-recipe-img-placeholder">🍳</div>
+          }
+        </div>
 
-        <button class="btn btn-outline" routerLink="/login">
-          Iniciar sesión
-        </button>
+        <!-- info -->
+        <div class="home-recipe-info">
+          <h3 class="home-recipe-title">{{ receta.title }}</h3>
+
+          <div class="home-recipe-author">
+            @if ((receta.user | asAny)?.image) {
+            <img
+              [src]="'http://localhost:3000/uploads/avatars/' + (receta.user | asAny).image"
+              class="home-recipe-avatar"
+              alt="avatar"
+            />
+            } @else {
+            <div class="home-recipe-avatar home-recipe-avatar-placeholder"></div>
+            }
+            <span>@{{ (receta.user | asAny)?.nick }}</span>
+          </div>
+
+          @if (receta.raciones || receta.tiempoHorno) {
+          <div class="home-recipe-stats">
+            @if (receta.raciones) {
+            <span class="recipe-stat">🍽️ {{ receta.raciones }}</span>
+            }
+            @if (receta.tiempoHorno) {
+            <span class="recipe-stat">⏱️ {{ receta.tiempoHorno }} min</span>
+            }
+          </div>
+          }
+        </div>
+
       </div>
+      }
+    </div>
+  </div>
+</section>
+}
+
+<!-- seccion features -->
+<section class="home-features">
+  <div class="page-container">
+    <div class="home-features-grid">
+
+      <div class="home-feature">
+        <span class="home-feature-icon">📖</span>
+        <h3 class="home-feature-title">Tu recetario personal</h3>
+        <p class="home-feature-text">
+          Guarda todas tus recetas en un lugar bonito y ordenado.
+          Accede desde cualquier dispositivo.
+        </p>
+      </div>
+
+      <div class="home-feature">
+        <span class="home-feature-icon">✨</span>
+        <h3 class="home-feature-title">Presentación profesional</h3>
+        <p class="home-feature-text">
+          Cookee convierte tus recetas en páginas bonitas automáticamente.
+          Sin diseño, sin esfuerzo.
+        </p>
+      </div>
+
+      <div class="home-feature">
+        <span class="home-feature-icon">🤝</span>
+        <h3 class="home-feature-title">Comunidad cocinillas</h3>
+        <p class="home-feature-text">
+          Sigue a otros amantes de la cocina, dale like a sus recetas
+          y comparte las tuyas con el mundo.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA final -->
+<section class="home-cta">
+  <div class="page-container">
+    <div class="home-cta-content">
+      <h2 class="home-cta-title">¿Listo para compartir tus recetas?</h2>
+      <p class="home-cta-subtitle">Únete a Cookee y empieza hoy gratis.</p>
+      <a class="btn btn-primary btn-lg" routerLink="/register">
+        Crear mi cuenta
+      </a>
     </div>
   </div>
 </section>

@@ -1,4 +1,3 @@
-<!-- src/app/components/user-profile/user-profile.html -->
 <div class="page-container profile-page">
 
   @if (loading()) {
@@ -7,39 +6,6 @@
 
   @if (!loading() && profileUser) {
 
-  @if (restricted) {
-  <div class="card-base profile-restricted">
-    <div class="profile-restricted-avatar">
-      @if (profileUser.image) {
-      <img
-        [src]="'http://localhost:3000/uploads/avatars/' + profileUser.image"
-        class="profile-avatar"
-        alt="avatar"
-      />
-      } @else {
-      <div class="profile-avatar profile-avatar-placeholder"></div>
-      }
-    </div>
-    <p class="profile-restricted-nick">@{{ profileUser.nick }}</p>
-    <p class="profile-restricted-msg">
-      🔒 Este perfil es
-      {{ profileUser.privacy === 'private' ? 'privado' : 'solo para amigos' }}
-    </p>
-    @if (!isOwnProfile) {
-    <div class="profile-actions">
-      @if (isFriend) {
-      <button class="btn btn-outline" (click)="unfollow()">Amigos ✓</button>
-      } @else if (isFollowing) {
-      <button class="btn btn-outline" (click)="unfollow()">Siguiendo</button>
-      } @else {
-      <button class="btn btn-primary" (click)="follow()">Seguir</button>
-      }
-    </div>
-    }
-  </div>
-  }
-
-  @if (!restricted) {
   <!-- cabecera del perfil -->
   <div class="card-base profile-header">
 
@@ -71,13 +37,12 @@
         </div>
         <div class="counter-item">
           <strong>{{ publicationsCount }}</strong>
-          <span>Publicaciones</span>
+          <span>Recetas</span>
         </div>
       </div>
       }
     </div>
 
-    <!-- botones seguir -->
     @if (!isOwnProfile) {
     <div class="profile-actions">
       @if (isFriend) {
@@ -93,43 +58,63 @@
     </div>
     }
 
+    @if (isOwnProfile) {
+    <div class="profile-actions">
+      <a class="btn btn-outline" routerLink="/my-data">Editar perfil</a>
+    </div>
+    }
+
   </div>
 
   <!-- publicaciones del usuario -->
   <div class="profile-publications">
 
-    <h2 class="profile-section-title">Publicaciones</h2>
+    <h2 class="section-title">Recetas</h2>
 
     @if (publications().length === 0) {
-    <div class="card-base profile-empty">
-      <p>Este usuario todavía no ha publicado nada.</p>
+    <div class="profile-empty">
+      <p>Este usuario todavía no ha publicado ninguna receta.</p>
     </div>
     }
 
-    @for (pub of publications(); track pub._id) {
-    <div class="card-base profile-pub-item">
-      <div class="profile-pub-header">
-        @if (profileUser.image) {
-        <img
-          [src]="'http://localhost:3000/uploads/avatars/' + profileUser.image"
-          class="profile-pub-avatar"
-          alt="avatar"
-        />
-        } @else {
-        <div class="profile-pub-avatar profile-pub-avatar-placeholder"></div>
-        }
-        <div class="profile-pub-meta">
-          <span class="profile-pub-name">{{ profileUser.name }} {{ profileUser.surname }}</span>
-          <span class="profile-pub-date">{{ getTimeAgo(pub.createdAt) }}</span>
+    <div class="profile-recipes-grid">
+      @for (pub of publications(); track pub._id) {
+      <article class="profile-recipe-card" [routerLink]="['/publication', pub._id]">
+
+        <div class="profile-recipe-cover">
+          @if (pub.images && pub.images.length > 0) {
+          <img
+            [src]="'http://localhost:3000/uploads/publications/' + pub.images[0]"
+            [alt]="pub.title"
+            class="profile-recipe-img"
+          />
+          } @else {
+          <div class="profile-recipe-placeholder">🍳</div>
+          }
+
+          @if (pub.hashtags && pub.hashtags.length > 0) {
+          <span class="profile-recipe-tag">{{ pub.hashtags[0] }}</span>
+          }
         </div>
-      </div>
-      <p class="profile-pub-text">{{ pub.text }}</p>
+
+        <div class="profile-recipe-body">
+          <h3 class="profile-recipe-title">{{ pub.title }}</h3>
+          <div class="profile-recipe-stats">
+            <span>❤️ {{ pub.likes?.length ?? 0 }}</span>
+            @if (pub.raciones) {
+            <span>🍽️ {{ pub.raciones }} rac.</span>
+            }
+            @if (pub.tiempoHorno) {
+            <span>⏱️ {{ pub.tiempoHorno }} min</span>
+            }
+          </div>
+        </div>
+
+      </article>
+      }
     </div>
-    }
 
   </div>
-
-  }
 
   }
 

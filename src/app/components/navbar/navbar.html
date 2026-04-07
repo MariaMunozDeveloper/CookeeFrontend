@@ -1,41 +1,61 @@
 <nav class="navbar">
   <div class="page-container navbar-content">
-    <div class="navbar-brand">
-      <a class="navbar-logo" routerLink="/">Cookee</a>
-    </div>
 
+    <!-- logo -->
+    <a class="navbar-logo" routerLink="/">
+      Cookee
+    </a>
+
+    <!-- menu central -->
     <div class="navbar-menu">
-      <a class="navbar-link" routerLink="/feed">Feed</a>
-      <a class="navbar-link" routerLink="/recipes">Recipes</a>
-      <a class="navbar-link navbar-link-messages" routerLink="/messages">
-        Messages
+      @if (identity) {
+      <a class="navbar-link" routerLink="/feed" routerLinkActive="navbar-link-active">
+        Feed
+      </a>
+      }
+      <a class="navbar-link" routerLink="/explore" routerLinkActive="navbar-link-active">
+        Explorar
+      </a>
+      <a class="navbar-link" routerLink="/people" routerLinkActive="navbar-link-active">
+        Cocinillas
+      </a>
+      @if (identity) {
+      <a class="navbar-link navbar-link-messages" routerLink="/messages" routerLinkActive="navbar-link-active">
+        Mensajes
         @if (unreadMessages > 0) {
         <span class="navbar-badge">{{ unreadMessages }}</span>
         }
       </a>
-      <a class="navbar-link" routerLink="/people">Cocinillas</a>
+      }
     </div>
 
+    <!-- acciones derecha -->
     <div class="navbar-actions">
       @if (!identity) {
-      <button class="btn btn-outline" routerLink="/login">Log in</button>
-      <button class="btn btn-primary" routerLink="/register">Sign up</button>
+      <a class="btn btn-ghost btn-sm" routerLink="/login">Entrar</a>
+      <a class="btn btn-primary btn-sm" routerLink="/register">Registrarse</a>
       }
 
       @if (identity) {
+      <!-- boton crear receta -->
+      <a class="btn btn-primary btn-sm navbar-create-btn" routerLink="/create-recipe">
+        + Receta
+      </a>
+
+      <!-- menu usuario -->
       <div class="navbar-user-menu">
-        <button class="btn btn-outline navbar-user-button" (click)="toggleUserMenu()">
+        <button class="navbar-user-btn" (click)="toggleUserMenu()">
           @if (identity.image) {
           <img
             [src]="'http://localhost:3000/uploads/avatars/' + identity.image"
-            alt="Avatar"
+            alt="avatar"
             class="navbar-avatar"
           />
           } @else {
-          <div class="navbar-avatar-placeholder"></div>
+          <div class="navbar-avatar navbar-avatar-placeholder"></div>
           }
-
           <span class="navbar-user-nick">{{ identity.nick }}</span>
+          <span class="navbar-chevron">▾</span>
         </button>
 
         @if (showUserMenu) {
@@ -43,12 +63,11 @@
           <a class="navbar-dropdown-link" [routerLink]="['/profile', identity._id]" (click)="closeUserMenu()">
             Mi perfil
           </a>
-
           <a class="navbar-dropdown-link" routerLink="/my-data" (click)="closeUserMenu()">
             Mis datos
           </a>
-
-          <button class="navbar-dropdown-link navbar-dropdown-button" (click)="logout()">
+          <hr class="navbar-dropdown-divider"/>
+          <button class="navbar-dropdown-link navbar-dropdown-btn" (click)="logout()">
             Cerrar sesión
           </button>
         </div>
@@ -56,5 +75,6 @@
       </div>
       }
     </div>
+
   </div>
 </nav>
