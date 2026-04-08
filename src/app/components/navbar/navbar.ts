@@ -1,4 +1,4 @@
-import { inject, Component, OnInit, OnDestroy } from '@angular/core';
+import { inject, Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/authService';
 import { MessageService } from '../../services/messageService';
@@ -61,5 +61,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.navbar-user-menu')) {
+      this.showUserMenu = false;
+    }
   }
 }

@@ -23,6 +23,7 @@ export class PublicationDetailComponent {
 
   // datos del usuario logueado
   identity: any = this.authService.getIdentity();
+  isLoggedIn: boolean = !!this.authService.getToken();
 
   // receta actual
   publication: WritableSignal<Publication | null> = signal<Publication | null>(null);

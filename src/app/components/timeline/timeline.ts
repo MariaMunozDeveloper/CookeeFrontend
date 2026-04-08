@@ -47,15 +47,14 @@ export class TimelineComponent implements OnInit {
     this.loading.set(true);
 
     this.publicationService.getFeed(this.page).subscribe({
-      next: (publications: Publication[]) => {
-        this.publications.update(current => [...current, ...publications]);
-        this.hasMore = this.page < this.totalPages;
+      next: (response) => {
+        this.publications.update(current => [...current, ...response.publications]);
+        this.totalPages = response.totalPages;
         this.page++;
+        this.hasMore = this.page <= response.totalPages;
         this.loading.set(false);
       },
-      error: () => {
-        this.loading.set(false);
-      }
+      error: () => { this.loading.set(false); }
     });
   }
 

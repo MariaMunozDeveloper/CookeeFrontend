@@ -27,8 +27,7 @@ export class MyDataComponent {
     name: [this.identity?.name || '', [Validators.required, FormValidators.notOnlyWhiteSpace]],
     surname: [this.identity?.surname || '', [Validators.required, FormValidators.notOnlyWhiteSpace]],
     nick: [this.identity?.nick || '', [Validators.required, Validators.minLength(3), FormValidators.notOnlyWhiteSpace]],
-    email: [this.identity?.email || '', [Validators.required, Validators.email]],
-    privacy: [this.identity?.privacy || 'public']
+    email: [this.identity?.email || '', [Validators.required, Validators.email]]
   });
 
   onSubmit(): void {

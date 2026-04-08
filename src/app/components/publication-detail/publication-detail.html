@@ -8,7 +8,6 @@
 
   @if (!loading() && publication()) {
 
-  <!-- portada a ancho completo -->
   <div class="detail-cover">
     @if ((publication()!.images?.length ?? 0) > 0) {
     <img
@@ -24,10 +23,8 @@
 
   <div class="page-container-narrow">
 
-    <!-- cabecera -->
     <header class="detail-header">
 
-      <!-- autor -->
       <div class="detail-author">
         <a [routerLink]="['/profile', (publication()!.user | asAny)?._id]" class="detail-author-link">
           @if ((publication()!.user | asAny)?.image) {
@@ -47,10 +44,8 @@
         <span class="detail-date">{{ getTimeAgo(publication()!.createdAt) }}</span>
       </div>
 
-      <!-- titulo -->
       <h1 class="detail-title">{{ publication()!.title }}</h1>
 
-      <!-- datos rapidos -->
       <div class="detail-stats">
         @if (publication()!.raciones) {
         <span class="recipe-stat">🍽️ <strong>{{ publication()!.raciones }}</strong> raciones</span>
@@ -69,8 +64,8 @@
         }
       </div>
 
-      <!-- likes y hashtags -->
       <div class="detail-actions">
+        @if (isLoggedIn) {
         <button
           class="detail-like-btn"
           [class.detail-like-btn-active]="hasLike()"
@@ -78,6 +73,7 @@
         >
           {{ hasLike() ? '❤️' : '🤍' }} {{ likesCount() }} me gusta
         </button>
+        }
 
         @if (publication()!.hashtags && publication()!.hashtags.length > 0) {
         <div class="detail-hashtags">
@@ -90,21 +86,18 @@
 
     </header>
 
-    <!-- introduccion -->
     @if (publication()!.text) {
     <section class="detail-section">
       <p class="detail-intro">{{ publication()!.text }}</p>
     </section>
     }
 
-    <!-- descripcion -->
     @if (publication()!.description) {
     <section class="detail-section">
       <p class="detail-description">{{ publication()!.description }}</p>
     </section>
     }
 
-    <!-- galeria adicional -->
     @if ((publication()!.images?.length ?? 0) > 1) {
     <section class="detail-section">
       <div class="detail-gallery">
@@ -121,7 +114,6 @@
 
     <hr class="divider"/>
 
-    <!-- ingredientes -->
     @if ((publication()!.ingredients?.length ?? 0) > 0) {
     <section class="detail-section">
       <h2 class="section-title">Ingredientes</h2>
@@ -140,10 +132,12 @@
 
     <hr class="divider"/>
 
-    <!-- elaboracion -->
+    <!-- elaboracion — bloqueada para no logueados -->
     @if ((publication()!.steps?.length ?? 0) > 0) {
     <section class="detail-section">
       <h2 class="section-title">Elaboración</h2>
+
+      @if (isLoggedIn) {
       <div class="detail-steps">
         @for (step of publication()!.steps; track $index) {
         <div class="detail-step">
@@ -161,11 +155,39 @@
         </div>
         }
       </div>
+      } @else {
+      <div class="detail-locked">
+        <div class="detail-locked-steps">
+          @for (step of publication()!.steps.slice(0, 2); track $index) {
+          <div class="detail-step">
+            <div class="detail-step-number">{{ $index + 1 }}</div>
+            <div class="detail-step-content">
+              <p class="detail-step-text">{{ step.text }}</p>
+            </div>
+          </div>
+          }
+        </div>
+        <div class="detail-locked-overlay">
+          <div class="detail-locked-content">
+            <span class="detail-locked-icon">🔒</span>
+            <h3 class="detail-locked-title">Únete a Cookee para ver la receta completa</h3>
+            <p class="detail-locked-text">
+              Regístrate gratis y accede a todos los pasos, consejos y comentarios.
+            </p>
+            <div class="detail-locked-actions">
+              <a class="btn btn-primary btn-lg" routerLink="/register">Crear cuenta gratis</a>
+              <a class="btn btn-outline btn-lg" routerLink="/login">Iniciar sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+
     </section>
     }
 
-    <!-- recomendaciones -->
-    @if ((publication() | asAny)?.recommendations) {
+    <!-- recomendaciones — solo logueados -->
+    @if ((publication() | asAny)?.recommendations && isLoggedIn) {
     <section class="detail-section detail-recommendations">
       <h2 class="section-title">💡 Recomendaciones</h2>
       <p class="detail-recommendations-text">{{ (publication() | asAny)?.recommendations }}</p>
@@ -174,16 +196,18 @@
 
     <hr class="divider"/>
 
+    <!-- comentarios -->
+    @if (isLoggedIn) {
     <section class="detail-section">
       <h2 class="section-title">{{ comments().length }} Comentarios</h2>
 
       <div class="comments-form">
-    <textarea
-      class="input-base comments-textarea"
-      [(ngModel)]="commentText"
-      placeholder="Escribe un comentario..."
-      rows="3"
-    ></textarea>
+        <textarea
+          class="input-base comments-textarea"
+          [(ngModel)]="commentText"
+          placeholder="Escribe un comentario..."
+          rows="3"
+        ></textarea>
         <button class="btn btn-primary" (click)="saveComment()" [disabled]="sendingComment">
           {{ sendingComment ? 'Enviando...' : 'Comentar' }}
         </button>
@@ -207,7 +231,6 @@
             <div class="comment-avatar comment-avatar-placeholder"></div>
             }
           </a>
-
           <div class="comment-body">
             <div class="comment-header">
               <a [routerLink]="['/profile', comment.user?._id]" class="comment-author">
@@ -225,9 +248,13 @@
         }
       </div>
     </section>
+    } @else {
+    <div class="detail-locked-comments">
+      <p>💬 <a routerLink="/register">Regístrate</a> para ver y escribir comentarios.</p>
+    </div>
+    }
 
   </div>
-
 
   }
 

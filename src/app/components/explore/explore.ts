@@ -55,15 +55,14 @@ export class ExploreComponent {
     this.loading.set(true);
 
     this.publicationService.explore(this.page, this.sortBy, this.searchHashtag).subscribe({
-      next: (publications: Publication[]) => {
-        this.publications.update(current => [...current, ...publications]);
-        this.hasMore = this.page < this.totalPages;
+      next: (response) => {
+        this.publications.update(current => [...current, ...response.publications]);
+        this.totalPages = response.totalPages;
+        this.hasMore = this.page < response.totalPages;
         this.page++;
         this.loading.set(false);
       },
-      error: () => {
-        this.loading.set(false);
-      }
+      error: () => { this.loading.set(false); }
     });
   }
 

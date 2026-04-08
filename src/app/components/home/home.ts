@@ -25,9 +25,8 @@ export class HomeComponent {
   // cargamos las ultimas recetas publicas para el showcase
   private loadRecetas(): void {
     this.publicationService.explore(1, 'recent', '').subscribe({
-      next: (publications: Publication[]) => {
-        // solo mostramos las 4 primeras
-        this.recetas.set(publications.slice(0, 4));
+      next: (response) => {
+        this.recetas.set(response.publications.slice(0, 4));
         this.loaded.set(true);
       },
       error: () => {

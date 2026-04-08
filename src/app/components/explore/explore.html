@@ -70,7 +70,11 @@
         }
 
         @if (pub.hashtags && pub.hashtags.length > 0) {
+        @if (searchHashtag) {
+        <span class="explore-card-tag">{{ searchHashtag | uppercase }}</span>
+        } @else if (pub.hashtags && pub.hashtags.length > 0) {
         <span class="explore-card-tag">{{ pub.hashtags[0] | uppercase }}</span>
+        }
         }
       </div>
 

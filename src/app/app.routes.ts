@@ -21,7 +21,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'my-data', component: MyDataComponent, canActivate: [authGuard] },
   { path: 'explore', component: ExploreComponent },
-  { path: 'publication/:id', component: PublicationDetailComponent, canActivate: [authGuard] },
+  { path: 'publication/:id', component: PublicationDetailComponent },
   { path: 'follows/:modo', component: FollowsComponent, canActivate: [authGuard] },
   { path: 'follows/:modo/:id', component: FollowsComponent, canActivate: [authGuard] },
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },

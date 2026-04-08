@@ -2,6 +2,7 @@ import { inject, Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/authService';
+import { UserService } from '../../services/userService';
 import { FormValidators } from '../../validators/formValidators';
 import { User } from '../../common/interfaces/user';
 
@@ -14,6 +15,7 @@ import { User } from '../../common/interfaces/user';
 })
 export class RegisterComponent {
   private readonly authService: AuthService = inject(AuthService);
+  private readonly userService: UserService = inject(UserService);
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
   private readonly router: Router = inject(Router);
 
@@ -33,9 +35,32 @@ export class RegisterComponent {
 
     const user: User = this.registerForm.value;
 
+    // registramos y hacemos login automatico
     this.authService.register(user).subscribe({
       next: () => {
-        this.router.navigate(['/login']);
+        this.authService.login({
+          email: user.email,
+          password: user.password!
+        }).subscribe({
+          next: (response) => {
+            localStorage.setItem('token', response.accessToken);
+            localStorage.setItem('refreshToken', response.refreshToken);
+            this.authService.setIdentity(response.user);
+
+            this.userService.getCounters().subscribe({
+              next: (statsResponse: any) => {
+                localStorage.setItem('stats', JSON.stringify(statsResponse));
+                this.router.navigate(['/feed']);
+              },
+              error: () => {
+                this.router.navigate(['/feed']);
+              }
+            });
+          },
+          error: () => {
+            this.router.navigate(['/login']);
+          }
+        });
       },
       error: (error) => {
         console.error(error);

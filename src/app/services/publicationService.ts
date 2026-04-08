@@ -16,9 +16,9 @@ export class PublicationService {
     return this.http.post(`${this.apiUrl}/save`, publication);
   }
 
-  getFeed(page: number = 1): Observable<Publication[]> {
+  getFeed(page: number = 1): Observable<{ publications: Publication[], totalPages: number }> {
     return this.http.get<any>(`${this.apiUrl}/feed/${page}`).pipe(
-      map(data => data.publications)
+      map(data => ({ publications: data.publications, totalPages: data.totalPages }))
     );
   }
 
@@ -52,11 +52,11 @@ export class PublicationService {
   }
 
   // explorador de recetas con filtros y busqueda por hashtag
-  explore(page: number = 1, sort: string = 'recent', hashtag: string = ''): Observable<Publication[]> {
+  explore(page: number = 1, sort: string = 'recent', hashtag: string = ''): Observable<{ publications: Publication[], totalPages: number }> {
     return this.http.get<any>(
       `${this.apiUrl}/explore?page=${page}&sort=${sort}&hashtag=${hashtag}`
     ).pipe(
-      map(data => data.publications)
+      map(data => ({ publications: data.publications, totalPages: data.totalPages }))
     );
   }
 

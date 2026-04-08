@@ -22,13 +22,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(authReq).pipe(
     catchError((error) => {
-      const isAuthPage =
-        req.url.includes('/login') || req.url.includes('/register');
+      const isAuthPage = req.url.includes('/login') || req.url.includes('/register');
 
-      if (error.status === 401 && !isAuthPage) {
+      if (error.status === 401 && !isAuthPage && authService.getToken()) {
         authService.logout();
-        alert('Tu sesión ha expirado. Vuelve a iniciar sesión.');
-        router.navigate(['/login']);
+        router.navigate(['/login'], { queryParams: { expired: true } });
       }
 
       return throwError(() => error);

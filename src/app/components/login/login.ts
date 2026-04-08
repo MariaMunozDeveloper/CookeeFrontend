@@ -1,6 +1,6 @@
 import { inject, Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/authService';
 import { UserService } from '../../services/userService';
 import { FormValidators } from '../../validators/formValidators';
@@ -17,8 +17,18 @@ export class LoginComponent {
   private readonly userService: UserService = inject(UserService);
   private readonly router: Router = inject(Router);
   private readonly formBuilder: FormBuilder = inject(FormBuilder);
+  private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
   showPassword: boolean = false;
+  errorMessage: string = '';
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['expired']) {
+        this.errorMessage = 'Tu sesión ha expirado. Vuelve a iniciar sesión.';
+      }
+    });
+  }
 
   loginForm: FormGroup = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
@@ -48,7 +58,11 @@ export class LoginComponent {
         });
       },
       error: (error) => {
-        console.error(error);
+        if (error.status === 401) {
+          this.errorMessage = 'Email o contraseña incorrectos';
+        } else {
+          this.errorMessage = 'Ha ocurrido un error. Inténtalo de nuevo.';
+        }
       }
     });
   }

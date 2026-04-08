@@ -388,3 +388,74 @@
   color: var(--color-text-soft);
   margin: 0;
 }
+
+.detail-locked {
+  position: relative;
+  min-height: 300px;
+}
+
+.detail-locked-steps {
+  filter: blur(3px);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.6;
+}
+
+.detail-locked-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, transparent, var(--color-background) 40%);
+}
+
+.detail-locked-content {
+  text-align: center;
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.detail-locked-icon {
+  font-size: 40px;
+}
+
+.detail-locked-title {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.detail-locked-text {
+  font-size: 15px;
+  color: var(--color-muted);
+  max-width: 400px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.detail-locked-actions {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.detail-locked-comments {
+  padding: var(--space-lg) 0;
+  font-size: 15px;
+  color: var(--color-muted);
+}
+
+.detail-locked-comments a {
+  color: var(--color-primary);
+  font-weight: 600;
+}
