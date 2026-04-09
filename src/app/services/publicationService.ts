@@ -67,6 +67,11 @@ export class PublicationService {
     );
   }
 
+  // actualizar una receta propia
+  updatePublication(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/update/${id}`, data);
+  }
+
   // dar o quitar like a una receta
   toggleLike(id: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/like/${id}`, {});

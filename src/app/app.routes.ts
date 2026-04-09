@@ -1,18 +1,19 @@
-import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login/login';
-import { RegisterComponent } from './components/register/register';
+import { LoginComponent } from './components/auth/login/login';
+import { RegisterComponent } from './components/auth/register/register';
+import { MyDataComponent } from './components/user/my-data/my-data';
+import { PeopleComponent } from './components/user/people/people';
+import { TimelineComponent } from './components/publication/timeline/timeline';
+import { UserProfileComponent } from './components/user/user-profile/user-profile';
+import { FollowsComponent } from './components/user/follows/follows';
+import { MessagesComponent } from './components/message/messages/messages';
+import { SendMessageComponent } from './components/message/send-message/send-message';
+import { CreateRecipeComponent } from './components/publication/create-recipe/create-recipe';
+import { ExploreComponent } from './components/publication/explore/explore';
+import { EditRecipeComponent } from './components/publication/edit-recipe/edit-recipe';
+import { PublicationDetailComponent } from './components/publication/publication-detail/publication-detail';
 import { HomeComponent } from './components/home/home';
-import { MyDataComponent } from './components/my-data/my-data';
+import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth-guard';
-import { PeopleComponent } from './components/people/people';
-import { TimelineComponent } from './components/timeline/timeline';
-import { UserProfileComponent } from './components/user-profile/user-profile';
-import { FollowsComponent } from './components/follows/follows';
-import { MessagesComponent } from './components/messages/messages';
-import { SendMessageComponent } from './components/send-message/send-message';
-import { CreateRecipeComponent } from './components/create-recipe/create-recipe';
-import { ExploreComponent } from './components/explore/explore';
-import { PublicationDetailComponent } from './components/publication-detail/publication-detail';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'my-data', component: MyDataComponent, canActivate: [authGuard] },
   { path: 'explore', component: ExploreComponent },
   { path: 'publication/:id', component: PublicationDetailComponent },
+  { path: 'edit-recipe/:id', component: EditRecipeComponent, canActivate: [authGuard] },
   { path: 'follows/:modo', component: FollowsComponent, canActivate: [authGuard] },
   { path: 'follows/:modo/:id', component: FollowsComponent, canActivate: [authGuard] },
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
