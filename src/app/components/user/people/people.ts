@@ -1,6 +1,5 @@
-import { inject, Component } from '@angular/core';
+import { inject, Component, OnInit } from '@angular/core';
 import { UserService } from '../../../services/userService';
-import { UserCardComponent } from '../../shared/user-card/user-card';
 import { FollowService } from '../../../services/followService';
 import { RouterLink } from '@angular/router';
 import { signal, WritableSignal } from '@angular/core';
@@ -13,7 +12,7 @@ import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
   templateUrl: './people.html',
   styleUrl: './people.css'
 })
-export class PeopleComponent {
+export class PeopleComponent implements OnInit{
   private readonly userService: UserService = inject(UserService);
   private readonly followService: FollowService = inject(FollowService);
 
@@ -78,8 +77,7 @@ export class PeopleComponent {
       next: () => {
         this.following.push(userId);
       },
-      error: (error: any) => {
-        console.error(error);
+      error: () => {
       }
     });
   }
@@ -89,8 +87,7 @@ export class PeopleComponent {
       next: () => {
         this.following = this.following.filter(id => id !== userId);
       },
-      error: (error: any) => {
-        console.error(error);
+      error: () => {
       }
     });
   }

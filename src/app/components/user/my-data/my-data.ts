@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { FormValidators } from '../../../validators/formValidators';
 import { AuthService } from '../../../services/authService';
 import { UserService } from '../../../services/userService';
-import { UserCardComponent } from '../../shared/user-card/user-card';
 
 @Component({
   selector: 'app-my-data',

@@ -9,7 +9,7 @@
   @if (!loading() && publication()) {
 
   <div class="detail-cover">
-    @if ((publication()!.images?.length ?? 0) > 0) {
+    @if (publication()!.images.length > 0) {
     <img
       [src]="'http://localhost:3000/uploads/publications/' + publication()!.images[0]"
       [alt]="publication()!.title"
@@ -56,10 +56,10 @@
         @if (publication()!.temperaturaHorno) {
         <span class="recipe-stat">🌡️ <strong>{{ publication()!.temperaturaHorno }}</strong>°C</span>
         }
-        @if (publication()!.ingredients?.length) {
+        @if (publication()!.ingredients.length) {
         <span class="recipe-stat">🧂 <strong>{{ publication()!.ingredients.length }}</strong> ingredientes</span>
         }
-        @if (publication()!.steps?.length) {
+        @if (publication()!.steps.length) {
         <span class="recipe-stat">👣 <strong>{{ publication()!.steps.length }}</strong> pasos</span>
         }
       </div>
@@ -106,7 +106,7 @@
     </section>
     }
 
-    @if ((publication()!.images?.length ?? 0) > 1) {
+    @if (publication()!.images.length > 1) {
     <section class="detail-section">
       <div class="detail-gallery">
         @for (img of publication()!.images.slice(1); track img) {
@@ -122,7 +122,7 @@
 
     <hr class="divider"/>
 
-    @if ((publication()!.ingredients?.length ?? 0) > 0) {
+    @if (publication()!.ingredients.length  > 0) {
     <section class="detail-section">
       <h2 class="section-title">Ingredientes</h2>
       <ul class="detail-ingredients">
@@ -141,7 +141,7 @@
     <hr class="divider"/>
 
     <!-- elaboracion — bloqueada para no logueados -->
-    @if ((publication()!.steps?.length ?? 0) > 0) {
+    @if (publication()!.steps.length  > 0) {
     <section class="detail-section">
       <h2 class="section-title">Elaboración</h2>
 

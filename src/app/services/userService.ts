@@ -17,14 +17,6 @@ export class UserService {
     return this.http.get(`${this.apiUrl}/counters`);
   }
 
-  getStats(): any {
-    const stats = localStorage.getItem('stats');
-    if (stats && stats !== 'undefined') {
-      return JSON.parse(stats);
-    }
-    return null;
-  }
-
   updateUser(userData: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/update`, userData);
   }

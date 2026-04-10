@@ -44,6 +44,7 @@ export class PublicationService {
     return this.http.post(`${this.apiUrl}/upload-step/${publicationId}/${stepIndex}`, formData);
   }
 
+  // obtener el numero de recetas de un usuario
   getPublicationCounters(userId?: string): Observable<any> {
     if (userId) {
       return this.http.get(`${this.apiUrl}/count/${userId}`);

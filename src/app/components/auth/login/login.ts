@@ -1,4 +1,4 @@
-import { inject, Component } from '@angular/core';
+import { inject, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../services/authService';
@@ -12,7 +12,7 @@ import { FormValidators } from '../../../validators/formValidators';
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private readonly authService: AuthService = inject(AuthService);
   private readonly userService: UserService = inject(UserService);
   private readonly router: Router = inject(Router);
@@ -22,6 +22,11 @@ export class LoginComponent {
   showPassword: boolean = false;
   errorMessage: string = '';
 
+  loginForm: FormGroup = this.formBuilder.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6), FormValidators.notOnlyWhiteSpace]]
+  });
+
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       if (params['expired']) {
@@ -29,11 +34,6 @@ export class LoginComponent {
       }
     });
   }
-
-  loginForm: FormGroup = this.formBuilder.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6), FormValidators.notOnlyWhiteSpace]]
-  });
 
   onSubmit(): void {
     if (this.loginForm.invalid) {

@@ -1,59 +1,304 @@
-# CookeeFrontend
+﻿# Cookee - Red social de recetas
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
 
-## Development server
 
-To start a local development server, run:
+\# Cookee 🍳
 
-```bash
-ng serve
-```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-## Code scaffolding
+Red social de recetas desarrollada como Trabajo Final de Grado del Ciclo Superior DAW.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-```bash
-ng generate component component-name
-```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+\## Tecnologías
 
-```bash
-ng generate --help
-```
 
-## Building
 
-To build the project run:
+\- \*\*Frontend:\*\* Angular 21, TypeScript
 
-```bash
-ng build
-```
+\- \*\*Backend:\*\* Node.js, Express
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+\- \*\*Base de datos:\*\* MongoDB Atlas
 
-## Running unit tests
+\- \*\*Autenticación:\*\* JWT
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
 
-```bash
-ng test
-```
 
-## Running end-to-end tests
+\---
 
-For end-to-end (e2e) testing, run:
+
+
+\## Requisitos previos
+
+
+
+Antes de instalar el proyecto asegúrate de tener instalado:
+
+
+
+\- \[Node.js](https://nodejs.org/) — versión 20 o superior
+
+\- \[npm](https://www.npmjs.com/) — versión 8 o superior
+
+\- \[Angular CLI](https://angular.io/cli) — versión 21
+
+
 
 ```bash
-ng e2e
+
+npm install -g @angular/cli
+
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
-## Additional Resources
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+\---
+
+
+
+\## Instalación
+
+
+
+El proyecto tiene dos repositorios separados: \*\*back\*\* y \*\*front\*\*.
+
+
+
+\### 1. Backend
+
+
+
+```bash
+
+\# Clonar el repositorio del back
+
+git clone https://github.com/tu-usuario/pfg-Back.git
+
+cd pfg-Back/api
+
+
+
+\# Instalar dependencias
+
+npm install
+
+
+
+\# Crear el archivo de variables de entorno
+
+\# Crea un archivo .env en la carpeta api/ con el siguiente contenido:
+
+```
+
+
+
+Contenido del `.env`:
+
+
+
+PORT=3000
+
+MONGODB\_URI=mongodb+srv://munozferrer.maria\_db\_user:NUEVA\_CONTRASEÑA@cookee.pv6unwy.mongodb.net/Cookee
+
+JWT\_ACCESS\_SECRET=access\_secret\_dev
+
+JWT\_REFRESH\_SECRET=refresh\_secret\_dev
+
+
+
+
+
+```bash
+
+\# Crear las carpetas de uploads (necesarias para las imágenes)
+
+mkdir -p uploads/avatars
+
+mkdir -p uploads/publications
+
+
+
+\# Arrancar el servidor
+
+npm run dev
+
+```
+
+
+
+El backend estará disponible en `http://localhost:3000`
+
+
+
+\---
+
+
+
+\### 2. Frontend
+
+
+
+```bash
+
+\# Clonar el repositorio del front
+
+git clone https://github.com/tu-usuario/pfg-Front.git
+
+cd pfg-Front
+
+
+
+\# Instalar dependencias
+
+npm install
+
+
+
+\# Arrancar la aplicación
+
+npm start
+
+```
+
+
+
+La aplicación estará disponible en `http://localhost:4200`
+
+
+
+\---
+
+
+
+\## Poblar la base de datos (opcional)
+
+
+
+El proyecto incluye un script para generar datos de prueba con usuarios y recetas reales.
+
+
+
+Antes de ejecutarlo, añade tu API key de Unsplash al `.env`:
+
+
+
+UNSPLASH\_KEY=tu\_api\_key\_de\_unsplash
+
+
+Puedes obtener una API key gratuita en \[unsplash.com/developers](https://unsplash.com/developers).
+
+
+
+```bash
+
+cd api
+
+npm run seed
+
+```
+
+
+
+Esto creará:
+
+\- 8 usuarios de prueba
+
+\- 8 recetas con fotos reales
+
+\- Follows, likes y comentarios de ejemplo
+
+
+
+Credenciales de acceso tras el seed:
+
+\- \*\*Email:\*\* laura@cookee.com
+
+\- \*\*Contraseña:\*\* password123
+
+
+
+\---
+
+
+
+\## Estructura del proyecto
+
+pfg-Back/
+
+└── api/
+
+├── config/         # Conexión a base de datos
+
+├── controllers/    # Lógica de negocio
+
+├── middlewares/    # Autenticación y subida de archivos
+
+├── models/         # Esquemas de MongoDB
+
+├── routes/         # Rutas de la API
+
+├── scripts/        # Script de seed
+
+├── services/       # JWT
+
+└── uploads/        # Imágenes subidas por los usuarios
+
+
+
+pfg-Front/
+
+└── src/
+
+└── app/
+
+├── common/         # Interfaces TypeScript
+
+├── components/
+
+│   ├── auth/       # Login y registro
+
+│   ├── home/       # Página de inicio
+
+│   ├── message/    # Mensajería
+
+│   ├── publication/ # Recetas (crear, editar, feed, explorar, detalle)
+
+│   ├── shared/     # Componentes reutilizables
+
+│   ├── structure/  # Navbar y footer
+
+│   └── user/       # Perfil, datos, cocinillas, seguidores
+
+├── guards/         # Protección de rutas
+
+├── interceptors/   # Interceptor de autenticación
+
+├── pipes/          # Pipes personalizados
+
+├── services/       # Servicios HTTP
+
+└── validators/     # Validadores de formularios
+
+
+## Funcionalidades
+
+
+
+\- Registro e inicio de sesión con JWT
+
+\- Feed de recetas de usuarios seguidos
+
+\- Explorar recetas con filtros y búsqueda por hashtag
+
+\- Crear, editar y eliminar recetas con fotos por paso
+
+\- Likes y comentarios en recetas
+
+\- Seguir y dejar de seguir usuarios
+
+\- Mensajería privada
+
+\- Perfil de usuario con recetario personal
+
+\- Vista previa de recetas para usuarios no registrados
+

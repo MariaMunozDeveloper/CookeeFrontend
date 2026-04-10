@@ -23,23 +23,25 @@ export class PublicationDetailComponent {
   private readonly commentService: CommentService = inject(CommentService);
   private readonly router: Router = inject(Router);
 
-  showDeleteModal: WritableSignal<boolean> = signal<boolean>(false);
-
   // datos del usuario logueado
   identity: any = this.authService.getIdentity();
   isLoggedIn: boolean = !!this.authService.getToken();
 
-  // receta actual
+// receta actual
   publication: WritableSignal<Publication | null> = signal<Publication | null>(null);
   loading: WritableSignal<boolean> = signal<boolean>(true);
 
-  // estado del like
+// likes
   hasLike: WritableSignal<boolean> = signal<boolean>(false);
   likesCount: WritableSignal<number> = signal<number>(0);
 
+// comentarios
   comments: WritableSignal<any[]> = signal<any[]>([]);
   commentText: string = '';
   sendingComment: boolean = false;
+
+// modal eliminar
+  showDeleteModal: WritableSignal<boolean> = signal<boolean>(false);
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -48,25 +50,25 @@ export class PublicationDetailComponent {
   }
 
   // cargamos el detalle de la receta
-private loadPublication(id: string): void {
+  private loadPublication(id: string): void {
   this.loading.set(true);
 
-  this.publicationService.getPublicationById(id).subscribe({
-    next: (publication: Publication) => {
-      this.publication.set(publication);
-      this.likesCount.set((publication as any).likes?.length ?? 0);
+    this.publicationService.getPublicationById(id).subscribe({
+      next: (publication: Publication) => {
+        this.publication.set(publication);
+        this.likesCount.set((publication as any).likes?.length ?? 0);
 
-      const likes = (publication as any).likes || [];
-      this.hasLike.set(likes.some((l: any) => l.toString() === this.identity?._id));
+        const likes = (publication as any).likes || [];
+        this.hasLike.set(likes.some((l: any) => l.toString() === this.identity?._id));
 
-      this.loading.set(false);
-      this.loadComments(id);
-    },
-    error: () => {
-      this.loading.set(false);
-    }
-  });
-}
+        this.loading.set(false);
+        this.loadComments(id);
+      },
+      error: () => {
+        this.loading.set(false);
+      }
+    });
+  }
 
   // dar o quitar like a la receta
   toggleLike(): void {
@@ -136,10 +138,6 @@ private loadPublication(id: string): void {
 
   isMyComment(comment: any): boolean {
     return comment.user?._id === this.identity?._id;
-  }
-
-  getTimeAgoComment(date: string): string {
-    return this.getTimeAgo(date);
   }
 
   // mostramos el modal de confirmacion

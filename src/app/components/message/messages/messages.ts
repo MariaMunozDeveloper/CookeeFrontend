@@ -1,4 +1,4 @@
-import { inject, Component, signal, WritableSignal } from '@angular/core';
+import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MessageService } from '../../../services/messageService';
 import { AuthService } from '../../../services/authService';
@@ -12,7 +12,7 @@ import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
   templateUrl: './messages.html',
   styleUrl: './messages.css'
 })
-export class MessagesComponent {
+export class MessagesComponent implements OnInit  {
   private readonly messageService: MessageService = inject(MessageService);
   private readonly authService: AuthService = inject(AuthService);
 

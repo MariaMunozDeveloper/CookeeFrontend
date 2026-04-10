@@ -1,21 +1,20 @@
-import { inject, Component, signal, WritableSignal } from '@angular/core';
+import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PublicationService } from '../../../services/publicationService';
 import { Publication } from '../../../common/interfaces/publication';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
-import { AsAnyPipe } from '../../../pipes/as-any.pipe';
 import { UpperCasePipe } from '@angular/common';
 import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-explore',
   standalone: true,
-  imports: [RouterLink, FormsModule, LoadingSpinner, AsAnyPipe, UpperCasePipe],
+  imports: [RouterLink, FormsModule, LoadingSpinner, UpperCasePipe],
   templateUrl: './explore.html',
   styleUrl: './explore.css'
 })
-export class ExploreComponent {
+export class ExploreComponent implements OnInit {
   private readonly publicationService: PublicationService = inject(PublicationService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly router: Router = inject(Router);

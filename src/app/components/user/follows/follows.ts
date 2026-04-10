@@ -1,4 +1,4 @@
-import { inject, Component, signal, WritableSignal } from '@angular/core';
+import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FollowService } from '../../../services/followService';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
@@ -11,7 +11,7 @@ import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
   templateUrl: './follows.html',
   styleUrl: './follows.css'
 })
-export class FollowsComponent {
+export class FollowsComponent implements OnInit {
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly followService: FollowService = inject(FollowService);
 

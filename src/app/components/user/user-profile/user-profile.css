@@ -191,7 +191,7 @@
   top: var(--space-xs);
   right: var(--space-xs);
   display: flex;
-  gap: 4px;
+  gap: 6px;
   opacity: 0;
   transition: opacity 0.2s;
 }
@@ -199,3 +199,36 @@
 .profile-recipe-card:hover .profile-recipe-overlay {
   opacity: 1;
 }
+
+.profile-recipe-overlay a,
+.profile-recipe-overlay button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  padding: 0;
+  text-decoration: none;
+}
+
+.profile-recipe-overlay a:hover {
+  background-color: white;
+  transform: scale(1.1);
+}
+
+.profile-recipe-overlay button:hover {
+  background-color: #fdf2f2;
+  transform: scale(1.1);
+}
+
+
+
+
+
+

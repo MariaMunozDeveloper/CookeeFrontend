@@ -62,8 +62,7 @@ export class RegisterComponent {
           }
         });
       },
-      error: (error) => {
-        console.error(error);
+      error: () => {
       }
     });
   }

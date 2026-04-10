@@ -1,4 +1,4 @@
-import { inject, Component, signal, WritableSignal } from '@angular/core';
+import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UserService } from '../../../services/userService';
 import { FollowService } from '../../../services/followService';
@@ -15,27 +15,26 @@ import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal'
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.css'
 })
-export class UserProfileComponent {
+
+export class UserProfileComponent implements OnInit {
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly userService: UserService = inject(UserService);
   private readonly followService: FollowService = inject(FollowService);
   private readonly publicationService: PublicationService = inject(PublicationService);
   private readonly authService: AuthService = inject(AuthService);
 
-  showDeleteModal: WritableSignal<boolean> = signal<boolean>(false);
   publicationToDelete: string = '';
-
   identity: any = this.authService.getIdentity();
 
   profileUser: any = null;
   counters: any = null;
-  publications: WritableSignal<Publication[]> = signal<Publication[]>([]);
   publicationsCount: number = 0;
 
   isFollowing: boolean = false;
-  isFriend: boolean = false;
   isOwnProfile: boolean = false;
-  restricted: boolean = false;
+
+  publications: WritableSignal<Publication[]> = signal<Publication[]>([]);
+  showDeleteModal: WritableSignal<boolean> = signal<boolean>(false);
   loading: WritableSignal<boolean> = signal<boolean>(true);
 
   ngOnInit(): void {
@@ -52,8 +51,6 @@ export class UserProfileComponent {
         this.profileUser = response.user;
         this.isOwnProfile = this.identity?._id === userId;
         this.isFollowing = response.following === true;
-        this.isFriend = response.following === true && response.followed === true;
-        this.restricted = response.restricted === true;
 
         this.userService.getCounters(userId).subscribe({
           next: (countersRes: any) => {
@@ -95,23 +92,10 @@ export class UserProfileComponent {
     this.followService.unfollowUser(this.profileUser._id).subscribe({
       next: () => {
         this.isFollowing = false;
-        this.isFriend = false;
       }
     });
   }
 
-  getTimeAgo(date: string | undefined): string {
-    if (!date) return '';
-    const now = new Date();
-    const created = new Date(date);
-    const diff = Math.floor((now.getTime() - created.getTime()) / 1000);
-
-    if (diff < 60) return 'hace un momento';
-    if (diff < 3600) return `hace ${Math.floor(diff / 60)} min`;
-    if (diff < 86400) return `hace ${Math.floor(diff / 3600)} h`;
-    if (diff < 604800) return `hace ${Math.floor(diff / 86400)} días`;
-    return created.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
-  }
 
   confirmDelete(id: string): void {
     this.publicationToDelete = id;

@@ -5,34 +5,34 @@ import { PublicationService } from '../../../services/publicationService';
 import { UserCardComponent } from '../../shared/user-card/user-card';
 import { Publication } from '../../../common/interfaces/publication';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
-import { UpperCasePipe } from '@angular/common';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [UserCardComponent, RouterLink, LoadingSpinner, UpperCasePipe, ConfirmModalComponent],
+  imports: [UserCardComponent, RouterLink, LoadingSpinner, ConfirmModalComponent],
   templateUrl: './timeline.html',
   styleUrl: './timeline.css'
 })
 export class TimelineComponent implements OnInit {
   private readonly authService: AuthService = inject(AuthService);
   private readonly publicationService: PublicationService = inject(PublicationService);
-  activeMenu: WritableSignal<string | null> = signal<string | null>(null);
-  showDeleteModal: WritableSignal<boolean> = signal<boolean>(false);
-  publicationToDelete: string = '';
-
   // datos del usuario logueado
   identity: any = this.authService.getIdentity();
   stats: any = JSON.parse(localStorage.getItem('stats') || 'null');
 
-  // lista de recetas del feed
+// lista de recetas del feed
   publications: WritableSignal<Publication[]> = signal<Publication[]>([]);
   loading: WritableSignal<boolean> = signal<boolean>(false);
 
   page: number = 1;
   totalPages: number = 1;
   hasMore: boolean = true;
+
+// menu de opciones y modal
+  activeMenu: WritableSignal<string | null> = signal<string | null>(null);
+  showDeleteModal: WritableSignal<boolean> = signal<boolean>(false);
+  publicationToDelete: string = '';
 
   ngOnInit(): void {
     this.getPublications();

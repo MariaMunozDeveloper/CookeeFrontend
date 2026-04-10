@@ -1,15 +1,14 @@
 import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { PublicationService } from '../../../services/publicationService';
 import { FormValidators } from '../../../validators/formValidators';
 import { Observable } from 'rxjs';
-import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-edit-recipe',
   standalone: true,
-  imports: [ReactiveFormsModule, LoadingSpinner],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './edit-recipe.html',
   styleUrl: './edit-recipe.css'
 })
@@ -21,13 +20,16 @@ export class EditRecipeComponent implements OnInit {
 
   publicationId: string = '';
   currentStep: WritableSignal<number> = signal<number>(1);
-  totalSteps = 3;
+  totalSteps = 4;
   sending: boolean = false;
   loading: WritableSignal<boolean> = signal<boolean>(true);
   errorMessage: string = '';
 
   stepImages: (File | null)[] = [];
   stepImagePreviews: (string | null)[] = [];
+  resultImages: File[] = [];
+  resultImagePreviews: string[] = [];
+  existingResultImages: string[] = [];
   hashtags: string[] = [];
   hashtagInput: string = '';
   coverImage: File | null = null;
@@ -88,6 +90,11 @@ export class EditRecipeComponent implements OnInit {
           this.existingCover = publication.images[0];
         }
 
+        // fotos del resultado existentes (images[1] en adelante)
+        if (publication.images?.length > 1) {
+          this.existingResultImages = publication.images.slice(1);
+        }
+
         // ingredientes
         publication.ingredients?.forEach((ing: any) => {
           this.ingredients.push(this.formBuilder.group({
@@ -134,6 +141,10 @@ export class EditRecipeComponent implements OnInit {
     this.ingredients.removeAt(index);
   }
 
+  removeExistingResultImage(index: number): void {
+    this.existingResultImages.splice(index, 1);
+  }
+
   newStep(): FormGroup {
     return this.formBuilder.group({
       text: ['', [Validators.required, FormValidators.notOnlyWhiteSpace]],
@@ -169,6 +180,25 @@ export class EditRecipeComponent implements OnInit {
     this.stepImages[index] = null;
     this.stepImagePreviews[index] = null;
     this.steps.at(index).patchValue({ image: null });
+  }
+
+  onResultImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      Array.from(input.files).forEach(file => {
+        this.resultImages.push(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.resultImagePreviews.push(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  }
+
+  removeResultImage(index: number): void {
+    this.resultImages.splice(index, 1);
+    this.resultImagePreviews.splice(index, 1);
   }
 
   onCoverSelected(event: Event): void {
@@ -221,6 +251,7 @@ export class EditRecipeComponent implements OnInit {
     if (this.currentStep() === 1) return this.recipeForm.get('title')!.valid;
     if (this.currentStep() === 2) return this.ingredients.length > 0 && this.ingredients.valid;
     if (this.currentStep() === 3) return this.steps.length > 0 && this.steps.valid;
+    if (this.currentStep() === 4) return true;
     return true;
   }
 
@@ -243,11 +274,15 @@ export class EditRecipeComponent implements OnInit {
       temperaturaHorno: this.recipeForm.value.temperaturaHorno,
       hashtags: this.hashtags,
       ingredients: this.recipeForm.value.ingredients,
-      steps: this.recipeForm.value.steps
+      steps: this.recipeForm.value.steps,
+      images: this.existingCover
+        ? [this.existingCover, ...this.existingResultImages]
+        : [...this.existingResultImages]
     };
 
     this.publicationService.updatePublication(this.publicationId, data).subscribe({
       next: (response: any) => {
+        console.log('response:', response);
         if (response.status) {
           this.uploadNewImages(this.publicationId);
         }
@@ -273,9 +308,15 @@ export class EditRecipeComponent implements OnInit {
       }
     });
 
+    this.resultImages.forEach(file => {
+      uploads.push(this.publicationService.uploadImage(publicationId, file));
+    });
+
     if (uploads.length === 0) {
       this.sending = false;
-      this.router.navigate(['/publication', publicationId]);
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/publication', publicationId]);
+      });
       return;
     }
 
@@ -285,7 +326,9 @@ export class EditRecipeComponent implements OnInit {
   private uploadNext(publicationId: string, uploads: Observable<any>[], index: number): void {
     if (index >= uploads.length) {
       this.sending = false;
-      this.router.navigate(['/publication', publicationId]);
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/publication', publicationId]);
+      });
       return;
     }
 
@@ -294,4 +337,5 @@ export class EditRecipeComponent implements OnInit {
       error: () => this.uploadNext(publicationId, uploads, index + 1)
     });
   }
+
 }

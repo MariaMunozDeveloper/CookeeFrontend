@@ -114,15 +114,6 @@
           <p class="hashtag-hint">Escribe las palabras y pulsa espacio o Enter</p>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Visibilidad</label>
-          <select class="input-base" formControlName="visibility">
-            <option value="public">🌍 Pública</option>
-            <option value="friends">👥 Solo amigos</option>
-            <option value="private">🔒 Solo yo</option>
-          </select>
-        </div>
-
       </div>
       }
 
@@ -221,24 +212,48 @@
       </div>
       }
 
+      @if (currentStep() === 4) {
+        <div class="recipe-step">
+
+          <p class="recipe-step-hint">Añade fotos de cómo quedó el plato. Son opcionales pero le dan vida a la receta.</p>
+
+          <label class="btn btn-outline recipe-upload-btn">
+            📷 Añadir fotos del resultado
+            <input type="file" accept="image/*" multiple (change)="onResultImageSelected($event)" hidden/>
+          </label>
+
+          @if (resultImagePreviews.length > 0) {
+            <div class="recipe-images-preview">
+              @for (preview of resultImagePreviews; track $index) {
+                <div class="recipe-image-wrap">
+                  <img [src]="preview" class="recipe-preview-img" alt="foto resultado"/>
+                  <button type="button" class="recipe-remove-img" (click)="removeResultImage($index)">✕</button>
+                </div>
+              }
+            </div>
+          }
+
+        </div>
+      }
+
     </form>
 
     <!-- navegación -->
     <div class="recipe-nav">
       @if (currentStep() > 1) {
-      <button class="btn btn-outline" (click)="prevStep()">← Anterior</button>
+        <button class="btn btn-outline" (click)="prevStep()">← Anterior</button>
       } @else {
-      <div></div>
+        <a class="btn btn-ghost" routerLink="/feed">Cancelar</a>
       }
 
       @if (currentStep() < totalSteps) {
-      <button class="btn btn-primary" (click)="nextStep()" [disabled]="!canGoNext()">
-        Siguiente →
-      </button>
+        <button class="btn btn-primary" (click)="nextStep()" [disabled]="!canGoNext()">
+          Siguiente →
+        </button>
       } @else {
-      <button class="btn btn-primary" (click)="onSubmit()" [disabled]="sending">
-        {{ sending ? 'Publicando...' : 'Publicar receta' }}
-      </button>
+        <button class="btn btn-primary" (click)="onSubmit()" [disabled]="sending">
+          {{ sending ? 'Publicando...' : 'Publicar receta' }}
+        </button>
       }
     </div>
 

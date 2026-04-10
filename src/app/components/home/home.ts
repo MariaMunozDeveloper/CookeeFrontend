@@ -1,4 +1,4 @@
-import { inject, Component, signal, WritableSignal } from '@angular/core';
+import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { PublicationService } from '../../services/publicationService';
 import { Publication } from '../../common/interfaces/publication';
@@ -11,7 +11,7 @@ import { AsAnyPipe } from '../../pipes/as-any.pipe';
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   private readonly publicationService: PublicationService = inject(PublicationService);
 
   // recetas recientes para mostrar en la home sin estar logueado
@@ -41,6 +41,5 @@ export class HomeComponent {
       ? publication.images[0]
       : null;
   }
-
 
 }

@@ -230,3 +230,10 @@
   color: var(--color-muted);
   margin: 0;
 }
+
+.recipe-step-hint {
+  font-size: 14px;
+  color: var(--color-muted);
+  margin: 0;
+  line-height: 1.6;
+}

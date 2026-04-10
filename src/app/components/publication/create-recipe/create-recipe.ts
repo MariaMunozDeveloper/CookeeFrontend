@@ -1,6 +1,6 @@
 import { inject, Component, signal, WritableSignal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PublicationService } from '../../../services/publicationService';
 import { FormValidators } from '../../../validators/formValidators';
 import { Observable } from 'rxjs';
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-create-recipe',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './create-recipe.html',
   styleUrl: './create-recipe.css'
 })
@@ -18,12 +18,14 @@ export class CreateRecipeComponent {
   private readonly router: Router = inject(Router);
 
   currentStep: WritableSignal<number> = signal<number>(1);
-  totalSteps = 3;
+  totalSteps = 4;
   sending: boolean = false;
   errorMessage: string = '';
 
   stepImages: (File | null)[] = [];
   stepImagePreviews: (string | null)[] = [];
+  resultImages: File[] = [];
+  resultImagePreviews: string[] = [];
   hashtags: string[] = [];
   hashtagInput: string = '';
   coverImage: File | null = null;
@@ -35,7 +37,6 @@ export class CreateRecipeComponent {
     raciones: [null, [FormValidators.minValue(1), FormValidators.soloEnteros]],
     tiempoHorno: [null, [FormValidators.minValue(0), FormValidators.soloEnteros]],
     temperaturaHorno: [null, [FormValidators.minValue(0), FormValidators.soloEnteros]],
-    visibility: ['public'],
     ingredients: this.formBuilder.array([]),
     steps: this.formBuilder.array([])
   });
@@ -102,6 +103,25 @@ export class CreateRecipeComponent {
   removeStepImage(index: number): void {
     this.stepImages[index] = null;
     this.stepImagePreviews[index] = null;
+  }
+
+  onResultImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      Array.from(input.files).forEach(file => {
+        this.resultImages.push(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.resultImagePreviews.push(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  }
+
+  removeResultImage(index: number): void {
+    this.resultImages.splice(index, 1);
+    this.resultImagePreviews.splice(index, 1);
   }
 
   onCoverSelected(event: Event): void {
@@ -182,7 +202,6 @@ export class CreateRecipeComponent {
       raciones: this.recipeForm.value.raciones,
       tiempoHorno: this.recipeForm.value.tiempoHorno,
       temperaturaHorno: this.recipeForm.value.temperaturaHorno,
-      visibility: this.recipeForm.value.visibility,
       ingredients: this.recipeForm.value.ingredients,
       steps: this.recipeForm.value.steps,
       hashtags: this.hashtags,
@@ -216,6 +235,11 @@ export class CreateRecipeComponent {
           this.publicationService.uploadStepImage(publicationId, index, file)
         );
       }
+    });
+
+    // fotos del resultado final
+    this.resultImages.forEach(file => {
+      uploads.push(this.publicationService.uploadImage(publicationId, file));
     });
 
     if (uploads.length === 0) {

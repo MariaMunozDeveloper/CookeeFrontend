@@ -1,5 +1,5 @@
-import { inject, Component, signal, WritableSignal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from '../../../services/messageService';
 import { UserService } from '../../../services/userService';
@@ -11,9 +11,8 @@ import { UserService } from '../../../services/userService';
   templateUrl: './send-message.html',
   styleUrl: './send-message.css'
 })
-export class SendMessageComponent {
+export class SendMessageComponent implements OnInit {
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
-  private readonly router: Router = inject(Router);
   private readonly messageService: MessageService = inject(MessageService);
   private readonly userService: UserService = inject(UserService);
 

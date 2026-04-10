@@ -44,18 +44,16 @@
     </div>
 
     @if (!isOwnProfile) {
-    <div class="profile-actions">
-      @if (isFriend) {
-      <button class="btn btn-outline" (click)="unfollow()">Amigos ✓</button>
-      } @else if (isFollowing) {
-      <button class="btn btn-outline" (click)="unfollow()">Siguiendo</button>
-      } @else {
-      <button class="btn btn-primary" (click)="follow()">Seguir</button>
-      }
-      <button class="btn btn-outline" [routerLink]="['/messages/send', profileUser._id]">
-        Mensaje
-      </button>
-    </div>
+      <div class="profile-actions">
+        @if (isFollowing) {
+          <button class="btn btn-outline" (click)="unfollow()">Siguiendo</button>
+        } @else {
+          <button class="btn btn-primary" (click)="follow()">Seguir</button>
+        }
+        <button class="btn btn-outline" [routerLink]="['/messages/send', profileUser._id]">
+          Mensaje
+        </button>
+      </div>
     }
 
     @if (isOwnProfile) {
@@ -100,7 +98,7 @@
         <div class="profile-recipe-body">
           <h3 class="profile-recipe-title">{{ pub.title }}</h3>
           <div class="profile-recipe-stats">
-            <span>❤️ {{ pub.likes?.length ?? 0 }}</span>
+            <span>❤️ {{ pub.likes.length }}</span>
             @if (pub.raciones) {
             <span>🍽️ {{ pub.raciones }} rac.</span>
             }

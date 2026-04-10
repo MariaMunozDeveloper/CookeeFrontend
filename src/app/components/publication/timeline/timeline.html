@@ -74,7 +74,7 @@
             @if (publication.temperaturaHorno) {
             <span class="recipe-stat">🌡️ {{ publication.temperaturaHorno }}°C</span>
             }
-            @if (publication.ingredients?.length) {
+            @if (publication.ingredients.length) {
             <span class="recipe-stat">🧂 {{ publication.ingredients.length }} ing.</span>
             }
           </div>
@@ -89,7 +89,7 @@
 
           <div class="feed-recipe-footer">
             <button class="feed-like-btn" (click)="toggleLike(publication._id, $event)">
-              {{ isLiked(publication) ? '❤️' : '🤍' }} {{ publication.likes?.length ?? 0 }}
+              {{ isLiked(publication) ? '❤️' : '🤍' }} {{ publication.likes.length }}
             </button>
 
             <div class="feed-recipe-actions">
