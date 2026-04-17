@@ -1,0 +1,133 @@
+<div class="page-container profile-page">
+
+  @if (loading()) {
+  <app-loading-spinner/>
+  }
+
+  @if (!loading() && profileUser) {
+
+  <div class="card-base profile-header">
+
+    <div class="profile-avatar-wrap">
+      @if (profileUser.image) {
+      <img
+        [src]="profileUser.image"
+        class="profile-avatar"
+        alt="avatar"/>
+      } @else {
+      <div class="profile-avatar profile-avatar-placeholder"></div>
+      }
+    </div>
+
+    <div class="profile-info">
+      <h1 class="profile-name">{{ profileUser.name }} {{ profileUser.surname }}</h1>
+      <p class="profile-nick">@{{ profileUser.nick }}</p>
+
+      @if (counters) {
+      <div class="profile-counters">
+        <div class="counter-item" [routerLink]="['/follows/following', profileUser._id]" style="cursor:pointer">
+          <strong>{{ counters.following ?? 0 }}</strong>
+          <span>Siguiendo</span>
+        </div>
+        <div class="counter-item" [routerLink]="['/follows/followers', profileUser._id]" style="cursor:pointer">
+          <strong>{{ counters.followed ?? 0 }}</strong>
+          <span>Seguidores</span>
+        </div>
+        <div class="counter-item">
+          <strong>{{ publicationsCount }}</strong>
+          <span>Recetas</span>
+        </div>
+      </div>
+      }
+    </div>
+
+    @if (!isOwnProfile) {
+    <div class="profile-actions">
+      @if (isFollowing) {
+      <button class="btn btn-outline" (click)="unfollow()">Siguiendo</button>
+      } @else {
+      <button class="btn btn-primary" (click)="follow()">Seguir</button>
+      }
+      <button class="btn btn-outline" [routerLink]="['/messages/send', profileUser._id]">
+        Mensaje
+      </button>
+    </div>
+    }
+
+    @if (isOwnProfile) {
+    <div class="profile-actions">
+      <a class="btn btn-outline" routerLink="/my-data">Editar perfil</a>
+    </div>
+    }
+
+  </div>
+
+  <div class="profile-publications">
+
+    <h2 class="section-title">Recetas</h2>
+
+    @if (publications().length === 0) {
+    <div class="profile-empty">
+      <p>Este usuario todavía no ha publicado ninguna receta.</p>
+    </div>
+    }
+
+    <div class="profile-recipes-grid">
+      @for (pub of publications(); track pub._id) {
+      <article class="profile-recipe-card" [routerLink]="['/publication', pub._id]">
+
+        <div class="profile-recipe-cover">
+          @if (pub.images && pub.images.length > 0) {
+          <img
+            [src]="pub.images[0]"
+            [alt]="pub.title"
+            class="profile-recipe-img"/>
+          } @else {
+          <div class="profile-recipe-placeholder">🍳</div>
+          }
+
+          @if (pub.hashtags && pub.hashtags.length > 0) {
+          <span class="profile-recipe-tag">{{ pub.hashtags[0] }}</span>
+          }
+        </div>
+
+        <div class="profile-recipe-body">
+          <h3 class="profile-recipe-title">{{ pub.title }}</h3>
+          <div class="profile-recipe-stats">
+            <span> {{ pub.likes.length }}</span>
+            @if (pub.raciones) {
+            <span> {{ pub.raciones }} rac.</span>
+            }
+            @if (pub.tiempoHorno) {
+            <span> {{ pub.tiempoHorno }} min</span>
+            }
+          </div>
+
+          @if (isOwnProfile) {
+          <div class="profile-recipe-overlay">
+            <a class="btn btn-outline btn-sm" [routerLink]="['/edit-recipe', pub._id]"
+               (click)="$event.stopPropagation()"> </a>
+            <button class="btn btn-danger btn-sm" (click)="confirmDelete(pub._id); $event.stopPropagation()"> ️</button>
+          </div>
+          }
+        </div>
+
+      </article>
+      }
+    </div>
+
+  </div>
+  @if (showDeleteModal()) {
+  <app-confirm-modal
+    title="¿Eliminar receta?"
+    message="Se eliminará permanentemente. Esta acción no tiene vuelta atrás."
+    confirmText="Sí, eliminar"
+    cancelText="Cancelar"
+    (confirmed)="deletePublication()"
+    (cancelled)="showDeleteModal.set(false)">
+  </app-confirm-modal>
+  }
+
+  }
+
+</div>

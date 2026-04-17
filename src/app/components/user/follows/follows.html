@@ -1,0 +1,53 @@
+<div class="page-container follows-page">
+
+  <div class="follows-header">
+    <h1 class="title-section">
+      <span class="title-highlight">{{ titulo }}</span>
+    </h1>
+  </div>
+
+  @if (loading()) {
+  <app-loading-spinner/>
+  }
+
+  @if (!loading() && users().length === 0) {
+  <div class="card-base follows-empty">
+    <p>{{ modo === 'following' ? 'No sigues a nadie todavía.' : 'Nadie te sigue todavía.' }}</p>
+  </div>
+  }
+
+  @if (!loading() && users().length > 0) {
+  <div class="follows-list">
+    @for (user of users(); track user._id) {
+    <div class="card-base follows-row">
+
+      <div class="follows-user-info" [routerLink]="['/profile', user._id]">
+        @if (user.image) {
+        <img
+          [src]="user.image"
+          class="follows-avatar"
+          alt="avatar"/>
+        } @else {
+        <div class="follows-avatar follows-avatar-placeholder"></div>
+        }
+
+        <div class="follows-user-text">
+          <p class="follows-name">{{ user.name }} {{ user.surname }}</p>
+          <p class="follows-nick">@{{ user.nick }}</p>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+  <div class="follows-pagination">
+    <button class="btn btn-outline" (click)="prevPage()" [disabled]="page === 1">
+      Anterior
+    </button>
+    <span class="follows-page-indicator">Página {{ page }} de {{ totalPages }}</span>
+    <button class="btn btn-outline" (click)="nextPage()" [disabled]="page === totalPages">
+      Siguiente
+    </button>
+  </div>
+  }
+</div>

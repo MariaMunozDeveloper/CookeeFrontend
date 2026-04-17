@@ -1,0 +1,87 @@
+.follows-page {
+  margin-top: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.follows-header {
+  margin-bottom: var(--space-lg);
+}
+
+.follows-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.follows-row {
+  display: flex;
+  align-items: center;
+}
+
+.follows-user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  cursor: pointer;
+  flex: 1;
+}
+
+.follows-user-info:hover .follows-name {
+  color: var(--color-primary);
+}
+
+.follows-avatar,
+.follows-avatar-placeholder {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.follows-avatar {
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+}
+
+.follows-avatar-placeholder {
+  background-color: var(--color-accent);
+  border: 1px solid var(--color-border);
+}
+
+.follows-user-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.follows-name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text);
+  transition: color 0.2s;
+}
+
+.follows-nick {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.follows-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.follows-page-indicator {
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.follows-empty {
+  text-align: center;
+  color: var(--color-muted);
+}

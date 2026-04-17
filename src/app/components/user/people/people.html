@@ -1,0 +1,87 @@
+<div class="page-container people-page">
+  <div class="people-header">
+    <h1 class="title-section">
+      Encuentra <span class="title-highlight">personas</span>
+    </h1>
+    <p class="people-subtitle">
+      Descubre usuarios, sigue perfiles y conecta con la comunidad de Cookee.
+    </p>
+  </div>
+
+  @if (!isLoggedIn) {
+  <div class="card-base people-locked">
+    <span class="people-locked-icon"> </span>
+    <h2 class="people-locked-title">Descubre a los cocinillas</h2>
+    <p class="people-locked-text">Regístrate gratis y conecta con otros amantes de la cocina.</p>
+    <div class="people-locked-actions">
+      <a class="btn btn-primary btn-lg" routerLink="/register">Crear cuenta gratis</a>
+      <a class="btn btn-outline btn-lg" routerLink="/login">Iniciar sesión</a>
+    </div>
+  </div>
+  }
+
+  @if (loading()) {
+  <app-loading-spinner/>
+  }
+
+  @if (!loading() && users().length > 0) {
+  <div class="people-list">
+    @for (user of users(); track user._id) {
+    <div class="card-base people-row">
+
+      <div class="people-user-info" [routerLink]="['/profile', user._id]" style="cursor:pointer">
+        @if (user.image) {
+        <img
+          [src]="user.image"
+          class="people-avatar"
+          alt="avatar"/>
+        } @else {
+        <div class="people-avatar-placeholder"></div>
+        }
+
+        <div class="people-user-text">
+          <h3 class="people-name">{{ user.name }} {{ user.surname }}</h3>
+          <p class="people-nick">@{{ user.nick }}</p>
+        </div>
+      </div>
+
+      <div class="people-user-action">
+        @if (isFriend(user._id)) {
+        <button class="btn btn-outline" (click)="unfollow(user._id)">
+          Amigos
+        </button>
+        } @else if (isFollowing(user._id)) {
+        <button class="btn btn-outline" (click)="unfollow(user._id)">
+          Siguiendo
+        </button>
+        } @else {
+        <button class="btn btn-primary" (click)="follow(user._id)">
+          Seguir
+        </button>
+        }
+      </div>
+    </div>
+    }
+  </div>
+
+  <div class="people-pagination">
+    <button class="btn btn-outline" (click)="prevPage()" [disabled]="page === 1">
+      Anterior
+    </button>
+
+    <span class="people-page-indicator">
+        Página {{ page }} de {{ totalPages }}
+    </span>
+
+    <button class="btn btn-outline" (click)="nextPage()" [disabled]="page === totalPages">
+      Siguiente
+    </button>
+  </div>
+  }
+
+  @if (!loading() && users().length === 0) {
+  <div class="card-base people-empty-state">
+    <p>No hay usuarios para mostrar.</p>
+  </div>
+  }
+</div>
