@@ -6,6 +6,7 @@ import { UserCardComponent } from '../../shared/user-card/user-card';
 import { Publication } from '../../../common/interfaces/publication';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
+import { FavoriteService } from '../../../services/favoriteService';
 
 @Component({
   selector: 'app-timeline',
@@ -17,6 +18,7 @@ import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal'
 export class TimelineComponent implements OnInit {
   private readonly authService: AuthService = inject(AuthService);
   private readonly publicationService: PublicationService = inject(PublicationService);
+  readonly favoriteService: FavoriteService = inject(FavoriteService);
 
   identity: any = this.authService.getIdentity();
   stats: any = JSON.parse(localStorage.getItem('stats') || 'null');
@@ -55,7 +57,9 @@ export class TimelineComponent implements OnInit {
         this.hasMore = this.page <= response.totalPages;
         this.loading.set(false);
       },
-      error: () => { this.loading.set(false); }
+      error: () => {
+        this.loading.set(false);
+      }
     });
   }
 
@@ -93,15 +97,17 @@ export class TimelineComponent implements OnInit {
       next: (response: any) => {
         this.publications.update(current =>
           current.map(p => p._id === id
-            ? { ...p, likes: response.hasLike
+            ? {
+              ...p, likes: response.hasLike
                 ? [...(p.likes || []), this.identity._id]
                 : (p.likes || []).filter((l: string) => l !== this.identity._id)
-              }
+            }
             : p
           )
         );
       },
-      error: () => {}
+      error: () => {
+      }
     });
   }
 
@@ -149,7 +155,8 @@ export class TimelineComponent implements OnInit {
           );
         }
       },
-      error: () => {}
+      error: () => {
+      }
     });
   }
 }

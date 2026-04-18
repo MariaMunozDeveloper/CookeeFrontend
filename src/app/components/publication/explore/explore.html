@@ -19,7 +19,7 @@
       </label>
       <button class="btn btn-primary" (click)="buscarHashtag()">Buscar</button>
       @if (searchHashtag) {
-      <button class="btn btn-ghost" (click)="clearHashtag()">✕ {{ searchHashtag }}</button>
+        <button class="btn btn-ghost" (click)="clearHashtag()">✕ {{ searchHashtag }}</button>
       }
     </div>
 
@@ -43,78 +43,86 @@
   </div>
 
   @if (!loading() && publications().length === 0) {
-  <div class="explore-empty">
-    <p>No hay recetas que coincidan con tu búsqueda.</p>
-  </div>
+    <div class="explore-empty">
+      <p>No hay recetas que coincidan con tu búsqueda.</p>
+    </div>
   }
 
   <div class="explore-grid">
     @for (pub of publications(); track pub._id) {
-    <article class="explore-card" [routerLink]="['/publication', pub._id]">
+      <article class="explore-card" [routerLink]="['/publication', pub._id]">
 
-      <div class="explore-card-cover">
-        @if (getCover(pub)) {
-        <img
-          [src]="getCover(pub)"
-          [alt]="pub.title"
-          class="explore-card-img"/>
-        } @else {
-        <div class="explore-card-placeholder">🍳</div>
-        }
-
-        @if (pub.hashtags && pub.hashtags.length > 0) {
-        @if (searchHashtag) {
-        <span class="explore-card-tag">{{ searchHashtag | uppercase }}</span>
-        } @else if (pub.hashtags && pub.hashtags.length > 0) {
-        <span class="explore-card-tag">{{ pub.hashtags[0] | uppercase }}</span>
-        }
-        }
-      </div>
-
-      <div class="explore-card-body">
-        <h3 class="explore-card-title">{{ pub.title }}</h3>
-
-        <div class="explore-card-author">
-          @if (getAuthor(pub)?.image) {
-          <img
-            [src]="getAuthor(pub).image"
-            class="explore-card-avatar"
-            alt="avatar"/>
+        <div class="explore-card-cover">
+          @if (getCover(pub)) {
+            <img
+              [src]="getCover(pub)"
+              [alt]="pub.title"
+              class="explore-card-img"/>
           } @else {
-          <div class="explore-card-avatar explore-card-avatar-placeholder"></div>
+            <div class="explore-card-placeholder">🍳</div>
           }
-          <span>@{{ getAuthor(pub)?.nick }}</span>
+
+          @if (pub.hashtags && pub.hashtags.length > 0) {
+            @if (searchHashtag) {
+              <span class="explore-card-tag">{{ searchHashtag | uppercase }}</span>
+            } @else if (pub.hashtags && pub.hashtags.length > 0) {
+              <span class="explore-card-tag">{{ pub.hashtags[0] | uppercase }}</span>
+            }
+          }
+          @if (isLoggedIn) {
+            <button class="favorite-btn" (click)="favoriteService.toggleFavorite(pub._id); $event.stopPropagation()">
+              <img
+                [src]="favoriteService.isFavorite(pub._id) ? 'icons/favorito (1).svg' : 'icons/favorito.svg'"
+                class="favorite-btn-icon"
+                alt="favorito"/>
+            </button>
+          }
         </div>
 
-        <div class="explore-card-stats">
+        <div class="explore-card-body">
+          <h3 class="explore-card-title">{{ pub.title }}</h3>
+
+          <div class="explore-card-author">
+            @if (getAuthor(pub)?.image) {
+              <img
+                [src]="getAuthor(pub).image"
+                class="explore-card-avatar"
+                alt="avatar"/>
+            } @else {
+              <div class="explore-card-avatar explore-card-avatar-placeholder"></div>
+            }
+            <span>@{{ getAuthor(pub)?.nick }}</span>
+          </div>
+
+          <div class="explore-card-stats">
         <span class="recipe-stat">
           <img src="icons/corazon.svg" class="recipe-stat-icon" alt="likes"/>
           {{ pub.likes.length }}
         </span>
-          @if (pub.raciones) {
-          <span class="recipe-stat">
+            @if (pub.raciones) {
+              <span class="recipe-stat">
             <img src="icons/usuarios.svg" class="recipe-stat-icon" alt="raciones"/>
-            {{ pub.raciones }}
+                {{ pub.raciones }}
           </span>
-          }
-          @if (pub.tiempoHorno) {
-          <span class="recipe-stat">
+            }
+            @if (pub.tiempoHorno) {
+              <span class="recipe-stat">
             <img src="icons/reloj.svg" class="recipe-stat-icon" alt="tiempo"/>
-            {{ pub.tiempoHorno }} min
+                {{ pub.tiempoHorno }} min
           </span>
-          }
+            }
+          </div>
         </div>
-      </div>
-    </article>
+      </article>
     }
   </div>
 
   @if (loading()) {
-  <app-loading-spinner/>
+    <app-loading-spinner/>
   }
 
   @if (!hasMore && publications().length > 0 && !loading()) {
-  <p class="feed-end">Ya has visto todo por hoy </p>
+    <p class="feed-end">Ya has visto todo por hoy </p>
   }
 
 </div>

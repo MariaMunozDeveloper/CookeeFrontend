@@ -60,9 +60,17 @@
   gap: var(--space-sm);
 }
 
-.ingredient-name { flex: 2; }
-.ingredient-qty { flex: 1; }
-.ingredient-unit { flex: 1; }
+.ingredient-name {
+  flex: 2;
+}
+
+.ingredient-qty {
+  flex: 1;
+}
+
+.ingredient-unit {
+  flex: 1;
+}
 
 .ingredient-remove {
   background: none;
@@ -135,7 +143,7 @@
   position: absolute;
   top: 6px;
   right: 6px;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   color: white;
   border: none;
   border-radius: 50%;
@@ -185,6 +193,13 @@
   cursor: pointer;
   font-size: 18px;
   transition: background-color 0.2s;
+}
+
+.step-img-upload-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  opacity: 0.6;
 }
 
 .step-img-upload-btn:hover {

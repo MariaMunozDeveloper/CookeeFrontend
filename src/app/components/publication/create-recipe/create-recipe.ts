@@ -50,7 +50,7 @@ export class CreateRecipeComponent {
   }
 
   get unidades(): string[] {
-    return ['gr', 'kg', 'ml', 'l', 'cucharadita', 'cucharada', 'taza', 'unidad', 'pizca', 'tbsp', 'cup', 'tsp', 'oz'];
+    return ['g', 'kg', 'ml', 'l', 'cucharadita', 'cucharada', 'taza', 'unidad', 'pizca', 'tbsp', 'cup', 'tsp', 'oz'];
   }
 
   newIngredient(): FormGroup {

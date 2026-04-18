@@ -6,6 +6,8 @@ import { Publication } from '../../../common/interfaces/publication';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 import { UpperCasePipe } from '@angular/common';
 import { HostListener } from '@angular/core';
+import { FavoriteService } from '../../../services/favoriteService';
+import { AuthService } from '../../../services/authService';
 
 @Component({
   selector: 'app-explore',
@@ -18,6 +20,8 @@ export class ExploreComponent implements OnInit {
   private readonly publicationService: PublicationService = inject(PublicationService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly router: Router = inject(Router);
+  private readonly authService: AuthService = inject(AuthService);
+  readonly favoriteService: FavoriteService = inject(FavoriteService);
 
   publications: WritableSignal<Publication[]> = signal<Publication[]>([]);
   loading: WritableSignal<boolean> = signal<boolean>(false);
@@ -25,6 +29,7 @@ export class ExploreComponent implements OnInit {
   page: number = 1;
   totalPages: number = 1;
   hasMore: boolean = true;
+  isLoggedIn: boolean = !!this.authService.getToken();
 
   sortBy: string = 'recent';
   searchHashtag: string = '';
@@ -59,7 +64,9 @@ export class ExploreComponent implements OnInit {
         this.page++;
         this.loading.set(false);
       },
-      error: () => { this.loading.set(false); }
+      error: () => {
+        this.loading.set(false);
+      }
     });
   }
 

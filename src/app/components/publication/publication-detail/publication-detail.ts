@@ -1,4 +1,4 @@
-import { inject, Component, signal, WritableSignal } from '@angular/core';
+import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink, Router } from '@angular/router';
 import { PublicationService } from '../../../services/publicationService';
 import { AuthService } from '../../../services/authService';
@@ -8,6 +8,7 @@ import { AsAnyPipe } from '../../../pipes/as-any.pipe';
 import { CommentService } from '../../../services/commentService';
 import { FormsModule } from '@angular/forms';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
+import { FavoriteService } from '../../../services/favoriteService';
 
 @Component({
   selector: 'app-publication-detail',
@@ -16,12 +17,13 @@ import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal'
   templateUrl: './publication-detail.html',
   styleUrl: './publication-detail.css'
 })
-export class PublicationDetailComponent {
+export class PublicationDetailComponent implements OnInit {
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly publicationService: PublicationService = inject(PublicationService);
   private readonly authService: AuthService = inject(AuthService);
   private readonly commentService: CommentService = inject(CommentService);
   private readonly router: Router = inject(Router);
+  readonly favoriteService: FavoriteService = inject(FavoriteService);
 
   identity: any = this.authService.getIdentity();
   isLoggedIn: boolean = !!this.authService.getToken();
@@ -38,6 +40,12 @@ export class PublicationDetailComponent {
 
   showDeleteModal: WritableSignal<boolean> = signal<boolean>(false);
 
+  // recomendaciones
+  recommendations: WritableSignal<string[]> = signal<string[]>([]);
+  editingRecommendations: WritableSignal<boolean> = signal<boolean>(false);
+  savingRecommendations: boolean = false;
+  dragIndex: number | null = null;
+
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.loadPublication(params['id']);
@@ -45,7 +53,7 @@ export class PublicationDetailComponent {
   }
 
   private loadPublication(id: string): void {
-  this.loading.set(true);
+    this.loading.set(true);
 
     this.publicationService.getPublicationById(id).subscribe({
       next: (publication: Publication) => {
@@ -54,6 +62,11 @@ export class PublicationDetailComponent {
 
         const likes = (publication as any).likes || [];
         this.hasLike.set(likes.some((l: any) => l.toString() === this.identity?._id));
+
+        const raw = (publication as any).recommendations || '';
+        this.recommendations.set(
+          raw ? raw.split('\n').filter((r: string) => r.trim()) : []
+        );
 
         this.loading.set(false);
         if (this.isLoggedIn) {
@@ -75,7 +88,8 @@ export class PublicationDetailComponent {
         this.likesCount.set(response.likes);
         this.hasLike.set(response.hasLike);
       },
-      error: () => {}
+      error: () => {
+      }
     });
   }
 
@@ -102,7 +116,8 @@ export class PublicationDetailComponent {
   private loadComments(publicationId: string): void {
     this.commentService.getByPublication(publicationId).subscribe({
       next: (comments: any[]) => this.comments.set(comments),
-      error: () => {}
+      error: () => {
+      }
     });
   }
 
@@ -116,7 +131,9 @@ export class PublicationDetailComponent {
         this.commentText = '';
         this.sendingComment = false;
       },
-      error: () => { this.sendingComment = false; }
+      error: () => {
+        this.sendingComment = false;
+      }
     });
   }
 
@@ -125,7 +142,8 @@ export class PublicationDetailComponent {
       next: () => {
         this.comments.update(current => current.filter(c => c._id !== commentId));
       },
-      error: () => {}
+      error: () => {
+      }
     });
   }
 
@@ -143,7 +161,85 @@ export class PublicationDetailComponent {
       next: () => {
         this.router.navigate(['/feed']);
       },
-      error: () => {}
+      error: () => {
+      }
     });
+  }
+
+  // ---- recomendaciones inline edit ----
+
+  startEditingRecommendations(): void {
+    this.editingRecommendations.set(true);
+  }
+
+  cancelEditingRecommendations(): void {
+    const raw = (this.publication() as any)?.recommendations || '';
+    this.recommendations.set(
+      raw ? raw.split('\n').filter((r: string) => r.trim()) : []
+    );
+    this.editingRecommendations.set(false);
+  }
+
+  addRecommendation(): void {
+    this.recommendations.update(current => [...current, '']);
+  }
+
+  updateRecommendation(index: number, value: string): void {
+    this.recommendations.update(current => {
+      const updated = [...current];
+      updated[index] = value;
+      return updated;
+    });
+  }
+
+  removeRecommendation(index: number): void {
+    this.recommendations.update(current => current.filter((_, i) => i !== index));
+  }
+
+  saveRecommendations(): void {
+    const clean = this.recommendations().filter(r => r.trim());
+    if (clean.length === 0 && this.recommendations().length > 0) return;
+
+    this.savingRecommendations = true;
+
+    const data = { recommendations: clean.join('\n') };
+
+    this.publicationService.updatePublication(this.publication()!._id, data).subscribe({
+      next: () => {
+        this.recommendations.set(clean);
+        this.publication.update(pub => {
+          if (!pub) return pub;
+          return { ...pub, recommendations: clean.join('\n') };
+        });
+        this.editingRecommendations.set(false);
+        this.savingRecommendations = false;
+      },
+      error: () => {
+        this.savingRecommendations = false;
+      }
+    });
+  }
+
+  // ---- drag & drop ----
+
+  onDragStart(index: number): void {
+    this.dragIndex = index;
+  }
+
+  onDragOver(event: DragEvent, index: number): void {
+    event.preventDefault();
+    if (this.dragIndex === null || this.dragIndex === index) return;
+
+    this.recommendations.update(current => {
+      const updated = [...current];
+      const dragged = updated.splice(this.dragIndex!, 1)[0];
+      updated.splice(index, 0, dragged);
+      this.dragIndex = index;
+      return updated;
+    });
+  }
+
+  onDragEnd(): void {
+    this.dragIndex = null;
   }
 }

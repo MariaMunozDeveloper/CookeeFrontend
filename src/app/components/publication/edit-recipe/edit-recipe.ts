@@ -57,7 +57,7 @@ export class EditRecipeComponent implements OnInit {
   }
 
   get unidades(): string[] {
-    return ['gr', 'kg', 'ml', 'l', 'cucharadita', 'cucharada', 'taza', 'unidad', 'pizca', 'tbsp', 'cup', 'tsp', 'oz'];
+    return ['g', 'kg', 'ml', 'l', 'cucharadita', 'cucharada', 'taza', 'unidad', 'pizca', 'tbsp', 'cup', 'tsp', 'oz'];
   }
 
   ngOnInit(): void {
@@ -228,12 +228,14 @@ export class EditRecipeComponent implements OnInit {
   nextStep(): void {
     if (this.currentStep() < this.totalSteps) {
       this.currentStep.update(s => s + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
   prevStep(): void {
     if (this.currentStep() > 1) {
       this.currentStep.update(s => s - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 

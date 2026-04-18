@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../services/authService';
 import { MessageService } from '../../../services/messageService';
 import { Subscription } from 'rxjs';
+import { FavoriteService } from '../../../services/favoriteService';
 
 @Component({
   selector: 'app-navbar',
@@ -15,6 +16,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private readonly authService: AuthService = inject(AuthService);
   private readonly router: Router = inject(Router);
   private readonly messageService: MessageService = inject(MessageService);
+  private readonly favoriteService: FavoriteService = inject(FavoriteService);
 
   identity: any = null;
   showUserMenu = false;
@@ -27,6 +29,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.identitySub = this.authService.identity$.subscribe(user => {
       this.identity = user;
       if (user) {
+        this.favoriteService.loadMyFavorites();
         this.loadUnreadCount();
         this.unreadInterval = setInterval(() => this.loadUnreadCount(), 30000);
       } else {
@@ -46,7 +49,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
       next: (count: number) => {
         this.unreadMessages = count;
       },
-      error: () => {}
+      error: () => {
+      }
     });
   }
 
