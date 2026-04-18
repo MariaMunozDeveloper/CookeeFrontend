@@ -87,7 +87,7 @@
 }
 
 .mydata-avatar-placeholder {
-  background-color: var(--color-accent);
+  background-color: var(--color-primary-light);
 }
 
 .mydata-avatar-edit-btn {
@@ -108,7 +108,7 @@
 }
 
 .mydata-avatar-edit-btn:hover {
-  background-color: var(--color-accent);
+  background-color: var(--color-primary-light);
 }
 
 .mydata-name {

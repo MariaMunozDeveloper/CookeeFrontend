@@ -44,7 +44,7 @@
 }
 
 .follows-avatar-placeholder {
-  background-color: var(--color-accent);
+  background-color: var(--color-primary-light);
   border: 1px solid var(--color-border);
 }
 

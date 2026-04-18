@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Message } from '../common/interfaces/message';
@@ -11,6 +11,7 @@ import { Message } from '../common/interfaces/message';
 export class MessageService {
   private readonly http: HttpClient = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/message`;
+  readonly unreadReset$ = new Subject<void>();
 
   sendMessage(receiverId: string, text: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/send`, { receiver: receiverId, text });
@@ -24,7 +25,10 @@ export class MessageService {
 
   getReceived(page: number = 1): Observable<Message[]> {
     return this.http.get<any>(`${this.apiUrl}/received/${page}`).pipe(
-      map(data => data.messages)
+      map(data => {
+        this.unreadReset$.next(); // avisa al navbar
+        return data.messages;
+      })
     );
   }
 
@@ -33,4 +37,9 @@ export class MessageService {
       map(data => data.count)
     );
   }
+
+  removeMessage(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
 }

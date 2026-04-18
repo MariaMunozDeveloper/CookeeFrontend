@@ -86,7 +86,7 @@
 
 .ingredient-remove:hover {
   color: #e74c3c;
-  background-color: var(--color-accent);
+  background-color: var(--color-primary-light);
 }
 
 /* pasos */
@@ -203,7 +203,7 @@
 }
 
 .step-img-upload-btn:hover {
-  background-color: var(--color-accent);
+  background-color: var(--color-primary-light);
 }
 
 .step-img-preview-wrap {

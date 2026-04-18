@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
 import { FavoriteService } from '../../../services/favoriteService';
 
+
 @Component({
   selector: 'app-publication-detail',
   standalone: true,
@@ -40,15 +41,28 @@ export class PublicationDetailComponent implements OnInit {
 
   showDeleteModal: WritableSignal<boolean> = signal<boolean>(false);
 
-  // recomendaciones
   recommendations: WritableSignal<string[]> = signal<string[]>([]);
   editingRecommendations: WritableSignal<boolean> = signal<boolean>(false);
   savingRecommendations: boolean = false;
   dragIndex: number | null = null;
 
+  introText: WritableSignal<string> = signal<string>('');
+  editingIntro: WritableSignal<boolean> = signal<boolean>(false);
+  savingIntro: boolean = false;
+  introInput: string = '';
+
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.loadPublication(params['id']);
+    });
+
+    this.route.fragment.subscribe(fragment => {
+      if (fragment === 'comentarios') {
+        setTimeout(() => {
+          const el = document.getElementById('comentarios');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 800);
+      }
     });
   }
 
@@ -64,6 +78,7 @@ export class PublicationDetailComponent implements OnInit {
         this.hasLike.set(likes.some((l: any) => l.toString() === this.identity?._id));
 
         const raw = (publication as any).recommendations || '';
+        this.introText.set((publication as any).text || '');
         this.recommendations.set(
           raw ? raw.split('\n').filter((r: string) => r.trim()) : []
         );
@@ -166,8 +181,6 @@ export class PublicationDetailComponent implements OnInit {
     });
   }
 
-  // ---- recomendaciones inline edit ----
-
   startEditingRecommendations(): void {
     this.editingRecommendations.set(true);
   }
@@ -216,6 +229,30 @@ export class PublicationDetailComponent implements OnInit {
       },
       error: () => {
         this.savingRecommendations = false;
+      }
+    });
+  }
+
+  startEditingIntro(): void {
+    this.introInput = this.introText();
+    this.editingIntro.set(true);
+  }
+
+  cancelEditingIntro(): void {
+    this.editingIntro.set(false);
+  }
+
+  saveIntro(): void {
+    this.savingIntro = true;
+    this.publicationService.updatePublication(this.publication()!._id, { text: this.introInput }).subscribe({
+      next: () => {
+        this.introText.set(this.introInput);
+        this.publication.update(pub => pub ? { ...pub, text: this.introInput } : pub);
+        this.editingIntro.set(false);
+        this.savingIntro = false;
+      },
+      error: () => {
+        this.savingIntro = false;
       }
     });
   }

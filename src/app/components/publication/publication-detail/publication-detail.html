@@ -121,9 +121,40 @@
         </div>
       </header>
 
-      @if (publication()!.text) {
-        <section class="detail-section">
-          <p class="detail-intro">{{ publication()!.text }}</p>
+      @if (introText() || isMyPublication()) {
+        <section class="detail-section detail-intro-section">
+          @if (!editingIntro()) {
+            <div class="detail-intro-view">
+              @if (introText()) {
+                <p class="detail-intro">{{ introText() }}</p>
+              } @else {
+                <p class="detail-intro-empty">Cuenta qué te llevó a crear esta receta...</p>
+              }
+              @if (isMyPublication()) {
+                <button class="detail-rec-edit-trigger" (click)="startEditingIntro()">
+                  <img src="icons/restaurante_x.svg" class="detail-owner-icon" alt="editar"/>
+                  Editar introducción
+                </button>
+              }
+            </div>
+          } @else {
+            <div class="detail-intro-editor">
+              <label>
+      <textarea
+        class="input-base detail-intro-textarea"
+        [(ngModel)]="introInput"
+        placeholder="Cuenta qué te llevó a crear esta receta..."
+        rows="3">
+      </textarea>
+              </label>
+              <div class="detail-rec-actions">
+                <button class="btn btn-outline btn-sm" (click)="cancelEditingIntro()">Cancelar</button>
+                <button class="btn btn-primary btn-sm" (click)="saveIntro()" [disabled]="savingIntro">
+                  {{ savingIntro ? 'Guardando...' : 'Guardar' }}
+                </button>
+              </div>
+            </div>
+          }
         </section>
       }
 
@@ -302,7 +333,7 @@
       <hr class="divider"/>
 
       @if (isLoggedIn) {
-        <section class="detail-section">
+        <section class="detail-section" id="comentarios">
           <div class="detail-section-box">
             <div class="detail-section-header">
               <img src="icons/chat-de-burbujas.svg" class="detail-section-icon" alt="comentarios"/>

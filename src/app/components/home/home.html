@@ -76,7 +76,7 @@
             } @else {
               <div class="home-trending-avatar home-trending-avatar--placeholder"></div>
             }
-                <span>@{{ (trendingRecipes()[0].user | asAny)?.nick }}</span>
+                <span>&#64;{{ (trendingRecipes()[0].user | asAny)?.nick }}</span>
           </span>
             }
 
@@ -90,10 +90,13 @@
                   class="home-trending-stat-icon" alt="likes"/>
                 <span>{{ trendingRecipes()[0].likes.length }}</span>
               </button>
-              <span class="home-trending-stat">
-              <img src="icons/chat-de-burbujas.svg" class="home-trending-stat-icon" alt="comentarios"/>
-              <span>{{ getCommentsCount(trendingRecipes()[0]) }}</span>
-            </span>
+              <a class="home-trending-stat"
+                 [routerLink]="['/publication', trendingRecipes()[0]._id]"
+                 fragment="comentarios"
+                 (click)="$event.stopPropagation()">
+                <img src="icons/chat-de-burbujas.svg" class="home-trending-stat-icon" alt="comentarios"/>
+                <span>{{ getCommentsCount(trendingRecipes()[0]) }}</span>
+              </a>
               @if (trendingRecipes()[0].raciones) {
                 <span class="home-trending-stat">
               <img src="icons/usuarios.svg" class="home-trending-stat-icon" alt="raciones"/>
@@ -126,10 +129,13 @@
                       class="home-trending-stat-icon" alt="likes"/>
                     <span>{{ recipe.likes.length }}</span>
                   </button>
-                  <span class="home-trending-stat">
-                <img src="icons/chat-de-burbujas.svg" class="home-trending-stat-icon" alt="comentarios"/>
-                <span>{{ getCommentsCount(recipe) }}</span>
-              </span>
+                  <a class="home-trending-stat"
+                     [routerLink]="['/publication', recipe._id]"
+                     fragment="comentarios"
+                     (click)="$event.stopPropagation()">
+                    <img src="icons/chat-de-burbujas.svg" class="home-trending-stat-icon" alt="comentarios"/>
+                    <span>{{ getCommentsCount(recipe) }}</span>
+                  </a>
                 </div>
               </div>
             </div>
@@ -187,7 +193,7 @@
                     } @else {
                       <div class="home-hashtag-recipe-avatar home-hashtag-recipe-avatar--placeholder"></div>
                     }
-                    <span class="home-hashtag-recipe-nick">@{{ (recipe.user | asAny)?.nick }}</span>
+                    <span class="home-hashtag-recipe-nick">&#64;{{ (recipe.user | asAny)?.nick }}</span>
                   </div>
                   <div class="home-hashtag-recipe-stats">
                     <button

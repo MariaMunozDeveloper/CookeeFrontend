@@ -20,21 +20,25 @@
 
       <div class="profile-info">
         <h1 class="profile-name">{{ profileUser.name }} {{ profileUser.surname }}</h1>
-        <p class="profile-nick">@{{ profileUser.nick }}</p>
+        <p class="profile-nick">&#64;{{ profileUser.nick }}</p>
 
         @if (counters) {
           <div class="profile-counters">
             <div class="counter-item" [routerLink]="['/follows/following', profileUser._id]" style="cursor:pointer">
-              <strong>{{ counters.following ?? 0 }}</strong>
+              <strong>{{ formatNumber(counters.following ?? 0) }}</strong>
               <span>Siguiendo</span>
             </div>
             <div class="counter-item" [routerLink]="['/follows/followers', profileUser._id]" style="cursor:pointer">
-              <strong>{{ counters.followed ?? 0 }}</strong>
+              <strong>{{ formatNumber(counters.followed ?? 0) }}</strong>
               <span>Seguidores</span>
             </div>
             <div class="counter-item">
               <strong>{{ publicationsCount }}</strong>
               <span>Recetas</span>
+            </div>
+            <div class="counter-item">
+              <strong>{{ formatNumber(counters.totalLikes ?? 0) }}</strong>
+              <span>Likes</span>
             </div>
           </div>
         }

@@ -32,6 +32,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.favoriteService.loadMyFavorites();
         this.loadUnreadCount();
         this.unreadInterval = setInterval(() => this.loadUnreadCount(), 30000);
+        this.messageService.unreadReset$.subscribe(() => {
+          this.unreadMessages = 0;
+        });
       } else {
         clearInterval(this.unreadInterval);
         this.unreadMessages = 0;

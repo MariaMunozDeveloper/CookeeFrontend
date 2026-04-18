@@ -12,7 +12,7 @@ import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
   templateUrl: './messages.html',
   styleUrl: './messages.css'
 })
-export class MessagesComponent implements OnInit  {
+export class MessagesComponent implements OnInit {
   private readonly messageService: MessageService = inject(MessageService);
   private readonly authService: AuthService = inject(AuthService);
 
@@ -80,5 +80,15 @@ export class MessagesComponent implements OnInit  {
     if (diff < 3600) return `hace ${Math.floor(diff / 60)} min`;
     if (diff < 86400) return `hace ${Math.floor(diff / 3600)} h`;
     return created.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+  }
+
+  deleteMessage(id: string): void {
+    this.messageService.removeMessage(id).subscribe({
+      next: () => {
+        this.messages.update(current => current.filter(m => m._id !== id));
+      },
+      error: () => {
+      }
+    });
   }
 }

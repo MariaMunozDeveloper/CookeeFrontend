@@ -5,6 +5,8 @@ import { PublicationService } from '../../../services/publicationService';
 import { FormValidators } from '../../../validators/formValidators';
 import { Observable } from 'rxjs';
 
+type EditTab = 'info' | 'ingredients' | 'steps' | 'photos';
+
 @Component({
   selector: 'app-edit-recipe',
   standalone: true,
@@ -19,11 +21,11 @@ export class EditRecipeComponent implements OnInit {
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
   publicationId: string = '';
-  currentStep: WritableSignal<number> = signal<number>(1);
-  totalSteps = 4;
+  activeTab: WritableSignal<EditTab> = signal<EditTab>('info');
   sending: boolean = false;
   loading: WritableSignal<boolean> = signal<boolean>(true);
   errorMessage: string = '';
+  successMessage: string = '';
 
   stepImages: (File | null)[] = [];
   stepImagePreviews: (string | null)[] = [];
@@ -60,11 +62,25 @@ export class EditRecipeComponent implements OnInit {
     return ['g', 'kg', 'ml', 'l', 'cucharadita', 'cucharada', 'taza', 'unidad', 'pizca', 'tbsp', 'cup', 'tsp', 'oz'];
   }
 
+  readonly tabs: { id: EditTab; label: string }[] = [
+    { id: 'info', label: 'Información' },
+    { id: 'ingredients', label: 'Ingredientes' },
+    { id: 'steps', label: 'Pasos' },
+    { id: 'photos', label: 'Fotos' }
+  ];
+
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.publicationId = params['id'];
       this.loadPublication();
     });
+  }
+
+  setTab(tab: EditTab): void {
+    this.activeTab.set(tab);
+    this.errorMessage = '';
+    this.successMessage = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   private loadPublication(): void {
@@ -225,36 +241,36 @@ export class EditRecipeComponent implements OnInit {
     this.hashtags = this.hashtags.filter(h => h !== tag);
   }
 
-  nextStep(): void {
-    if (this.currentStep() < this.totalSteps) {
-      this.currentStep.update(s => s + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }
-
-  prevStep(): void {
-    if (this.currentStep() > 1) {
-      this.currentStep.update(s => s - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }
-
-  canGoNext(): boolean {
-    if (this.currentStep() === 1) return this.recipeForm.get('title')!.valid;
-    if (this.currentStep() === 2) return this.ingredients.length > 0 && this.ingredients.valid;
-    if (this.currentStep() === 3) return this.steps.length > 0 && this.steps.valid;
-    if (this.currentStep() === 4) return true;
+  isTabValid(tab: EditTab): boolean {
+    if (tab === 'info') return this.recipeForm.get('title')!.valid;
+    if (tab === 'ingredients') return this.ingredients.length > 0 && this.ingredients.valid;
+    if (tab === 'steps') return this.steps.length > 0 && this.steps.valid;
     return true;
   }
 
   onSubmit(): void {
-    if (this.recipeForm.invalid) {
-      this.recipeForm.markAllAsTouched();
+    if (this.recipeForm.get('title')!.invalid) {
+      this.recipeForm.get('title')!.markAsTouched();
+      this.errorMessage = 'El título es obligatorio.';
+      this.activeTab.set('info');
+      return;
+    }
+
+    if (this.ingredients.invalid) {
+      this.errorMessage = 'Revisa los ingredientes.';
+      this.activeTab.set('ingredients');
+      return;
+    }
+
+    if (this.steps.invalid) {
+      this.errorMessage = 'Revisa los pasos.';
+      this.activeTab.set('steps');
       return;
     }
 
     this.sending = true;
     this.errorMessage = '';
+    this.successMessage = '';
 
     const data = {
       title: this.recipeForm.value.title,
@@ -274,7 +290,6 @@ export class EditRecipeComponent implements OnInit {
 
     this.publicationService.updatePublication(this.publicationId, data).subscribe({
       next: (response: any) => {
-        console.log('response:', response);
         if (response.status) {
           this.uploadNewImages(this.publicationId);
         }
@@ -328,5 +343,4 @@ export class EditRecipeComponent implements OnInit {
       error: () => this.uploadNext(publicationId, uploads, index + 1)
     });
   }
-
 }

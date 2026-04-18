@@ -333,6 +333,12 @@
   opacity: 0.6;
 }
 
+.user-card-profile-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
 @media (max-width: 900px) {
   .feed-page {
     grid-template-columns: 1fr;

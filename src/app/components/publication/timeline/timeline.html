@@ -5,7 +5,8 @@
       [stats]="stats"
       [showStats]="true"
       [buttonText]="'Mis datos'"
-      [buttonLink]="'/my-data'">
+      [buttonLink]="'/my-data'"
+      [profileId]="identity._id">
     </app-user-card>
 
     <div class="card-base feed-create-card">
@@ -60,7 +61,7 @@
                 } @else {
                   <div class="feed-author-avatar feed-author-avatar-placeholder"></div>
                 }
-                <span class="feed-author-nick">@{{ getAuthor(publication)?.nick }}</span>
+                <span class="feed-author-nick">&#64;{{ getAuthor(publication)?.nick }}</span>
               </a>
               <span class="feed-recipe-date">{{ getTimeAgo(publication.createdAt) }}</span>
             </div>

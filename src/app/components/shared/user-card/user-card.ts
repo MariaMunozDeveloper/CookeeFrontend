@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-card',
@@ -9,6 +11,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './user-card.css'
 })
 export class UserCardComponent {
+  private readonly router: Router = inject(Router);
 
   @Input() user: any;
   @Input() stats: any;
@@ -18,5 +21,13 @@ export class UserCardComponent {
 
   @Input() buttonText: string = '';
   @Input() buttonLink: string = '';
+
+  @Input() profileId: string = '';
+
+  onProfileClick(): void {
+    if (this.profileId) {
+      this.router.navigate(['/profile', this.profileId]);
+    }
+  }
 
 }

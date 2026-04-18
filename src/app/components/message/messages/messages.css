@@ -72,7 +72,7 @@
 }
 
 .message-avatar-placeholder {
-  background-color: var(--color-accent);
+  background-color: var(--color-primary-light);
   border: 1px solid var(--color-border);
 }
 
@@ -113,7 +113,7 @@
   font-size: 11px;
   font-weight: 600;
   color: var(--color-primary);
-  background-color: var(--color-accent);
+  background-color: var(--color-primary-light);
   padding: 2px 8px;
   border-radius: var(--radius-pill);
 }
@@ -141,4 +141,34 @@
   min-height: 30px;
   padding: 0 12px;
   margin-left: auto;
+}
+
+.message-delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--color-muted);
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s;
+  margin-left: auto;
+}
+
+.message-delete-btn:hover {
+  color: #c0392b;
+}
+
+.message-user-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+  transition: opacity 0.2s;
+}
+
+.message-user-link:hover {
+  opacity: 0.8;
 }
