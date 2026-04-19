@@ -85,7 +85,9 @@
           <span class="admin-user-name">
             {{ user.name }} {{ user.surname }}
             @if (user.role === 'ROLE_VERIFIED' || user.role === 'ROLE_ADMIN') {
-              <img src="icons/verificar.svg" class="admin-verified-icon" alt="verificado"/>
+              <span class="verified-wrap">
+                <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+              </span>
             }
             @if (user.role === 'ROLE_ADMIN') {
               <span class="admin-role-badge admin-role-badge--admin">Admin</span>
@@ -141,7 +143,9 @@
               <h2 class="admin-panel-name">
                 {{ selectedUser?.name }} {{ selectedUser?.surname }}
                 @if (selectedUser?.role === 'ROLE_VERIFIED' || selectedUser?.role === 'ROLE_ADMIN') {
-                  <img src="icons/verificar.svg" class="admin-verified-icon" alt="verificado"/>
+                  <span class="verified-wrap">
+                    <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                  </span>
                 }
               </h2>
               <p class="admin-panel-nick">&#64;{{ selectedUser?.nick }}</p>

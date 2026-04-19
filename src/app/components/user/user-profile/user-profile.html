@@ -23,7 +23,9 @@
         <div class="people-nick-wrap">
           <p class="profile-nick">&#64;{{ profileUser.nick }}</p>
           @if (profileUser.role === 'ROLE_VERIFIED' || profileUser.role === 'ROLE_ADMIN') {
-            <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+            <span class="verified-wrap">
+              <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+            </span>
           }
         </div>
 
@@ -56,9 +58,7 @@
           } @else {
             <button class="btn btn-primary" (click)="follow()">Seguir</button>
           }
-          <button class="btn btn-outline" [routerLink]="['/messages/send', profileUser._id]">
-            Mensaje
-          </button>
+          <button class="btn btn-outline" [routerLink]="['/messages/send', profileUser._id]">Mensaje</button>
         </div>
       }
 
@@ -119,12 +119,23 @@
               <div class="profile-recipe-body">
                 <h3 class="profile-recipe-title">{{ pub.title }}</h3>
                 <div class="profile-recipe-stats">
-                  <span>{{ pub.likes.length }}</span>
+                  <button class="profile-like-btn" (click)="toggleLike(pub._id, $event)">
+                    <img
+                      [src]="isLiked(pub) ? 'icons/corazon.svg' : 'icons/corazon_line.svg'"
+                      class="recipe-stat-icon" alt="like"/>
+                    {{ pub.likes.length }}
+                  </button>
                   @if (pub.raciones) {
-                    <span>{{ pub.raciones }} rac.</span>
+                    <span class="recipe-stat">
+              <img src="icons/usuarios.svg" class="recipe-stat-icon" alt="raciones"/>
+                      {{ pub.raciones }} rac.
+            </span>
                   }
                   @if (pub.tiempoHorno) {
-                    <span>{{ pub.tiempoHorno }} min</span>
+                    <span class="recipe-stat">
+              <img src="icons/reloj.svg" class="recipe-stat-icon" alt="tiempo"/>
+                      {{ pub.tiempoHorno }} min
+            </span>
                   }
                 </div>
 
@@ -170,7 +181,9 @@
                   @if (getCover(pub)) {
                     <img [src]="getCover(pub)" [alt]="pub.title" class="profile-recipe-img"/>
                   } @else {
-                    <div class="profile-recipe-placeholder">🍳</div>
+                    <div class="profile-recipe-placeholder">
+                      <img src="icons/cooking-time.svg" class="profile-placeholder-icon" alt="receta"/>
+                    </div>
                   }
                   @if (pub.hashtags && pub.hashtags.length > 0) {
                     <span class="profile-recipe-tag">{{ pub.hashtags[0] }}</span>
@@ -186,12 +199,23 @@
                 <div class="profile-recipe-body">
                   <h3 class="profile-recipe-title">{{ pub.title }}</h3>
                   <div class="profile-recipe-stats">
-                    <span>{{ pub.likes.length }}</span>
+                    <button class="profile-like-btn" (click)="toggleLike(pub._id, $event)">
+                      <img
+                        [src]="isLiked(pub) ? 'icons/corazon.svg' : 'icons/corazon_line.svg'"
+                        class="recipe-stat-icon" alt="like"/>
+                      {{ pub.likes.length }}
+                    </button>
                     @if ((pub | asAny).raciones) {
-                      <span>{{ (pub | asAny).raciones }} rac.</span>
+                      <span class="recipe-stat">
+              <img src="icons/usuarios.svg" class="recipe-stat-icon" alt="raciones"/>
+                        {{ (pub | asAny).raciones }} rac.
+            </span>
                     }
                     @if ((pub | asAny).tiempoHorno) {
-                      <span>{{ (pub | asAny).tiempoHorno }} min</span>
+                      <span class="recipe-stat">
+              <img src="icons/reloj.svg" class="recipe-stat-icon" alt="tiempo"/>
+                        {{ (pub | asAny).tiempoHorno }} min
+            </span>
                     }
                   </div>
                 </div>

@@ -64,7 +64,9 @@
                 <span class="feed-author-nick">&#64;{{ getAuthor(publication)?.nick }}</span>
                 <div class="people-nick-wrap">
                   @if (getAuthor(publication)?.role === 'ROLE_VERIFIED' || getAuthor(publication)?.role === 'ROLE_ADMIN') {
-                    <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                    <span class="verified-wrap">
+                      <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                    </span>
                   }
                 </div>
               </a>
@@ -92,7 +94,7 @@
               }
               @if (publication.temperaturaHorno) {
                 <span class="recipe-stat">
-              <img src="icons/termometro.svg" class="recipe-stat-icon" alt="temperatura"/>
+              <img src="icons/termometro_1.svg" class="recipe-stat-icon" alt="temperatura"/>
                   {{ publication.temperaturaHorno }}°C
             </span>
               }

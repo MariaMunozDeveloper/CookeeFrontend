@@ -165,4 +165,38 @@ export class UserProfileComponent implements OnInit {
     if (num >= 1000) return (num / 1000).toFixed(1).replace('.0', '') + 'k';
     return num.toString();
   }
+
+  toggleLike(id: string, event: Event): void {
+    event.stopPropagation();
+    this.publicationService.toggleLike(id).subscribe({
+      next: (response: any) => {
+        this.publications.update(current =>
+          current.map(p => p._id === id
+            ? {
+              ...p, likes: response.hasLike
+                ? [...(p.likes || []), this.identity._id]
+                : (p.likes || []).filter((l: any) => l !== this.identity._id)
+            }
+            : p
+          )
+        );
+        this.favorites.update(current =>
+          current.map(p => p._id === id
+            ? {
+              ...p, likes: response.hasLike
+                ? [...(p.likes || []), this.identity._id]
+                : (p.likes || []).filter((l: any) => l !== this.identity._id)
+            }
+            : p
+          )
+        );
+      },
+      error: () => {
+      }
+    });
+  }
+
+  isLiked(publication: Publication): boolean {
+    return (publication.likes || []).some((l: any) => l.toString() === this.identity?._id);
+  }
 }

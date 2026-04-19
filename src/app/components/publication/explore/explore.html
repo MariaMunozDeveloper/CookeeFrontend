@@ -94,7 +94,9 @@
             <div class="nick-wrap">
               <span>&#64;{{ getAuthor(pub)?.nick }}</span>
               @if (getAuthor(pub)?.role === 'ROLE_VERIFIED' || getAuthor(pub)?.role === 'ROLE_ADMIN') {
-                <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                <span class="verified-wrap">
+                    <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                </span>
               }
             </div>
           </div>

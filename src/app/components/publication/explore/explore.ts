@@ -1,11 +1,10 @@
-import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
+import { inject, Component, signal, WritableSignal, OnInit, HostListener } from '@angular/core';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PublicationService } from '../../../services/publicationService';
 import { Publication } from '../../../common/interfaces/publication';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 import { UpperCasePipe } from '@angular/common';
-import { HostListener } from '@angular/core';
 import { FavoriteService } from '../../../services/favoriteService';
 import { AuthService } from '../../../services/authService';
 

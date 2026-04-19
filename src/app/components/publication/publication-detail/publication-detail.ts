@@ -40,6 +40,8 @@ export class PublicationDetailComponent implements OnInit {
   commentText: string = '';
   sendingComment: boolean = false;
   commentError: string = '';
+  introError: string = '';
+  recommendationsError: string = '';
 
   showDeleteModal: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -225,6 +227,24 @@ export class PublicationDetailComponent implements OnInit {
 
   saveRecommendations(): void {
     const clean = this.recommendations().filter(r => r.trim());
+
+    const found = clean.find(rec => {
+      const lower = rec.toLowerCase();
+      return FORBIDDEN_WORDS.find(word =>
+        new RegExp(`\\b${word.toLowerCase()}\\b`, 'i').test(lower)
+      );
+    });
+
+    if (found) {
+      const word = FORBIDDEN_WORDS.find(w =>
+        new RegExp(`\\b${w.toLowerCase()}\\b`, 'i').test(found.toLowerCase())
+      );
+      this.recommendationsError = `La palabra "${word}" infringe las normas de la comunidad`;
+      return;
+    }
+
+    this.recommendationsError = '';
+
     if (clean.length === 0 && this.recommendations().length > 0) return;
 
     this.savingRecommendations = true;
@@ -257,6 +277,17 @@ export class PublicationDetailComponent implements OnInit {
   }
 
   saveIntro(): void {
+    const lowerText = this.introInput.toLowerCase();
+    const found = FORBIDDEN_WORDS.find(word =>
+      new RegExp(`\\b${word.toLowerCase()}\\b`, 'i').test(lowerText)
+    );
+
+    if (found) {
+      this.introError = `La palabra "${found}" infringe las normas de la comunidad`;
+      return;
+    }
+
+    this.introError = '';
     this.savingIntro = true;
     this.publicationService.updatePublication(this.publication()!._id, { text: this.introInput }).subscribe({
       next: () => {

@@ -16,6 +16,7 @@ import { MessagesComponent } from './components/message/messages/messages';
 import { SendMessageComponent } from './components/message/send-message/send-message';
 import { AdminComponent } from './components/admin/admin/admin';
 import { adminGuard } from './guards/admin-guard';
+import { NotFoundComponent } from './components/not-found/not-found';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -34,5 +35,5 @@ export const routes: Routes = [
   { path: 'people', component: PeopleComponent },
   { path: 'profile/:id', component: UserProfileComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [authGuard, adminGuard] },
-  { path: '**', redirectTo: '', pathMatch: 'full' }
+  { path: '**', component: NotFoundComponent }
 ];

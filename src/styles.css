@@ -393,3 +393,33 @@ textarea.input-base {
   align-items: center;
   gap: 4px;
 }
+
+.verified-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.verified-wrap::after {
+  content: 'Usuario verificado';
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  font-family: var(--font-body);
+  z-index: 10;
+}
+
+.verified-wrap:hover::after {
+  opacity: 1;
+}

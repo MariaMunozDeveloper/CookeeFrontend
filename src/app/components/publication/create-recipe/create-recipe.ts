@@ -5,14 +5,13 @@ import { PublicationService } from '../../../services/publicationService';
 import { FORBIDDEN_WORDS } from '../../../validators/forbidden-words';
 import { FormValidators } from '../../../validators/formValidators';
 import { Observable } from 'rxjs';
-import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 
 type CreateTab = 'info' | 'ingredients' | 'steps' | 'photos';
 
 @Component({
   selector: 'app-create-recipe',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, LoadingSpinner],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './create-recipe.html',
   styleUrl: './create-recipe.css'
 })

@@ -81,7 +81,9 @@
                 <div class="nick-wrap">
                   <span>&#64;{{ (trendingRecipes()[0].user | asAny)?.nick }}</span>
                   @if ((trendingRecipes()[0].user | asAny)?.role === 'ROLE_VERIFIED' || (trendingRecipes()[0].user | asAny)?.role === 'ROLE_ADMIN') {
-                    <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                    <span class="verified-wrap">
+                      <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                    </span>
                   }
                 </div>
               </span>
@@ -203,7 +205,9 @@
                     <div class="nick-wrap">
                       <span class="home-hashtag-recipe-nick">&#64;{{ (recipe.user | asAny)?.nick }}</span>
                       @if ((recipe.user | asAny)?.role === 'ROLE_VERIFIED' || (recipe.user | asAny)?.role === 'ROLE_ADMIN') {
-                        <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                        <span class="verified-wrap">
+                          <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                        </span>
                       }
                     </div>
                   </div>

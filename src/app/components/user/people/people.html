@@ -61,7 +61,9 @@
               <div class="people-nick-wrap">
                 <p class="people-nick">&#64;{{ user.nick }}</p>
                 @if (user.role === 'ROLE_VERIFIED' || user.role === 'ROLE_ADMIN') {
-                  <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                  <span class="verified-wrap">
+                    <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                  </span>
                 }
               </div>
             </div>

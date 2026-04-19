@@ -9,11 +9,7 @@
 
     <div class="detail-cover">
       @if (publication()!.images.length > 0) {
-        <img
-          [src]="publication()!.images[0]"
-          [alt]="publication()!.title"
-          class="detail-cover-img"
-        />
+        <img [src]="publication()!.images[0]" [alt]="publication()!.title" class="detail-cover-img"/>
       } @else {
         <div class="detail-cover-placeholder">🍳</div>
       }
@@ -25,20 +21,21 @@
         <div class="detail-author">
           <a [routerLink]="['/profile', (publication()!.user | asAny)?._id]" class="detail-author-link">
             @if ((publication()!.user | asAny)?.image) {
-              <img
-                [src]="(publication()!.user | asAny).image"
-                class="detail-author-avatar"
-                alt="avatar"/>
+              <img [src]="(publication()!.user | asAny).image" class="detail-author-avatar" alt="avatar"/>
             } @else {
               <div class="detail-author-avatar detail-author-avatar-placeholder"></div>
             }
             <span class="detail-author-name">
             {{ (publication()!.user | asAny)?.name }} {{ (publication()!.user | asAny)?.surname }}
           </span>
-            <span class="detail-author-nick">&#64;{{ (publication()!.user | asAny)?.nick }}</span>
-            @if ((publication()!.user | asAny)?.role === 'ROLE_VERIFIED' || (publication()!.user | asAny)?.role === 'ROLE_ADMIN') {
-              <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
-            }
+            <div class="nick-wrap">
+              <span class="detail-author-nick">&#64;{{ (publication()!.user | asAny)?.nick }}</span>
+              @if ((publication()!.user | asAny)?.role === 'ROLE_VERIFIED' || (publication()!.user | asAny)?.role === 'ROLE_ADMIN') {
+                <span class="verified-wrap">
+                  <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                </span>
+              }
+            </div>
           </a>
           <span class="detail-date">{{ getTimeAgo(publication()!.createdAt) }}</span>
         </div>
@@ -60,7 +57,7 @@
           }
           @if (publication()!.temperaturaHorno) {
             <span class="recipe-stat">
-          <img src="icons/termometro.svg" class="recipe-stat-icon" alt="temperatura"/>
+          <img src="icons/termometro_1.svg" class="recipe-stat-icon" alt="temperatura"/>
           <strong>{{ publication()!.temperaturaHorno }}</strong>°C
         </span>
           }
@@ -80,37 +77,26 @@
 
         <div class="detail-actions">
           @if (isLoggedIn) {
-            <button
-              class="detail-like-btn"
-              [class.detail-like-btn-active]="hasLike()"
-              (click)="toggleLike()">
-              <img
-                [src]="hasLike() ? 'icons/corazon.svg' : 'icons/corazon_line.svg'"
-                class="detail-like-icon"
-                alt="like"
-              />
+            <button class="detail-like-btn" [class.detail-like-btn-active]="hasLike()" (click)="toggleLike()">
+              <img [src]="hasLike() ? 'icons/corazon.svg' : 'icons/corazon_line.svg'" class="detail-like-icon"
+                   alt="like"/>
               {{ likesCount() }} me gusta
             </button>
-            @if (isLoggedIn) {
-              <button class="detail-favorite-btn" (click)="favoriteService.toggleFavorite(publication()!._id)">
-                <img
-                  [src]="favoriteService.isFavorite(publication()!._id) ? 'icons/favorito (1).svg' : 'icons/favorito.svg'"
-                  class="detail-favorite-icon"
-                  alt="favorito"/>
-                {{ favoriteService.isFavorite(publication()!._id) ? 'Guardado' : 'Guardar' }}
-              </button>
-            }
+            <button class="detail-favorite-btn" (click)="favoriteService.toggleFavorite(publication()!._id)">
+              <img
+                [src]="favoriteService.isFavorite(publication()!._id) ? 'icons/favorito (1).svg' : 'icons/favorito.svg'"
+                class="detail-favorite-icon" alt="favorito"/>
+              {{ favoriteService.isFavorite(publication()!._id) ? 'Guardado' : 'Guardar' }}
+            </button>
           }
 
           @if (isMyPublication()) {
             <div class="detail-owner-actions">
               <a class="detail-edit-btn" [routerLink]="['/edit-recipe', publication()!._id]">
-                <img src="icons/restaurante_x.svg" class="detail-owner-icon" alt="editar"/>
+                <img src="icons/tenedor.svg" class="detail-owner-icon" alt="editar"/>
                 Editar receta
               </a>
-              <button class="detail-delete-btn" (click)="confirmDelete()">
-                Eliminar
-              </button>
+              <button class="detail-delete-btn" (click)="confirmDelete()">Eliminar</button>
             </div>
           }
 
@@ -135,7 +121,7 @@
               }
               @if (isMyPublication()) {
                 <button class="detail-rec-edit-trigger" (click)="startEditingIntro()">
-                  <img src="icons/restaurante_x.svg" class="detail-owner-icon" alt="editar"/>
+                  <img src="icons/tenedor.svg" class="detail-owner-icon" alt="editar"/>
                   Editar introducción
                 </button>
               }
@@ -143,13 +129,16 @@
           } @else {
             <div class="detail-intro-editor">
               <label>
-      <textarea
-        class="input-base detail-intro-textarea"
-        [(ngModel)]="introInput"
-        placeholder="Cuenta qué te llevó a crear esta receta..."
-        rows="3">
-      </textarea>
+          <textarea
+            class="input-base detail-intro-textarea"
+            [(ngModel)]="introInput"
+            placeholder="Cuenta qué te llevó a crear esta receta..."
+            rows="3">
+          </textarea>
               </label>
+              @if (introError) {
+                <p class="comment-error">{{ introError }}</p>
+              }
               <div class="detail-rec-actions">
                 <button class="btn btn-outline btn-sm" (click)="cancelEditingIntro()">Cancelar</button>
                 <button class="btn btn-primary btn-sm" (click)="saveIntro()" [disabled]="savingIntro">
@@ -202,13 +191,11 @@
         </section>
       }
 
-      <hr class="divider"/>
-
       @if (publication()!.steps.length > 0) {
         <section class="detail-section">
           <div class="detail-section-box">
             <div class="detail-section-header">
-              <img src="icons/cooking-time.svg" class="detail-section-icon" alt="elaboracion"/>
+              <img src="icons/cadena-de-valor.svg" class="detail-section-icon" alt="pasos"/>
               <span class="detail-section-title">Elaboración</span>
             </div>
 
@@ -220,7 +207,7 @@
                     <div class="detail-step-content">
                       <p class="detail-step-text">{{ step.text }}</p>
                       @if (step.image) {
-                        <img [src]="step.image" class="detail-step-img" alt="paso {{ $index + 1 }}"/>
+                        <img [src]="step.image" class="detail-step-img" alt="foto paso"/>
                       }
                     </div>
                   </div>
@@ -267,7 +254,6 @@
             </div>
 
             @if (!editingRecommendations()) {
-
               <div class="detail-recommendations-list">
                 @for (rec of recommendations(); track $index) {
                   <div class="detail-recommendation-item">
@@ -278,16 +264,13 @@
                   <p class="detail-recommendations-empty">Aún no hay recomendaciones.</p>
                 }
               </div>
-
               @if (isMyPublication()) {
                 <button class="detail-rec-edit-trigger" (click)="startEditingRecommendations()">
-                  <img src="icons/restaurante_x.svg" class="detail-owner-icon" alt="editar"/>
+                  <img src="icons/tenedor.svg" class="detail-owner-icon" alt="editar"/>
                   Editar recomendaciones
                 </button>
               }
-
             } @else {
-
               <div class="detail-rec-editor">
                 <div class="detail-rec-list">
                   @for (rec of recommendations(); track $index) {
@@ -298,7 +281,7 @@
                       (dragstart)="onDragStart($index)"
                       (dragover)="onDragOver($event, $index)"
                       (dragend)="onDragEnd()">
-                      <img src="icons/restaurante_x.svg" class="detail-rec-drag-icon" alt="arrastrar"/>
+                      <img src="icons/tenedor.svg" class="detail-rec-drag-icon" alt="arrastrar"/>
                       <label>
                         <input
                           class="input-base detail-rec-input"
@@ -316,6 +299,10 @@
                   + Añadir recomendación
                 </button>
 
+                @if (recommendationsError) {
+                  <p class="comment-error">{{ recommendationsError }}</p>
+                }
+
                 <div class="detail-rec-actions">
                   <button type="button" class="btn btn-outline btn-sm" (click)="cancelEditingRecommendations()">
                     Cancelar
@@ -326,9 +313,7 @@
                   </button>
                 </div>
               </div>
-
             }
-
           </div>
         </section>
       }
@@ -379,10 +364,12 @@
                       <a [routerLink]="['/profile', comment.user?._id]" class="comment-author">
                         {{ comment.user?.name }} {{ comment.user?.surname }}
                       </a>
-                      <span class="detail-author-nick">&#64;{{ (publication()!.user | asAny)?.nick }}</span>
-                      <div class="people-nick-wrap">
-                        @if ((publication()!.user | asAny)?.role === 'ROLE_VERIFIED' || (publication()!.user | asAny)?.role === 'ROLE_ADMIN') {
-                          <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                      <div class="nick-wrap">
+                        <span class="comment-nick">&#64;{{ comment.user?.nick }}</span>
+                        @if (comment.user?.role === 'ROLE_VERIFIED' || comment.user?.role === 'ROLE_ADMIN') {
+                          <span class="verified-wrap">
+                            <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                          </span>
                         }
                       </div>
                       <span class="comment-date">{{ getTimeAgo(comment.createdAt) }}</span>

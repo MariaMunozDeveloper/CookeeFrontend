@@ -27,7 +27,9 @@
             <div class="mydata-nick-wrap">
               <p class="mydata-nick">&#64;{{ identity?.nick }}</p>
               @if (identity?.role === 'ROLE_VERIFIED' || identity?.role === 'ROLE_ADMIN') {
-                <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                <span class="verified-wrap">
+                  <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                </span>
               }
             </div>
             @if (previewUrl) {
