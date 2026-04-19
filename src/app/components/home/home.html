@@ -50,7 +50,7 @@
 
       <div class="home-section-header">
         <div class="home-section-title-wrap">
-          <img src="icons/favorito.svg" class="home-section-icon" alt="trending"/>
+          <img src="icons/fuego.svg" class="home-section-icon" alt="trending"/>
           <h2 class="home-section-title">En <em>tendencia</em></h2>
         </div>
         <a class="btn btn-ghost btn-sm" routerLink="/explore">Ver todas →</a>
@@ -76,8 +76,13 @@
             } @else {
               <div class="home-trending-avatar home-trending-avatar--placeholder"></div>
             }
-                <span>&#64;{{ (trendingRecipes()[0].user | asAny)?.nick }}</span>
-          </span>
+                <div class="nick-wrap">
+                  <span>&#64;{{ (trendingRecipes()[0].user | asAny)?.nick }}</span>
+                  @if ((trendingRecipes()[0].user | asAny)?.role === 'ROLE_VERIFIED' || (trendingRecipes()[0].user | asAny)?.role === 'ROLE_ADMIN') {
+                    <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                  }
+                </div>
+              </span>
             }
 
             <div class="home-trending-featured-stats">
@@ -193,7 +198,12 @@
                     } @else {
                       <div class="home-hashtag-recipe-avatar home-hashtag-recipe-avatar--placeholder"></div>
                     }
-                    <span class="home-hashtag-recipe-nick">&#64;{{ (recipe.user | asAny)?.nick }}</span>
+                    <div class="nick-wrap">
+                      <span class="home-hashtag-recipe-nick">&#64;{{ (recipe.user | asAny)?.nick }}</span>
+                      @if ((recipe.user | asAny)?.role === 'ROLE_VERIFIED' || (recipe.user | asAny)?.role === 'ROLE_ADMIN') {
+                        <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                      }
+                    </div>
                   </div>
                   <div class="home-hashtag-recipe-stats">
                     <button

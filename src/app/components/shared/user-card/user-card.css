@@ -110,3 +110,9 @@
   cursor: pointer;
   width: 100%;
 }
+
+.people-nick-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

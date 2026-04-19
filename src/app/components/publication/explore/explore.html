@@ -91,7 +91,12 @@
             } @else {
               <div class="explore-card-avatar explore-card-avatar-placeholder"></div>
             }
-            <span>@{{ getAuthor(pub)?.nick }}</span>
+            <div class="nick-wrap">
+              <span>&#64;{{ getAuthor(pub)?.nick }}</span>
+              @if (getAuthor(pub)?.role === 'ROLE_VERIFIED' || getAuthor(pub)?.role === 'ROLE_ADMIN') {
+                <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+              }
+            </div>
           </div>
 
           <div class="explore-card-stats">

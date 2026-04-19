@@ -2,6 +2,7 @@ import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FollowService } from '../../../services/followService';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
+import { AuthService } from '../../../services/authService';
 
 
 @Component({
@@ -14,6 +15,8 @@ import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 export class FollowsComponent implements OnInit {
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
   private readonly followService: FollowService = inject(FollowService);
+  private readonly authService: AuthService = inject(AuthService);
+  identity: any = this.authService.getIdentity();
 
   modo: 'following' | 'followers' = 'following';
   userId: string = '';
@@ -70,5 +73,19 @@ export class FollowsComponent implements OnInit {
 
   get titulo(): string {
     return this.modo === 'following' ? 'Siguiendo' : 'Seguidores';
+  }
+
+  unfollow(userId: string): void {
+    this.followService.unfollowUser(userId).subscribe({
+      next: () => {
+        this.users.update(current => current.filter(u => u._id !== userId));
+      },
+      error: () => {
+      }
+    });
+  }
+
+  get isOwnProfile(): boolean {
+    return !this.userId || this.userId === this.identity?._id;
   }
 }

@@ -537,7 +537,6 @@
 }
 
 .home-hashtag-recipe-nick {
-  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -682,4 +681,5 @@
   .home-hashtag-block {
     padding: var(--space-md);
   }
+
 }

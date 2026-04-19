@@ -33,10 +33,8 @@ export class HomeComponent implements OnInit {
 
   private readonly featuredHashtags: { tag: string; icon: string }[] = [
     { tag: 'tradicional', icon: 'icons/miton_one_color.svg' },
-    { tag: 'saludable', icon: 'icons/ingredientes.svg' },
-    { tag: 'rapido', icon: 'icons/reloj.svg' },
-    { tag: 'postre', icon: 'icons/favorito.svg' },
-    { tag: 'chocolate', icon: 'icons/corazon.svg' },
+    { tag: 'saludable', icon: 'icons/verduras.svg' },
+    { tag: 'postre', icon: 'icons/pastel.svg' },
   ];
 
   ngOnInit(): void {

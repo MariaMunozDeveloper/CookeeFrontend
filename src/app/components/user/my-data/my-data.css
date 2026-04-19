@@ -46,7 +46,8 @@
 }
 
 .auth-submit {
-  width: 100%;
+  width: auto;
+  align-self: flex-end;
   margin-top: 8px;
 }
 
@@ -118,9 +119,9 @@
 }
 
 .mydata-nick {
-  margin: 4px 0 0;
+  margin: 0;
   font-size: 14px;
-  color: var(--color-muted);
+  color: var(--color-primary);
 }
 
 .mydata-cancel-btn {
@@ -130,3 +131,27 @@
   padding: 0 14px;
 }
 
+.mydata-edit-icon {
+  width: 13px;
+  height: 13px;
+  object-fit: contain;
+  opacity: 0.7;
+}
+
+.mydata-success {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2e7d32;
+  background-color: #f1f8f1;
+  border: 1px solid #c8e6c9;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  text-align: center;
+}
+
+.mydata-nick-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}

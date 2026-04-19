@@ -20,7 +20,12 @@
 
       <div class="profile-info">
         <h1 class="profile-name">{{ profileUser.name }} {{ profileUser.surname }}</h1>
-        <p class="profile-nick">&#64;{{ profileUser.nick }}</p>
+        <div class="people-nick-wrap">
+          <p class="profile-nick">&#64;{{ profileUser.nick }}</p>
+          @if (profileUser.role === 'ROLE_VERIFIED' || profileUser.role === 'ROLE_ADMIN') {
+            <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+          }
+        </div>
 
         @if (counters) {
           <div class="profile-counters">
@@ -102,7 +107,9 @@
                 @if (pub.images && pub.images.length > 0) {
                   <img [src]="pub.images[0]" [alt]="pub.title" class="profile-recipe-img"/>
                 } @else {
-                  <div class="profile-recipe-placeholder">🍳</div>
+                  <div class="profile-recipe-placeholder">
+                    <img src="icons/cooking-time.svg" class="profile-placeholder-icon" alt="receta"/>
+                  </div>
                 }
                 @if (pub.hashtags && pub.hashtags.length > 0) {
                   <span class="profile-recipe-tag">{{ pub.hashtags[0] }}</span>
@@ -124,9 +131,11 @@
                 @if (isOwnProfile) {
                   <div class="profile-recipe-overlay">
                     <a class="btn btn-outline btn-sm" [routerLink]="['/edit-recipe', pub._id]"
-                       (click)="$event.stopPropagation()">Editar</a>
+                       (click)="$event.stopPropagation()">
+                      <img src="icons/lapiz.svg" class="profile-overlay-icon" alt="editar"/>
+                    </a>
                     <button class="btn btn-danger btn-sm" (click)="confirmDelete(pub._id); $event.stopPropagation()">
-                      Eliminar
+                      <img src="icons/letra-x.svg" class="profile-overlay-icon" alt="eliminar"/>
                     </button>
                   </div>
                 }

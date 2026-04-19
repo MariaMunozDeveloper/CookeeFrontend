@@ -14,6 +14,8 @@ import { PeopleComponent } from './components/user/people/people';
 import { FollowsComponent } from './components/user/follows/follows';
 import { MessagesComponent } from './components/message/messages/messages';
 import { SendMessageComponent } from './components/message/send-message/send-message';
+import { AdminComponent } from './components/admin/admin/admin';
+import { adminGuard } from './guards/admin-guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -31,5 +33,6 @@ export const routes: Routes = [
   { path: 'create-recipe', component: CreateRecipeComponent, canActivate: [authGuard] },
   { path: 'people', component: PeopleComponent },
   { path: 'profile/:id', component: UserProfileComponent, canActivate: [authGuard] },
+  { path: 'admin', component: AdminComponent, canActivate: [authGuard, adminGuard] },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

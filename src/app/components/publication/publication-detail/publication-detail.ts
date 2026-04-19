@@ -9,6 +9,7 @@ import { CommentService } from '../../../services/commentService';
 import { FormsModule } from '@angular/forms';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
 import { FavoriteService } from '../../../services/favoriteService';
+import { FORBIDDEN_WORDS } from '../../../validators/forbidden-words';
 
 
 @Component({
@@ -38,6 +39,7 @@ export class PublicationDetailComponent implements OnInit {
   comments: WritableSignal<any[]> = signal<any[]>([]);
   commentText: string = '';
   sendingComment: boolean = false;
+  commentError: string = '';
 
   showDeleteModal: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -138,6 +140,18 @@ export class PublicationDetailComponent implements OnInit {
 
   saveComment(): void {
     if (!this.commentText.trim()) return;
+
+    const lowerText = this.commentText.toLowerCase();
+    const found = FORBIDDEN_WORDS.find(word =>
+      new RegExp(`\\b${word.toLowerCase()}\\b`, 'i').test(lowerText)
+    );
+
+    if (found) {
+      this.commentError = `La palabra "${found}" infringe las normas de la comunidad`;
+      return;
+    }
+
+    this.commentError = '';
     this.sendingComment = true;
 
     this.commentService.save(this.publication()!._id, this.commentText.trim()).subscribe({

@@ -47,7 +47,12 @@
               }
               <div class="message-user-info">
                 <span class="message-user-name">{{ getOtherUser(msg)?.name }} {{ getOtherUser(msg)?.surname }}</span>
-                <span class="message-user-nick">&#64;{{ getOtherUser(msg)?.nick }}</span>
+                <div class="people-nick-wrap">
+                  <span class="message-user-nick">&#64;{{ getOtherUser(msg)?.nick }}</span>
+                  @if (getOtherUser(msg)?.role === 'ROLE_VERIFIED' || getOtherUser(msg)?.role === 'ROLE_ADMIN') {
+                    <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                  }
+                </div>
               </div>
             </a>
             <button class="message-delete-btn" (click)="deleteMessage(msg._id)" title="Eliminar">✕</button>

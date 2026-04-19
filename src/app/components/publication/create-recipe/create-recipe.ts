@@ -2,13 +2,17 @@ import { inject, Component, signal, WritableSignal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { PublicationService } from '../../../services/publicationService';
+import { FORBIDDEN_WORDS } from '../../../validators/forbidden-words';
 import { FormValidators } from '../../../validators/formValidators';
 import { Observable } from 'rxjs';
+import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
+
+type CreateTab = 'info' | 'ingredients' | 'steps' | 'photos';
 
 @Component({
   selector: 'app-create-recipe',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, LoadingSpinner],
   templateUrl: './create-recipe.html',
   styleUrl: './create-recipe.css'
 })
@@ -17,10 +21,10 @@ export class CreateRecipeComponent {
   private readonly publicationService: PublicationService = inject(PublicationService);
   private readonly router: Router = inject(Router);
 
-  currentStep: WritableSignal<number> = signal<number>(1);
-  totalSteps = 4;
+  activeTab: WritableSignal<CreateTab> = signal<CreateTab>('info');
   sending: boolean = false;
   errorMessage: string = '';
+  submitted: boolean = false;
 
   stepImages: (File | null)[] = [];
   stepImagePreviews: (string | null)[] = [];
@@ -32,8 +36,10 @@ export class CreateRecipeComponent {
   coverPreview: string | null = null;
 
   recipeForm: FormGroup = this.formBuilder.group({
-    title: ['', [Validators.required, Validators.minLength(3), FormValidators.notOnlyWhiteSpace, FormValidators.primeraMayuscula]],
-    description: ['', [FormValidators.notOnlyWhiteSpace]],
+    title: ['', [Validators.required, Validators.minLength(3),
+      FormValidators.notOnlyWhiteSpace, FormValidators.primeraMayuscula,
+      FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
+    description: ['', [FormValidators.notOnlyWhiteSpace, FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
     raciones: [null, [FormValidators.minValue(1), FormValidators.soloEnteros]],
     tiempoHorno: [null, [FormValidators.minValue(0), FormValidators.soloEnteros]],
     temperaturaHorno: [null, [FormValidators.minValue(0), FormValidators.soloEnteros]],
@@ -53,9 +59,29 @@ export class CreateRecipeComponent {
     return ['g', 'kg', 'ml', 'l', 'cucharadita', 'cucharada', 'taza', 'unidad', 'pizca', 'tbsp', 'cup', 'tsp', 'oz'];
   }
 
+  readonly tabs: { id: CreateTab; label: string }[] = [
+    { id: 'info', label: 'Información' },
+    { id: 'ingredients', label: 'Ingredientes' },
+    { id: 'steps', label: 'Pasos' },
+    { id: 'photos', label: 'Fotos' }
+  ];
+
+  setTab(tab: CreateTab): void {
+    this.activeTab.set(tab);
+    this.errorMessage = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  isTabValid(tab: CreateTab): boolean {
+    if (tab === 'info') return this.recipeForm.get('title')!.valid;
+    if (tab === 'ingredients') return this.ingredients.length > 0 && this.ingredients.valid;
+    if (tab === 'steps') return this.steps.length > 0 && this.steps.valid;
+    return true;
+  }
+
   newIngredient(): FormGroup {
     return this.formBuilder.group({
-      name: ['', [Validators.required, FormValidators.notOnlyWhiteSpace]],
+      name: ['', [Validators.required, FormValidators.notOnlyWhiteSpace, FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
       quantity: [null, [FormValidators.minValue(0)]],
       unit: ['unidad']
     });
@@ -71,7 +97,7 @@ export class CreateRecipeComponent {
 
   newStep(): FormGroup {
     return this.formBuilder.group({
-      text: ['', [Validators.required, FormValidators.notOnlyWhiteSpace]],
+      text: ['', [Validators.required, FormValidators.notOnlyWhiteSpace, FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
       image: [null]
     });
   }
@@ -141,35 +167,9 @@ export class CreateRecipeComponent {
     this.coverPreview = null;
   }
 
-  nextStep(): void {
-    if (this.currentStep() < this.totalSteps) {
-      this.currentStep.update(s => s + 1);
-    }
-  }
-
-  prevStep(): void {
-    if (this.currentStep() > 1) {
-      this.currentStep.update(s => s - 1);
-    }
-  }
-
-  canGoNext(): boolean {
-    if (this.currentStep() === 1) {
-      return this.recipeForm.get('title')!.valid;
-    }
-    if (this.currentStep() === 2) {
-      return this.ingredients.length > 0 && this.ingredients.valid;
-    }
-    if (this.currentStep() === 3) {
-      return this.steps.length > 0 && this.steps.valid;
-    }
-    return true;
-  }
-
   onHashtagInput(event: KeyboardEvent): void {
     const input = event.target as HTMLInputElement;
     const value = input.value.trim().toLowerCase();
-
     if ((event.key === ' ' || event.key === 'Enter') && value) {
       const clean = value.replace(/[^a-z0-9áéíóúüñ]/g, '');
       if (clean && !this.hashtags.includes(clean)) {
@@ -185,8 +185,23 @@ export class CreateRecipeComponent {
   }
 
   onSubmit(): void {
-    if (this.recipeForm.invalid) {
-      this.recipeForm.markAllAsTouched();
+    if (this.recipeForm.get('title')!.invalid) {
+      this.submitted = true;
+      this.recipeForm.get('title')!.markAsTouched();
+      this.errorMessage = 'El título es obligatorio.';
+      this.activeTab.set('info');
+      return;
+    }
+
+    if (this.ingredients.length === 0 || this.ingredients.invalid) {
+      this.errorMessage = 'Añade al menos un ingrediente.';
+      this.activeTab.set('ingredients');
+      return;
+    }
+
+    if (this.steps.length === 0 || this.steps.invalid) {
+      this.errorMessage = 'Añade al menos un paso.';
+      this.activeTab.set('steps');
       return;
     }
 
@@ -229,9 +244,7 @@ export class CreateRecipeComponent {
 
     this.stepImages.forEach((file, index) => {
       if (file) {
-        uploads.push(
-          this.publicationService.uploadStepImage(publicationId, index, file)
-        );
+        uploads.push(this.publicationService.uploadStepImage(publicationId, index, file));
       }
     });
 

@@ -5,15 +5,16 @@ import { RouterLink } from '@angular/router';
 import { signal, WritableSignal } from '@angular/core';
 import { AuthService } from '../../../services/authService';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-people',
   standalone: true,
-  imports: [ RouterLink, LoadingSpinner],
+  imports: [RouterLink, LoadingSpinner, FormsModule],
   templateUrl: './people.html',
   styleUrl: './people.css'
 })
-export class PeopleComponent implements OnInit{
+export class PeopleComponent implements OnInit {
   private readonly userService: UserService = inject(UserService);
   private readonly followService: FollowService = inject(FollowService);
   private readonly authService: AuthService = inject(AuthService);
@@ -27,6 +28,9 @@ export class PeopleComponent implements OnInit{
   following: string[] = [];
   followed: string[] = [];
 
+  search: string = '';
+  searchInput: string = '';
+
   ngOnInit(): void {
     if (!this.isLoggedIn) return;
     this.loadUsers();
@@ -35,7 +39,7 @@ export class PeopleComponent implements OnInit{
   loadUsers(): void {
     this.loading.set(true);
 
-    this.userService.getUsers(this.page).subscribe({
+    this.userService.getUsers(this.page, 10, this.search).subscribe({
       next: (response: any) => {
         const identity = localStorage.getItem('user');
         const currentUser = identity ? JSON.parse(identity) : null;
@@ -95,5 +99,18 @@ export class PeopleComponent implements OnInit{
       error: () => {
       }
     });
+  }
+
+  onSearch(): void {
+    this.search = this.searchInput;
+    this.page = 1;
+    this.loadUsers();
+  }
+
+  clearSearch(): void {
+    this.search = '';
+    this.searchInput = '';
+    this.page = 1;
+    this.loadUsers();
   }
 }

@@ -129,4 +129,17 @@ export class FormValidators {
       return Number(value) < min ? { minValue: true } : null;
     };
   }
+
+  static forbiddenWords(list: string[]): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value?.toLowerCase();
+      if (!value) return null;
+
+      const found = list.find(word =>
+        new RegExp(`\\b${word.toLowerCase()}\\b`, 'i').test(value)
+      );
+
+      return found ? { forbiddenWords: { word: found } } : null;
+    };
+  }
 }

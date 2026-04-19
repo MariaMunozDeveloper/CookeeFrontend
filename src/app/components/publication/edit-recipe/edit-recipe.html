@@ -14,9 +14,6 @@
           <h1 class="title-section">Editar <span class="title-highlight">receta</span></h1>
           <a class="edit-cancel-link" [routerLink]="['/publication', publicationId]">← Volver a la receta</a>
         </div>
-        <button class="btn btn-primary edit-save-btn" (click)="onSubmit()" [disabled]="sending">
-          {{ sending ? 'Guardando...' : 'Guardar cambios' }}
-        </button>
       </div>
 
       @if (errorMessage) {
@@ -62,6 +59,9 @@
                   @if (recipeForm.get('title')?.errors?.['primeraMayuscula']) {
                     <span>Debe empezar por mayúscula</span>
                   }
+                  @if (recipeForm.get('title')?.errors?.['forbiddenWords']) {
+                    <span>La palabra "{{ recipeForm.get('title')?.errors?.['forbiddenWords'].word }}" infringe las normas de la comunidad</span>
+                  }
                 </div>
               }
             </div>
@@ -72,6 +72,11 @@
             <textarea class="input-base recipe-textarea" formControlName="description"
                       placeholder="Describe brevemente tu receta..." rows="2"></textarea>
               </label>
+              @if (recipeForm.get('description')?.touched && recipeForm.get('description')?.errors?.['forbiddenWords']) {
+                <div class="form-error">
+                  <span>La palabra "{{ recipeForm.get('description')?.errors?.['forbiddenWords'].word }}" infringe las normas de la comunidad</span>
+                </div>
+              }
             </div>
 
             <div class="form-group">
@@ -80,6 +85,11 @@
             <textarea class="input-base recipe-textarea" formControlName="text"
                       placeholder="Cuenta qué te llevó a crear esta receta..." rows="3"></textarea>
               </label>
+              @if (recipeForm.get('text')?.touched && recipeForm.get('text')?.errors?.['forbiddenWords']) {
+                <div class="form-error">
+                  <span>La palabra "{{ recipeForm.get('text')?.errors?.['forbiddenWords'].word }}" infringe las normas de la comunidad</span>
+                </div>
+              }
             </div>
 
             <div class="edit-info-grid">
@@ -160,8 +170,15 @@
               <div class="ingredient-row" [formGroupName]="$index">
                 <div class="form-group ingredient-name">
                   <input class="input-base" formControlName="name" placeholder="Ingrediente *"/>
-                  @if (ingredient.get('name')?.touched && ingredient.get('name')?.errors?.['required']) {
-                    <div class="form-error"><span>Obligatorio</span></div>
+                  @if (ingredient.get('name')?.touched) {
+                    <div class="form-error">
+                      @if (ingredient.get('name')?.errors?.['required']) {
+                        <span>Obligatorio</span>
+                      }
+                      @if (ingredient.get('name')?.errors?.['forbiddenWords']) {
+                        <span>La palabra "{{ ingredient.get('name')?.errors?.['forbiddenWords'].word }}" infringe las normas de la comunidad</span>
+                      }
+                    </div>
                   }
                 </div>
                 <div class="form-group ingredient-qty">
@@ -228,6 +245,9 @@
                         }
                         @if (step.get('text')?.errors?.['notOnlyWhiteSpace']) {
                           <span>No puede contener solo espacios</span>
+                        }
+                        @if (step.get('text')?.errors?.['forbiddenWords']) {
+                          <span>La palabra "{{ step.get('text')?.errors?.['forbiddenWords'].word }}" infringe las normas de la comunidad</span>
                         }
                       </div>
                     }

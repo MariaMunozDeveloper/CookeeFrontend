@@ -105,7 +105,7 @@
   position: absolute;
   top: var(--space-sm);
   left: var(--space-sm);
-  background-color: rgba(255,255,255,0.92);
+  background-color: rgba(255, 255, 255, 0.92);
   color: var(--color-primary);
   font-size: 10px;
   font-weight: 700;
@@ -191,6 +191,7 @@
   object-fit: contain;
   opacity: 0.6;
 }
+
 
 @media (max-width: 1024px) {
   .explore-grid {

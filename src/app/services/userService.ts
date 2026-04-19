@@ -27,8 +27,8 @@ export class UserService {
     return this.http.post(`${this.apiUrl}/upload-avatar`, formData);
   }
 
-  getUsers(page: number = 1, limit: number = 10): Observable<any> {
-    return this.http.get(`${this.apiUrl}?page=${page}&limit=${limit}`);
+  getUsers(page: number = 1, limit: number = 10, search: string = ''): Observable<any> {
+    return this.http.get(`${this.apiUrl}?page=${page}&limit=${limit}&search=${search}`);
   }
 
   getUserById(userId: string): Observable<any> {

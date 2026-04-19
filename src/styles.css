@@ -379,3 +379,17 @@ textarea.input-base {
   height: 18px;
   object-fit: contain;
 }
+
+.verified-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.nick-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

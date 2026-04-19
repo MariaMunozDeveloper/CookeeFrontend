@@ -35,7 +35,10 @@
             <span class="detail-author-name">
             {{ (publication()!.user | asAny)?.name }} {{ (publication()!.user | asAny)?.surname }}
           </span>
-            <span class="detail-author-nick">@{{ (publication()!.user | asAny)?.nick }}</span>
+            <span class="detail-author-nick">&#64;{{ (publication()!.user | asAny)?.nick }}</span>
+            @if ((publication()!.user | asAny)?.role === 'ROLE_VERIFIED' || (publication()!.user | asAny)?.role === 'ROLE_ADMIN') {
+              <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+            }
           </a>
           <span class="detail-date">{{ getTimeAgo(publication()!.createdAt) }}</span>
         </div>
@@ -349,6 +352,9 @@
               rows="3">
             </textarea>
               </label>
+              @if (commentError) {
+                <p class="comment-error">{{ commentError }}</p>
+              }
               <button class="btn btn-primary" (click)="saveComment()" [disabled]="sendingComment">
                 {{ sendingComment ? 'Enviando...' : 'Comentar' }}
               </button>
@@ -373,7 +379,12 @@
                       <a [routerLink]="['/profile', comment.user?._id]" class="comment-author">
                         {{ comment.user?.name }} {{ comment.user?.surname }}
                       </a>
-                      <span class="comment-nick">@{{ comment.user?.nick }}</span>
+                      <span class="detail-author-nick">&#64;{{ (publication()!.user | asAny)?.nick }}</span>
+                      <div class="people-nick-wrap">
+                        @if ((publication()!.user | asAny)?.role === 'ROLE_VERIFIED' || (publication()!.user | asAny)?.role === 'ROLE_ADMIN') {
+                          <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                        }
+                      </div>
                       <span class="comment-date">{{ getTimeAgo(comment.createdAt) }}</span>
                       @if (isMyComment(comment)) {
                         <button class="comment-delete" (click)="deleteComment(comment._id)">✕</button>

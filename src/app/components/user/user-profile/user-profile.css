@@ -320,6 +320,24 @@
   gap: var(--space-md);
 }
 
+.profile-overlay-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.profile-placeholder-icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  opacity: 0.3;
+}
+
+.people-nick-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 
 
 

@@ -7,6 +7,22 @@
     <p class="subtitle">Descubre usuarios, sigue perfiles y conecta con la comunidad.</p>
   </div>
 
+  @if (isLoggedIn) {
+    <div class="people-search">
+      <label>
+        <input
+          class="input-base people-search-input"
+          [(ngModel)]="searchInput"
+          placeholder="Buscar por nombre o nick..."
+          (keyup.enter)="onSearch()"/>
+      </label>
+      <button class="btn btn-primary btn-sm" (click)="onSearch()">Buscar</button>
+      @if (search) {
+        <button class="btn btn-ghost btn-sm" (click)="clearSearch()">✕ Limpiar</button>
+      }
+    </div>
+  }
+
   @if (!isLoggedIn) {
     <div class="card-base people-locked">
       <img src="icons/cuenta.svg" class="people-locked-icon" alt="usuarios"/>
@@ -42,7 +58,12 @@
 
             <div class="people-user-text">
               <h3 class="people-name">{{ user.name }} {{ user.surname }}</h3>
-              <p class="people-nick">@{{ user.nick }}</p>
+              <div class="people-nick-wrap">
+                <p class="people-nick">&#64;{{ user.nick }}</p>
+                @if (user.role === 'ROLE_VERIFIED' || user.role === 'ROLE_ADMIN') {
+                  <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                }
+              </div>
             </div>
           </div>
 

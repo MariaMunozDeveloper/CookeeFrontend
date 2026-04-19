@@ -1,16 +1,18 @@
 import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 import { PublicationService } from '../../../services/publicationService';
 import { FormValidators } from '../../../validators/formValidators';
 import { Observable } from 'rxjs';
+import { FORBIDDEN_WORDS } from '../../../validators/forbidden-words';
 
 type EditTab = 'info' | 'ingredients' | 'steps' | 'photos';
 
 @Component({
   selector: 'app-edit-recipe',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, LoadingSpinner],
   templateUrl: './edit-recipe.html',
   styleUrl: './edit-recipe.css'
 })
@@ -39,10 +41,12 @@ export class EditRecipeComponent implements OnInit {
   existingCover: string | null = null;
 
   recipeForm: FormGroup = this.formBuilder.group({
-    title: ['', [Validators.required, Validators.minLength(3), FormValidators.notOnlyWhiteSpace, FormValidators.primeraMayuscula]],
-    description: ['', [FormValidators.notOnlyWhiteSpace]],
-    text: ['', [FormValidators.notOnlyWhiteSpace]],
-    recommendations: ['', [FormValidators.notOnlyWhiteSpace]],
+    title: ['', [Validators.required, Validators.minLength(3),
+      FormValidators.notOnlyWhiteSpace, FormValidators.primeraMayuscula,
+      FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
+    description: ['', [FormValidators.notOnlyWhiteSpace, FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
+    text: ['', [FormValidators.notOnlyWhiteSpace, FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
+    recommendations: ['', [FormValidators.notOnlyWhiteSpace, FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
     raciones: [null, [FormValidators.minValue(1), FormValidators.soloEnteros]],
     tiempoHorno: [null, [FormValidators.minValue(0), FormValidators.soloEnteros]],
     temperaturaHorno: [null, [FormValidators.minValue(0), FormValidators.soloEnteros]],
@@ -108,7 +112,7 @@ export class EditRecipeComponent implements OnInit {
 
         publication.ingredients?.forEach((ing: any) => {
           this.ingredients.push(this.formBuilder.group({
-            name: [ing.name, [Validators.required, FormValidators.notOnlyWhiteSpace]],
+            name: [ing.name, [Validators.required, FormValidators.notOnlyWhiteSpace, FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
             quantity: [ing.quantity, [FormValidators.minValue(0)]],
             unit: [ing.unit || 'unidad']
           }));
@@ -116,7 +120,7 @@ export class EditRecipeComponent implements OnInit {
 
         publication.steps?.forEach((step: any) => {
           this.steps.push(this.formBuilder.group({
-            text: [step.text, [Validators.required, FormValidators.notOnlyWhiteSpace]],
+            text: [step.text, [Validators.required, FormValidators.notOnlyWhiteSpace, FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
             image: [step.image || null]
           }));
           this.stepImages.push(null);
@@ -133,7 +137,8 @@ export class EditRecipeComponent implements OnInit {
 
   newIngredient(): FormGroup {
     return this.formBuilder.group({
-      name: ['', [Validators.required, FormValidators.notOnlyWhiteSpace]],
+      name: ['', [Validators.required, FormValidators.notOnlyWhiteSpace,
+        FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
       quantity: [null, [FormValidators.minValue(0)]],
       unit: ['unidad']
     });
@@ -153,7 +158,8 @@ export class EditRecipeComponent implements OnInit {
 
   newStep(): FormGroup {
     return this.formBuilder.group({
-      text: ['', [Validators.required, FormValidators.notOnlyWhiteSpace]],
+      text: ['', [Validators.required, FormValidators.notOnlyWhiteSpace,
+        FormValidators.forbiddenWords(FORBIDDEN_WORDS)]],
       image: [null]
     });
   }

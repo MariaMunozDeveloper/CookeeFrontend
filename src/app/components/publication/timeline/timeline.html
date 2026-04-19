@@ -62,6 +62,11 @@
                   <div class="feed-author-avatar feed-author-avatar-placeholder"></div>
                 }
                 <span class="feed-author-nick">&#64;{{ getAuthor(publication)?.nick }}</span>
+                <div class="people-nick-wrap">
+                  @if (getAuthor(publication)?.role === 'ROLE_VERIFIED' || getAuthor(publication)?.role === 'ROLE_ADMIN') {
+                    <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                  }
+                </div>
               </a>
               <span class="feed-recipe-date">{{ getTimeAgo(publication.createdAt) }}</span>
             </div>

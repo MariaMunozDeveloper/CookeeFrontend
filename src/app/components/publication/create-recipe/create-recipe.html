@@ -1,39 +1,43 @@
-<div class="page-container recipe-page">
+<div class="page-container edit-page">
 
-  <div class="recipe-progress">
-    <div class="recipe-progress-bar" [style.width.%]="(currentStep() / totalSteps) * 100"></div>
-  </div>
+  <div class="edit-layout">
 
-  <div class="card-base recipe-card">
-
-    <div class="recipe-step-header">
-      <span class="recipe-step-badge">Paso {{ currentStep() }} de {{ totalSteps }}</span>
-      <h1 class="title-section">
-        @if (currentStep() === 1) {
-          Información <span class="title-highlight">básica</span>
-        }
-        @if (currentStep() === 2) {
-          <span class="title-highlight">Ingredientes</span>
-        }
-        @if (currentStep() === 3) {
-          <span class="title-highlight">Elaboración</span>
-        }
-        @if (currentStep() === 4) {
-          Fotos de la <span class="title-highlight">receta</span>
-        }
-      </h1>
+    <div class="edit-header">
+      <div class="edit-header-text">
+        <h1 class="title-section">Nueva <span class="title-highlight">receta</span></h1>
+        <a class="edit-cancel-link" routerLink="/feed">← Volver al feed</a>
+      </div>
     </div>
 
-    <form [formGroup]="recipeForm">
+    @if (errorMessage) {
+      <div class="edit-alert edit-alert--error">{{ errorMessage }}</div>
+    }
 
-      @if (currentStep() === 1) {
-        <div class="recipe-step">
+    <div class="edit-tabs">
+      @for (tab of tabs; track tab.id) {
+        <button
+          class="edit-tab"
+          [class.edit-tab--active]="activeTab() === tab.id"
+          (click)="setTab(tab.id)">
+          {{ tab.label }}
+          @if (submitted && !isTabValid(tab.id) && tab.id !== 'photos') {
+            <span class="edit-tab-dot"></span>
+          }
+        </button>
+      } @empty {
+      }
+    </div>
+
+    <form [formGroup]="recipeForm" class="edit-form">
+
+      @if (activeTab() === 'info') {
+        <div class="edit-section">
+
+          <div class="edit-section-title">Información general</div>
 
           <div class="form-group">
-            <label class="form-label">Título de la receta *</label>
-            <label>
-              <input class="input-base" formControlName="title" placeholder="Ej: Tarta de queso al horno"/>
-            </label>
+            <label class="form-label">Título *</label>
+            <input class="input-base" formControlName="title" placeholder="Ej: Tarta de queso al horno"/>
             @if (recipeForm.get('title')?.touched) {
               <div class="form-error">
                 @if (recipeForm.get('title')?.errors?.['required']) {
@@ -48,15 +52,43 @@
                 @if (recipeForm.get('title')?.errors?.['primeraMayuscula']) {
                   <span>Debe empezar por mayúscula</span>
                 }
+                @if (recipeForm.get('title')?.errors?.['forbiddenWords']) {
+                  <span>La palabra "{{ recipeForm.get('title')?.errors?.['forbiddenWords'].word }}" infringe las normas de la comunidad</span>
+                }
               </div>
             }
           </div>
 
           <div class="form-group">
-            <label class="form-label">Descripción</label>
+            <label class="form-label">Descripción corta</label>
+            <label>
             <textarea class="input-base recipe-textarea" formControlName="description"
-                      placeholder="Describe brevemente tu receta..." rows="3">
-          </textarea>
+                      placeholder="Describe brevemente tu receta..." rows="2">
+            </textarea>
+              @if (recipeForm.get('description')?.touched && recipeForm.get('description')?.errors?.['forbiddenWords']) {
+                <div class="form-error">
+                  <span>La palabra "{{ recipeForm.get('description')?.errors?.['forbiddenWords'].word }}" infringe las normas de la comunidad</span>
+                </div>
+              }
+            </label>
+          </div>
+
+          <div class="edit-info-grid">
+            <div class="form-group">
+              <label class="form-label">Raciones</label>
+              <input class="input-base" type="number" formControlName="raciones" placeholder="4" min="1"/>
+              @if (recipeForm.get('raciones')?.touched && recipeForm.get('raciones')?.errors?.['minValue']) {
+                <div class="form-error"><span>Mínimo 1 ración</span></div>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tiempo horno (min)</label>
+              <input class="input-base" type="number" formControlName="tiempoHorno" placeholder="30" min="0"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Temperatura (°C)</label>
+              <input class="input-base" type="number" formControlName="temperaturaHorno" placeholder="180" min="0"/>
+            </div>
           </div>
 
           <div class="form-group">
@@ -74,113 +106,88 @@
             }
           </div>
 
-          <div class="recipe-info-row">
-            <div class="form-group">
-              <label class="form-label">Raciones</label>
-              <label>
-                <input class="input-base" type="number" formControlName="raciones" placeholder="4" min="1"/>
-              </label>
-              @if (recipeForm.get('raciones')?.touched && recipeForm.get('raciones')?.errors?.['minValue']) {
-                <div class="form-error"><span>Mínimo 1 ración</span></div>
-              }
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Tiempo horno (min)</label>
-              <label>
-                <input class="input-base" type="number" formControlName="tiempoHorno" placeholder="30" min="0"/>
-              </label>
-              @if (recipeForm.get('tiempoHorno')?.touched && recipeForm.get('tiempoHorno')?.errors?.['minValue']) {
-                <div class="form-error"><span>No puede ser negativo</span></div>
-              }
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Temperatura (°C)</label>
-              <label>
-                <input class="input-base" type="number" formControlName="temperaturaHorno" placeholder="180" min="0"/>
-              </label>
-              @if (recipeForm.get('temperaturaHorno')?.touched &&
-              recipeForm.get('temperaturaHorno')?.errors?.['minValue']) {
-                <div class="form-error"><span>No puede ser negativa</span></div>
-              }
-            </div>
-          </div>
-
           <div class="form-group">
             <label class="form-label">Hashtags</label>
-            <label>
-              <input
-                class="input-base"
-                placeholder="Ej: tarta queso chocolate (separados por espacios)"
-                (keyup)="onHashtagInput($event)"
-                [value]="hashtagInput"/>
-            </label>
+            <input
+              class="input-base"
+              placeholder="Escribe y pulsa espacio o Enter para añadir"
+              (keyup)="onHashtagInput($event)"
+              [value]="hashtagInput"/>
             @if (hashtags.length > 0) {
               <div class="hashtag-preview">
                 @for (tag of hashtags; track tag) {
                   <span class="hashtag">#{{ tag }}
                     <button type="button" class="hashtag-remove" (click)="removeHashtag(tag)">✕</button>
             </span>
+                } @empty {
                 }
               </div>
             }
-            <p class="hashtag-hint">Escribe las palabras y pulsa espacio o Enter</p>
           </div>
+
         </div>
       }
 
-      @if (currentStep() === 2) {
-        <div class="recipe-step" formArrayName="ingredients">
+      @if (activeTab() === 'ingredients') {
+        <div class="edit-section" formArrayName="ingredients">
+
+          <div class="edit-section-title">Ingredientes</div>
 
           @if (ingredients.length === 0) {
             <div class="recipe-empty-hint">
-              <p>Añade los ingredientes de tu receta.</p>
+              <p>Aún no has añadido ingredientes.</p>
             </div>
           }
 
           @for (ingredient of ingredients.controls; track $index) {
             <div class="ingredient-row" [formGroupName]="$index">
               <div class="form-group ingredient-name">
-                <label>
-                  <input class="input-base" formControlName="name" placeholder="Ingrediente *"/>
-                </label>
-                @if (ingredient.get('name')?.touched && ingredient.get('name')?.errors?.['required']) {
-                  <div class="form-error"><span>Obligatorio</span></div>
+                <input class="input-base" formControlName="name" placeholder="Ingrediente *"/>
+                @if (ingredient.get('name')?.touched) {
+                  <div class="form-error">
+                    @if (ingredient.get('name')?.errors?.['required']) {
+                      <span>Obligatorio</span>
+                    }
+                    @if (ingredient.get('name')?.errors?.['forbiddenWords']) {
+                      <span>La palabra "{{ ingredient.get('name')?.errors?.['forbiddenWords'].word }}" infringe las normas de la comunidad</span>
+                    }
+                  </div>
                 }
               </div>
-
               <div class="form-group ingredient-qty">
                 <input class="input-base" type="number" formControlName="quantity" placeholder="Cantidad" min="0"/>
               </div>
-
               <div class="form-group ingredient-unit">
                 <label>
                   <select class="input-base" formControlName="unit">
                     @for (u of unidades; track u) {
                       <option [value]="u">{{ u }}</option>
+                    } @empty {
                     }
                   </select>
                 </label>
               </div>
-
               <button type="button" class="ingredient-remove" (click)="removeIngredient($index)" title="Eliminar">✕
               </button>
             </div>
+          } @empty {
           }
 
           <button type="button" class="btn btn-outline recipe-add-btn" (click)="addIngredient()">
             + Añadir ingrediente
           </button>
+
         </div>
       }
 
-      @if (currentStep() === 3) {
-        <div class="recipe-step" formArrayName="steps">
+      @if (activeTab() === 'steps') {
+        <div class="edit-section" formArrayName="steps">
+
+          <div class="edit-section-title">Pasos de elaboración</div>
 
           @if (steps.length === 0) {
             <div class="recipe-empty-hint">
-              <p>Añade los pasos de elaboración.</p>
+              <p>Aún no has añadido pasos.</p>
             </div>
           }
 
@@ -212,12 +219,16 @@
                       @if (step.get('text')?.errors?.['notOnlyWhiteSpace']) {
                         <span>No puede contener solo espacios</span>
                       }
+                      @if (step.get('text')?.errors?.['forbiddenWords']) {
+                        <span>La palabra "{{ step.get('text')?.errors?.['forbiddenWords'].word }}" infringe las normas de la comunidad</span>
+                      }
                     </div>
                   }
                 </div>
               </div>
               <button type="button" class="ingredient-remove" (click)="removeStep($index)" title="Eliminar">✕</button>
             </div>
+          } @empty {
           }
 
           <button type="button" class="btn btn-outline recipe-add-btn" (click)="addStep()">
@@ -227,14 +238,15 @@
         </div>
       }
 
-      @if (currentStep() === 4) {
-        <div class="recipe-step">
+      @if (activeTab() === 'photos') {
+        <div class="edit-section">
 
-          <p class="recipe-step-hint">Añade fotos de cómo quedó el plato. Son opcionales pero le dan vida a la
+          <div class="edit-section-title">Fotos del resultado</div>
+          <p class="edit-section-hint">Añade fotos de cómo quedó el plato. Son opcionales pero le dan vida a la
             receta.</p>
 
           <label class="btn btn-outline recipe-upload-btn">
-            Añadir fotos del resultado
+            Añadir fotos
             <input type="file" accept="image/*" multiple (change)="onResultImageSelected($event)" hidden/>
           </label>
 
@@ -245,30 +257,23 @@
                   <img [src]="preview" class="recipe-preview-img" alt="foto resultado"/>
                   <button type="button" class="recipe-remove-img" (click)="removeResultImage($index)">✕</button>
                 </div>
+              } @empty {
               }
             </div>
           }
+
         </div>
       }
+
     </form>
 
-    <div class="recipe-nav">
-      @if (currentStep() > 1) {
-        <button class="btn btn-outline" (click)="prevStep()">← Anterior</button>
-      } @else {
-        <a class="btn btn-ghost" routerLink="/feed">Cancelar</a>
-      }
-
-      @if (currentStep() < totalSteps) {
-        <button class="btn btn-primary" (click)="nextStep()" [disabled]="!canGoNext()">
-          Siguiente →
-        </button>
-      } @else {
-        <button class="btn btn-primary" (click)="onSubmit()" [disabled]="sending">
-          {{ sending ? 'Publicando...' : 'Publicar receta' }}
-        </button>
-      }
+    <div class="edit-footer">
+      <a class="btn btn-ghost" routerLink="/feed">Cancelar</a>
+      <button class="btn btn-primary" (click)="onSubmit()" [disabled]="sending">
+        {{ sending ? 'Publicando...' : 'Publicar receta' }}
+      </button>
     </div>
 
   </div>
+
 </div>
