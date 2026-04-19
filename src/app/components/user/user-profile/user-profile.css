@@ -339,6 +339,40 @@
   gap: 4px;
 }
 
+@media (max-width: 600px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-counters {
+    gap: 10px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .counter-item + .counter-item {
+    padding-left: var(--space-md);
+  }
+
+  .counter-item strong {
+    font-size: 15px;
+  }
+
+  .counter-item span {
+    font-size: 11px;
+  }
+
+  .profile-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .profile-name {
+    font-size: 20px;
+  }
+}
+
 
 
 

@@ -7,16 +7,10 @@
 
     <div class="navbar-menu">
       @if (identity) {
-        <a class="navbar-link" routerLink="/feed" routerLinkActive="navbar-link-active">
-          Feed
-        </a>
+        <a class="navbar-link" routerLink="/feed" routerLinkActive="navbar-link-active">Feed</a>
       }
-      <a class="navbar-link" routerLink="/explore" routerLinkActive="navbar-link-active">
-        Explorar
-      </a>
-      <a class="navbar-link" routerLink="/people" routerLinkActive="navbar-link-active">
-        Cocinillas
-      </a>
+      <a class="navbar-link" routerLink="/explore" routerLinkActive="navbar-link-active">Explorar</a>
+      <a class="navbar-link" routerLink="/people" routerLinkActive="navbar-link-active">Cocinillas</a>
       @if (identity) {
         <a class="navbar-link navbar-link-messages" routerLink="/messages" routerLinkActive="navbar-link-active">
           Mensajes
@@ -26,9 +20,7 @@
         </a>
       }
       @if (identity?.role === 'ROLE_ADMIN') {
-        <a class="navbar-link" routerLink="/admin" routerLinkActive="navbar-link-active">
-          Admin
-        </a>
+        <a class="navbar-link" routerLink="/admin" routerLinkActive="navbar-link-active">Admin</a>
       }
     </div>
 
@@ -39,17 +31,12 @@
       }
 
       @if (identity) {
-        <a class="btn btn-primary btn-sm navbar-create-btn" routerLink="/create-recipe">
-          + Receta
-        </a>
+        <a class="btn btn-primary btn-sm navbar-create-btn" routerLink="/create-recipe">+ Receta</a>
 
         <div class="navbar-user-menu">
           <button class="navbar-user-btn" (click)="toggleUserMenu()">
             @if (identity.image) {
-              <img
-                [src]="identity.image"
-                alt="avatar"
-                class="navbar-avatar"/>
+              <img [src]="identity.image" alt="avatar" class="navbar-avatar"/>
             } @else {
               <div class="navbar-avatar navbar-avatar-placeholder"></div>
             }
@@ -75,5 +62,48 @@
       }
     </div>
 
+    <!-- hamburguesa -->
+    <button class="navbar-hamburger" (click)="toggleMobileMenu()" [class.navbar-hamburger--open]="showMobileMenu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
   </div>
+
+  <!-- menú móvil -->
+  @if (showMobileMenu) {
+    <div class="navbar-mobile-menu">
+      <a class="navbar-mobile-link" routerLink="/explore" routerLinkActive="navbar-mobile-link--active"
+         (click)="closeMobileMenu()">Explorar</a>
+      <a class="navbar-mobile-link" routerLink="/people" routerLinkActive="navbar-mobile-link--active"
+         (click)="closeMobileMenu()">Cocinillas</a>
+      @if (identity) {
+        <a class="navbar-mobile-link" routerLink="/feed" routerLinkActive="navbar-mobile-link--active"
+           (click)="closeMobileMenu()">Feed</a>
+        <a class="navbar-mobile-link navbar-link-messages" routerLink="/messages"
+           routerLinkActive="navbar-mobile-link--active" (click)="closeMobileMenu()">
+          Mensajes
+          @if (unreadMessages > 0) {
+            <span class="navbar-badge">{{ unreadMessages }}</span>
+          }
+        </a>
+        <a class="navbar-mobile-link" routerLink="/create-recipe" routerLinkActive="navbar-mobile-link--active"
+           (click)="closeMobileMenu()">+ Nueva receta</a>
+        <a class="navbar-mobile-link" [routerLink]="['/profile', identity._id]" (click)="closeMobileMenu()">Mi
+          perfil</a>
+        <a class="navbar-mobile-link" routerLink="/my-data" (click)="closeMobileMenu()">Mis datos</a>
+        @if (identity?.role === 'ROLE_ADMIN') {
+          <a class="navbar-mobile-link" routerLink="/admin" (click)="closeMobileMenu()">Admin</a>
+        }
+        <hr class="navbar-mobile-divider"/>
+        <button class="navbar-mobile-link navbar-mobile-logout" (click)="logout()">Cerrar sesión</button>
+      } @else {
+        <hr class="navbar-mobile-divider"/>
+        <a class="navbar-mobile-link" routerLink="/login" (click)="closeMobileMenu()">Entrar</a>
+        <a class="navbar-mobile-link" routerLink="/register" (click)="closeMobileMenu()">Registrarse</a>
+      }
+    </div>
+  }
+
 </nav>

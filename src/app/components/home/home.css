@@ -671,7 +671,7 @@
   }
 
   .home-trending-item-body {
-    padding: var(--space-sm) var(--space-sm) var(--space-sm) 0;
+    padding: var(--space-sm) var(--space-sm) var(--space-sm) var(--space-sm);
   }
 
   .home-hashtag-recipes-grid {

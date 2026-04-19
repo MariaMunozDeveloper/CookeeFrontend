@@ -2,7 +2,7 @@ import { inject, Component, OnInit } from '@angular/core';
 import { UserService } from '../../../services/userService';
 import { FollowService } from '../../../services/followService';
 import { RouterLink } from '@angular/router';
-import { signal, WritableSignal } from '@angular/core';
+import { signal, WritableSignal, } from '@angular/core';
 import { AuthService } from '../../../services/authService';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 import { FormsModule } from '@angular/forms';

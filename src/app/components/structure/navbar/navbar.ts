@@ -21,6 +21,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   identity: any = null;
   showUserMenu = false;
   unreadMessages: number = 0;
+  showMobileMenu = false;
 
   private identitySub!: Subscription;
   private unreadInterval: any;
@@ -76,5 +77,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (!target.closest('.navbar-user-menu')) {
       this.showUserMenu = false;
     }
+    if (!target.closest('.navbar-hamburger') && !target.closest('.navbar-mobile-menu')) {
+      this.showMobileMenu = false;
+    }
+  }
+
+  toggleMobileMenu(): void {
+    this.showMobileMenu = !this.showMobileMenu;
+  }
+
+  closeMobileMenu(): void {
+    this.showMobileMenu = false;
   }
 }

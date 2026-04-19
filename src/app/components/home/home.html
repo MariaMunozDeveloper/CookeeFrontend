@@ -12,7 +12,9 @@
         platos increíbles cada día.
       </p>
       <div class="home-hero-actions">
-        <a class="btn btn-primary btn-lg" routerLink="/register">Empezar gratis</a>
+        @if (!isLoggedIn) {
+          <a class="btn btn-primary btn-lg" routerLink="/register">Empezar gratis</a>
+        }
         <a class="btn btn-hero-outline btn-lg" routerLink="/explore">Explorar recetas</a>
       </div>
     </div>

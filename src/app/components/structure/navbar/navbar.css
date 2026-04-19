@@ -30,6 +30,11 @@
   color: var(--color-primary-hover);
 }
 
+.navbar-logo-img {
+  height: 60px;
+  width: auto;
+}
+
 .navbar-menu {
   display: flex;
   align-items: center;
@@ -106,7 +111,7 @@
 
 .navbar-user-btn:hover {
   border-color: #8a8480;
-    background-color: #2e2820;
+  background-color: #2e2820;
 }
 
 .navbar-avatar {
@@ -183,14 +188,113 @@
   color: #a93226;
 }
 
-.navbar-logo-img {
-  height: 60px;
-  width: auto;
+/* hamburguesa */
+.navbar-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+.navbar-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background-color: #c8c0b8;
+  border-radius: 2px;
+  transition: all 0.25s ease;
+  transform-origin: center;
+}
+
+.navbar-hamburger--open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.navbar-hamburger--open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.navbar-hamburger--open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* menú móvil desplegable */
+.navbar-mobile-menu {
+  display: flex;
+  flex-direction: column;
+  background-color: #1f1a16;
+  border-top: 1px solid #2e2820;
+  padding: var(--space-sm) 0 var(--space-md);
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-mobile-link {
+  display: block;
+  padding: 12px var(--space-lg);
+  font-size: 15px;
+  font-weight: 500;
+  color: #c8c0b8;
+  transition: color 0.2s, background-color 0.2s;
+  position: relative;
+}
+
+.navbar-mobile-link:hover {
+  color: #faf9f6;
+  background-color: #2e2820;
+}
+
+.navbar-mobile-link--active {
+  color: var(--color-primary) !important;
+}
+
+.navbar-mobile-divider {
+  border: none;
+  border-top: 1px solid #2e2820;
+  margin: var(--space-xs) 0;
+}
+
+.navbar-mobile-logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  width: 100%;
+  color: #c0392b;
+}
+
+.navbar-mobile-logout:hover {
+  background-color: #2e2820;
 }
 
 /* responsive */
 @media (max-width: 768px) {
   .navbar-menu {
     display: none;
+  }
+
+  .navbar-actions {
+    display: none;
+  }
+
+  .navbar-hamburger {
+    display: flex;
   }
 }
