@@ -192,6 +192,47 @@
   opacity: 0.6;
 }
 
+.explore-like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--color-muted);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  transition: color 0.2s;
+}
+
+.explore-like-btn:hover {
+  color: var(--color-primary);
+}
+
+.explore-like-btn--active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+@media (max-width: 1136px) {
+  .explore-like-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-muted);
+    padding: 2px 3px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    transition: color 0.2s;
+  }
+
+}
 
 @media (max-width: 1024px) {
   .explore-grid {

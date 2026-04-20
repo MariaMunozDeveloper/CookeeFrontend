@@ -7,6 +7,7 @@ import { Publication } from '../../../common/interfaces/publication';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
 import { FavoriteService } from '../../../services/favoriteService';
+import { UserService } from '../../../services/userService';
 
 @Component({
   selector: 'app-timeline',
@@ -19,9 +20,10 @@ export class TimelineComponent implements OnInit {
   private readonly authService: AuthService = inject(AuthService);
   private readonly publicationService: PublicationService = inject(PublicationService);
   readonly favoriteService: FavoriteService = inject(FavoriteService);
+  private readonly userService: UserService = inject(UserService);
 
   identity: any = this.authService.getIdentity();
-  stats: any = JSON.parse(localStorage.getItem('stats') || 'null');
+  stats: WritableSignal<any> = signal<any>(JSON.parse(localStorage.getItem('stats') || 'null'));
 
   publications: WritableSignal<Publication[]> = signal<Publication[]>([]);
   loading: WritableSignal<boolean> = signal<boolean>(false);
@@ -36,6 +38,18 @@ export class TimelineComponent implements OnInit {
 
   ngOnInit(): void {
     this.getPublications();
+    this.loadStats();
+  }
+
+  loadStats(): void {
+    this.userService.getCounters().subscribe({
+      next: (response: any) => {
+        this.stats.set(response);
+        localStorage.setItem('stats', JSON.stringify(response));
+      },
+      error: () => {
+      }
+    });
   }
 
   getPublications(reset: boolean = false): void {

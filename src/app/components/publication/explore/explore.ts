@@ -29,6 +29,7 @@ export class ExploreComponent implements OnInit {
   totalPages: number = 1;
   hasMore: boolean = true;
   isLoggedIn: boolean = !!this.authService.getToken();
+  identity: any = this.authService.getIdentity();
 
   sortBy: string = 'recent';
   searchHashtag: string = '';
@@ -96,6 +97,32 @@ export class ExploreComponent implements OnInit {
 
   getAuthor(publication: Publication): any {
     return publication.user as any;
+  }
+
+  toggleLike(id: string, event: Event): void {
+    event.stopPropagation();
+    if (!this.isLoggedIn) return;
+
+    this.publicationService.toggleLike(id).subscribe({
+      next: (response: any) => {
+        this.publications.update(current =>
+          current.map(p => p._id === id
+            ? {
+              ...p, likes: response.hasLike
+                ? [...(p.likes || []), this.identity._id]
+                : (p.likes || []).filter((l: any) => l !== this.identity._id)
+            }
+            : p
+          )
+        );
+      },
+      error: () => {
+      }
+    });
+  }
+
+  isLiked(publication: Publication): boolean {
+    return (publication.likes || []).some((l: any) => l.toString() === this.identity?._id);
   }
 
   @HostListener('window:scroll')
