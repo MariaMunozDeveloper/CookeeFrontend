@@ -18,14 +18,14 @@
             <input class="input-base" formControlName="name" placeholder="Escribe tu nombre"/>
 
             @if (registerForm.get('name')?.touched) {
-            <div class="form-error">
-              @if (registerForm.get('name')?.errors?.['required']) {
-              <span>El nombre es obligatorio</span>
-              }
-              @if (registerForm.get('name')?.errors?.['notOnlyWhiteSpace']) {
-              <span>No puede contener solo espacios</span>
-              }
-            </div>
+              <div class="form-error">
+                @if (registerForm.get('name')?.errors?.['required']) {
+                  <span>El nombre es obligatorio</span>
+                }
+                @if (registerForm.get('name')?.errors?.['notOnlyWhiteSpace']) {
+                  <span>No puede contener solo espacios</span>
+                }
+              </div>
             }
           </div>
 
@@ -36,38 +36,39 @@
             </label>
 
             @if (registerForm.get('surname')?.touched) {
-            <div class="form-error">
-              @if (registerForm.get('surname')?.errors?.['required']) {
-              <span>Los apellidos son obligatorios</span>
-              }
-              @if (registerForm.get('surname')?.errors?.['notOnlyWhiteSpace']) {
-              <span>No puede contener solo espacios</span>
-              }
-            </div>
+              <div class="form-error">
+                @if (registerForm.get('surname')?.errors?.['required']) {
+                  <span>Los apellidos son obligatorios</span>
+                }
+                @if (registerForm.get('surname')?.errors?.['notOnlyWhiteSpace']) {
+                  <span>No puede contener solo espacios</span>
+                }
+              </div>
             }
           </div>
 
           <div class="form-group">
             <label class="form-label">Nick</label>
-            <label>
-              <input class="input-base" formControlName="nick" placeholder="Elige un nick"/>
-            </label>
+            <div class="nick-input-wrap">
+              <span class="nick-prefix">&#64;</span>
+              <input class="input-base nick-input" formControlName="nick" placeholder="nick"/>
+            </div>
 
             @if (registerForm.get('nick')?.touched) {
-            <div class="form-error">
-              @if (registerForm.get('nick')?.errors?.['required']) {
-              <span>El nick es obligatorio</span>
-              }
-              @if (registerForm.get('nick')?.errors?.['minlength']) {
-              <span>Debe tener al menos 3 caracteres</span>
-              }
-              @if (registerForm.get('nick')?.errors?.['notOnlyWhiteSpace']) {
-              <span>No puede contener solo espacios</span>
-              }
-              @if (registerForm.get('nick')?.errors?.['forbiddenWord']) {
-              <span>Ese nick no está permitido</span>
-              }
-            </div>
+              <div class="form-error">
+                @if (registerForm.get('nick')?.errors?.['required']) {
+                  <span>El nick es obligatorio</span>
+                }
+                @if (registerForm.get('nick')?.errors?.['minlength']) {
+                  <span>Debe tener al menos 3 caracteres</span>
+                }
+                @if (registerForm.get('nick')?.errors?.['notOnlyWhiteSpace']) {
+                  <span>No puede contener solo espacios</span>
+                }
+                @if (registerForm.get('nick')?.errors?.['forbiddenWord']) {
+                  <span>Ese nick no está permitido</span>
+                }
+              </div>
             }
           </div>
 
@@ -78,14 +79,14 @@
             </label>
 
             @if (registerForm.get('email')?.touched) {
-            <div class="form-error">
-              @if (registerForm.get('email')?.errors?.['required']) {
-              <span>El correo es obligatorio</span>
-              }
-              @if (registerForm.get('email')?.errors?.['email']) {
-              <span>Formato de correo no válido</span>
-              }
-            </div>
+              <div class="form-error">
+                @if (registerForm.get('email')?.errors?.['required']) {
+                  <span>El correo es obligatorio</span>
+                }
+                @if (registerForm.get('email')?.errors?.['email']) {
+                  <span>Formato de correo no válido</span>
+                }
+              </div>
             }
           </div>
 
@@ -94,17 +95,17 @@
             <input type="password" class="input-base" formControlName="password" placeholder="Crea una contraseña"/>
 
             @if (registerForm.get('password')?.touched) {
-            <div class="form-error">
-              @if (registerForm.get('password')?.errors?.['required']) {
-              <span>La contraseña es obligatoria</span>
-              }
-              @if (registerForm.get('password')?.errors?.['minlength']) {
-              <span>Debe tener al menos 6 caracteres</span>
-              }
-              @if (registerForm.get('password')?.errors?.['notOnlyWhiteSpace']) {
-              <span>No puede contener solo espacios</span>
-              }
-            </div>
+              <div class="form-error">
+                @if (registerForm.get('password')?.errors?.['required']) {
+                  <span>La contraseña es obligatoria</span>
+                }
+                @if (registerForm.get('password')?.errors?.['minlength']) {
+                  <span>Debe tener al menos 6 caracteres</span>
+                }
+                @if (registerForm.get('password')?.errors?.['notOnlyWhiteSpace']) {
+                  <span>No puede contener solo espacios</span>
+                }
+              </div>
             }
           </div>
 

@@ -7,6 +7,9 @@
         <h1 class="title-section">Nueva <span class="title-highlight">receta</span></h1>
         <a class="edit-cancel-link" routerLink="/feed">← Volver al feed</a>
       </div>
+      <button class="btn btn-primary" (click)="onSubmit()" [disabled]="sending">
+        {{ sending ? 'Publicando...' : 'Publicar receta' }}
+      </button>
     </div>
 
     @if (errorMessage) {
@@ -108,17 +111,20 @@
 
           <div class="form-group">
             <label class="form-label">Hashtags</label>
-            <input
-              class="input-base"
-              placeholder="Escribe y pulsa espacio o Enter para añadir"
-              (keyup)="onHashtagInput($event)"
-              [value]="hashtagInput"/>
+            <div class="nick-input-wrap">
+              <span class="nick-prefix">#</span>
+              <input
+                class="nick-input"
+                placeholder="Escribe y pulsa espacio o Enter para añadir"
+                (keyup)="onHashtagInput($event)"
+                [value]="hashtagInput"/>
+            </div>
             @if (hashtags.length > 0) {
               <div class="hashtag-preview">
                 @for (tag of hashtags; track tag) {
                   <span class="hashtag">#{{ tag }}
                     <button type="button" class="hashtag-remove" (click)="removeHashtag(tag)">✕</button>
-            </span>
+        </span>
                 } @empty {
                 }
               </div>
@@ -155,7 +161,8 @@
                 }
               </div>
               <div class="form-group ingredient-qty">
-                <input class="input-base" type="number" formControlName="quantity" placeholder="Cantidad" min="0"/>
+                <input class="input-base" type="number" formControlName="quantity" placeholder="Cantidad" min="0"
+                       step="0.01"/>
               </div>
               <div class="form-group ingredient-unit">
                 <label>
@@ -269,9 +276,14 @@
 
     <div class="edit-footer">
       <a class="btn btn-ghost" routerLink="/feed">Cancelar</a>
-      <button class="btn btn-primary" (click)="onSubmit()" [disabled]="sending">
-        {{ sending ? 'Publicando...' : 'Publicar receta' }}
-      </button>
+      <div class="edit-footer-nav">
+        @if (activeTab() !== 'info') {
+          <button type="button" class="btn btn-ghost btn-sm" (click)="prevTab()">← Anterior</button>
+        }
+        @if (activeTab() !== 'photos') {
+          <button type="button" class="btn btn-ghost btn-sm" (click)="nextTab()">Siguiente →</button>
+        }
+      </div>
     </div>
 
   </div>

@@ -272,4 +272,18 @@ export class CreateRecipeComponent {
       error: () => this.uploadNext(publicationId, uploads, index + 1)
     });
   }
+
+  nextTab(): void {
+    const current = this.tabs.findIndex(t => t.id === this.activeTab());
+    if (current < this.tabs.length - 1) {
+      this.setTab(this.tabs[current + 1].id);
+    }
+  }
+
+  prevTab(): void {
+    const current = this.tabs.findIndex(t => t.id === this.activeTab());
+    if (current > 0) {
+      this.setTab(this.tabs[current - 1].id);
+    }
+  }
 }

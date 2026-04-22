@@ -50,14 +50,14 @@
           @if (getCover(pub)) {
             <img [src]="getCover(pub)" [alt]="pub.title" class="explore-card-img"/>
           } @else {
-            <div class="explore-card-placeholder">🍳</div>
+            <div class="explore-card-placeholder"></div>
           }
 
           @if (pub.hashtags && pub.hashtags.length > 0) {
             @if (searchHashtag) {
               <span class="explore-card-tag">{{ searchHashtag | uppercase }}</span>
             } @else {
-              <span class="explore-card-tag">{{ pub.hashtags[0] | uppercase }}</span>
+              <span class="explore-card-tag">#{{ pub.hashtags[0] | uppercase }}</span>
             }
           }
 

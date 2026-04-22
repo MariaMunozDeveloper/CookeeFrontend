@@ -94,12 +94,10 @@
 
           <div class="form-group">
             <label class="form-label">Nick</label>
-            <label>
-              <input
-                class="input-base"
-                formControlName="nick"
-                placeholder="Escribe tu nick"/>
-            </label>
+            <div class="nick-input-wrap">
+              <span class="nick-prefix">&#64;</span>
+              <input class="input-base nick-input" formControlName="nick" placeholder="nick"/>
+            </div>
 
             @if (myDataForm.get('nick')?.touched) {
               <div class="form-error">

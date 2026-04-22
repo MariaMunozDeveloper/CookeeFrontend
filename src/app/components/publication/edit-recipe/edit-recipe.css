@@ -343,6 +343,10 @@
   font-size: 13px;
 }
 
+.btn-ghost {
+  background-color: transparent;
+}
+
 @media (max-width: 600px) {
   .edit-info-grid {
     grid-template-columns: 1fr 1fr;
