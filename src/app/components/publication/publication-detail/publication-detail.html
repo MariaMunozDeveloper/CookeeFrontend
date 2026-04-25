@@ -32,8 +32,8 @@
               <span class="detail-author-nick">&#64;{{ (publication()!.user | asAny)?.nick }}</span>
               @if ((publication()!.user | asAny)?.role === 'ROLE_VERIFIED' || (publication()!.user | asAny)?.role === 'ROLE_ADMIN') {
                 <span class="verified-wrap">
-                  <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
-                </span>
+              <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+            </span>
               }
             </div>
           </a>
@@ -129,12 +129,8 @@
           } @else {
             <div class="detail-intro-editor">
               <label>
-          <textarea
-            class="input-base detail-intro-textarea"
-            [(ngModel)]="introInput"
-            placeholder="Cuenta qué te llevó a crear esta receta..."
-            rows="3">
-          </textarea>
+          <textarea class="input-base detail-intro-textarea" [(ngModel)]="introInput"
+                    placeholder="Cuenta qué te llevó a crear esta receta..." rows="3"></textarea>
               </label>
               @if (introError) {
                 <p class="comment-error">{{ introError }}</p>
@@ -274,20 +270,14 @@
               <div class="detail-rec-editor">
                 <div class="detail-rec-list">
                   @for (rec of recommendations(); track $index) {
-                    <div
-                      class="detail-rec-row"
-                      [class.detail-rec-row--dragging]="dragIndex === $index"
-                      draggable="true"
-                      (dragstart)="onDragStart($index)"
-                      (dragover)="onDragOver($event, $index)"
-                      (dragend)="onDragEnd()">
+                    <div class="detail-rec-row" [class.detail-rec-row--dragging]="dragIndex === $index"
+                         draggable="true" (dragstart)="onDragStart($index)" (dragover)="onDragOver($event, $index)"
+                         (dragend)="onDragEnd()">
                       <img src="icons/tenedor.svg" class="detail-rec-drag-icon" alt="arrastrar"/>
                       <label>
-                        <input
-                          class="input-base detail-rec-input"
-                          [value]="rec"
-                          (input)="updateRecommendation($index, $any($event.target).value)"
-                          placeholder="Escribe una recomendación..."/>
+                        <input class="input-base detail-rec-input" [value]="rec"
+                               (input)="updateRecommendation($index, $any($event.target).value)"
+                               placeholder="Escribe una recomendación..."/>
                       </label>
                       <button type="button" class="detail-rec-remove" (click)="removeRecommendation($index)">✕</button>
                     </div>
@@ -330,12 +320,8 @@
 
             <div class="comments-form">
               <label>
-            <textarea
-              class="input-base comments-textarea"
-              [(ngModel)]="commentText"
-              placeholder="Escribe un comentario..."
-              rows="3">
-            </textarea>
+            <textarea class="input-base comments-textarea" [(ngModel)]="commentText"
+                      placeholder="Escribe un comentario..." rows="3"></textarea>
               </label>
               @if (commentError) {
                 <p class="comment-error">{{ commentError }}</p>
@@ -368,16 +354,88 @@
                         <span class="comment-nick">&#64;{{ comment.user?.nick }}</span>
                         @if (comment.user?.role === 'ROLE_VERIFIED' || comment.user?.role === 'ROLE_ADMIN') {
                           <span class="verified-wrap">
-                            <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
-                          </span>
+                    <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                  </span>
+                        }
+                        @if (isPublicationAuthor(comment.user?._id)) {
+                          <span class="comment-creator-badge">Creador</span>
                         }
                       </div>
                       <span class="comment-date">{{ getTimeAgo(comment.createdAt) }}</span>
-                      @if (isMyComment(comment)) {
-                        <button class="comment-delete" (click)="deleteComment(comment._id)">✕</button>
+                      @if (canDelete(comment)) {
+                        <button class="comment-delete"
+                                (click)="confirmDeleteComment(comment._id, undefined, comment.replies)">✕
+                        </button>
                       }
                     </div>
                     <p class="comment-text">{{ comment.text }}</p>
+
+                    <button class="comment-reply-btn" (click)="startReply(comment._id)">Responder</button>
+
+                    @if (replyingTo === comment._id) {
+                      <div class="comment-reply-form">
+                        <label>
+                  <textarea class="input-base comment-reply-textarea" [(ngModel)]="replyText"
+                            placeholder="Escribe una respuesta..." rows="2"></textarea>
+                        </label>
+                        @if (replyError) {
+                          <p class="comment-error">{{ replyError }}</p>
+                        }
+                        <div class="comment-reply-actions">
+                          <button class="btn btn-ghost btn-sm" (click)="cancelReply()">Cancelar</button>
+                          <button class="btn btn-primary btn-sm" (click)="saveReply(comment._id)"
+                                  [disabled]="sendingReply">
+                            {{ sendingReply ? 'Enviando...' : 'Responder' }}
+                          </button>
+                        </div>
+                      </div>
+                    }
+
+                    @if (comment.replies && comment.replies.length > 0) {
+                      <div class="comment-replies">
+                        @for (reply of comment.replies; track reply._id) {
+                          <div class="comment-item comment-item--reply">
+                            <a [routerLink]="['/profile', reply.user?._id]" class="comment-avatar-link">
+                              @if (reply.user?.image) {
+                                <img [src]="reply.user.image" class="comment-avatar comment-avatar--sm" alt="avatar"/>
+                              } @else {
+                                <div class="comment-avatar comment-avatar--sm comment-avatar-placeholder"></div>
+                              }
+                            </a>
+                            <div class="comment-body">
+                              <div class="comment-header">
+                                <a [routerLink]="['/profile', reply.user?._id]" class="comment-author">
+                                  {{ reply.user?.name }} {{ reply.user?.surname }}
+                                </a>
+                                <div class="nick-wrap">
+                                  <span class="comment-nick">&#64;{{ reply.user?.nick }}</span>
+                                  @if (reply.user?.role === 'ROLE_VERIFIED' || reply.user?.role === 'ROLE_ADMIN') {
+                                    <span class="verified-wrap">
+                          <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
+                        </span>
+                                  }
+                                  @if (isPublicationAuthor(reply.user?._id)) {
+                                    <span class="comment-creator-badge">Creador</span>
+                                  }
+                                </div>
+                                <span class="comment-date">{{ getTimeAgo(reply.createdAt) }}</span>
+                                @if (canDelete(reply)) {
+                                  <button class="comment-delete" (click)="confirmDeleteComment(reply._id, comment._id)">
+                                    ✕
+                                  </button>
+                                }
+                              </div>
+                              <p class="comment-text">{{ reply.text }}</p>
+                              <button class="comment-reply-btn" (click)="startReply(comment._id, reply.user?.nick)">
+                                Responder
+                              </button>
+                            </div>
+                          </div>
+                        } @empty {
+                        }
+                      </div>
+                    }
+
                   </div>
                 </div>
               } @empty {
@@ -392,6 +450,17 @@
       }
 
     </div>
+
+    @if (showDeleteCommentModal()) {
+      <app-confirm-modal
+        title="¿Eliminar comentario?"
+        [message]="hasReplies ? 'Este comentario tiene respuestas. Si lo eliminas se borrarán también.' : '¿Seguro que quieres eliminar este comentario?'"
+        confirmText="Sí, eliminar"
+        cancelText="Cancelar"
+        (confirmed)="deleteComment()"
+        (cancelled)="showDeleteCommentModal.set(false)">
+      </app-confirm-modal>
+    }
 
     @if (showDeleteModal()) {
       <app-confirm-modal

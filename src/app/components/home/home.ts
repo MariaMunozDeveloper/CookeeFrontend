@@ -2,6 +2,7 @@ import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core
 import { Router, RouterLink } from '@angular/router';
 import { PublicationService } from '../../services/publicationService';
 import { AuthService } from '../../services/authService';
+import { UserService } from '../../services/userService';
 import { Publication } from '../../common/interfaces/publication';
 import { AsAnyPipe } from '../../pipes/as-any.pipe';
 
@@ -21,10 +22,12 @@ interface HashtagSection {
 export class HomeComponent implements OnInit {
   private readonly publicationService: PublicationService = inject(PublicationService);
   private readonly authService: AuthService = inject(AuthService);
+  private readonly userService: UserService = inject(UserService);
   private readonly router: Router = inject(Router);
 
   trendingRecipes: WritableSignal<Publication[]> = signal<Publication[]>([]);
   heroImages: WritableSignal<string[]> = signal<string[]>([]);
+  heroUsers: WritableSignal<any[]> = signal<any[]>([]);
   hashtagSections: WritableSignal<HashtagSection[]> = signal<HashtagSection[]>([]);
   loaded: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -50,13 +53,22 @@ export class HomeComponent implements OnInit {
         const images = recipes
           .map(r => this.getCover(r))
           .filter((img): img is string => img !== null)
-          .slice(0, 3);
+          .slice(0, 6);
         this.heroImages.set(images);
 
         this.loaded.set(true);
       },
       error: () => {
         this.loaded.set(true);
+      }
+    });
+
+    this.userService.getUsers(1, 50).subscribe({
+      next: (response: any) => {
+        const users = (response.users || []).filter((u: any) => u.image);
+        this.heroUsers.set(this.getRotatingUsers(users));
+      },
+      error: () => {
       }
     });
 
@@ -75,6 +87,46 @@ export class HomeComponent implements OnInit {
         }
       });
     });
+  }
+
+  private getRotatingUsers(users: any[]): any[] {
+    const stored = localStorage.getItem('heroUsers');
+    const storedDate = localStorage.getItem('heroUsersDate');
+    const now = new Date();
+    const threeDays = 3 * 24 * 60 * 60 * 1000;
+
+    if (stored && storedDate && now.getTime() - new Date(storedDate).getTime() < threeDays) {
+      const storedUsers = JSON.parse(stored);
+      const stillValid = storedUsers.every((su: any) =>
+        users.some((u: any) => u._id === su._id)
+      );
+      if (stillValid && storedUsers.length >= 4) return storedUsers;
+    }
+
+    const shuffled = [...users].sort(() => Math.random() - 0.5).slice(0, 4);
+    localStorage.setItem('heroUsers', JSON.stringify(shuffled));
+    localStorage.setItem('heroUsersDate', now.toISOString());
+    return shuffled;
+  }
+
+  get heroCircles(): { type: 'recipe' | 'user', src: string }[] {
+    const recipes = this.heroImages().map(src => ({ type: 'recipe' as const, src }));
+    const users = this.heroUsers()
+      .filter(u => u?.image)
+      .map(u => ({ type: 'user' as const, src: u.image }));
+
+    const result: { type: 'recipe' | 'user', src: string }[] = [];
+    let ri = 0, ui = 0;
+    while (ri < recipes.length || ui < users.length) {
+      if (ri < recipes.length) result.push(recipes[ri++]);
+      if (ri < recipes.length) result.push(recipes[ri++]);
+      if (ui < users.length) result.push(users[ui++]);
+    }
+    return result;
+  }
+
+  getHeroUser(index: number): any {
+    return this.heroUsers()[index] ?? null;
   }
 
   toggleLike(id: string, event: Event): void {

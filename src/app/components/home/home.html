@@ -20,27 +20,11 @@
     </div>
 
     <div class="home-hero-circles">
-      <div class="home-hero-circle-wrap home-hero-circle-wrap--top">
-        @if (getHeroImage(0)) {
-          <img [src]="getHeroImage(0)" class="home-hero-circle-img" alt="receta"/>
-        } @else {
-          <div class="home-hero-circle-img home-hero-circle-img--placeholder"></div>
-        }
-      </div>
-      <div class="home-hero-circle-wrap home-hero-circle-wrap--mid">
-        @if (getHeroImage(1)) {
-          <img [src]="getHeroImage(1)" class="home-hero-circle-img" alt="receta"/>
-        } @else {
-          <div class="home-hero-circle-img home-hero-circle-img--placeholder"></div>
-        }
-      </div>
-      <div class="home-hero-circle-wrap home-hero-circle-wrap--bot">
-        @if (getHeroImage(2)) {
-          <img [src]="getHeroImage(2)" class="home-hero-circle-img" alt="receta"/>
-        } @else {
-          <div class="home-hero-circle-img home-hero-circle-img--placeholder"></div>
-        }
-      </div>
+      @for (circle of heroCircles; track $index) {
+        <div class="home-hero-circle-wrap home-hero-circle-wrap--{{ $index + 1 }}">
+          <img [src]="circle.src" class="home-hero-circle-img" [alt]="circle.type"/>
+        </div>
+      }
     </div>
 
   </div>
@@ -243,11 +227,19 @@
 <section class="home-cta">
   <div class="page-container">
     <div class="home-cta-inner">
-      <h2 class="home-cta-title">
-        ¿Lista para compartir<br>tus <em>recetas</em>?
-      </h2>
-      <p class="home-cta-subtitle">Únete gratis y empieza a construir tu recetario hoy.</p>
-      <a class="btn btn-primary btn-lg" routerLink="/register">Crear mi cuenta</a>
+      @if (!isLoggedIn) {
+        <h2 class="home-cta-title">
+          ¿Lista para compartir<br>tus <em>recetas</em>?
+        </h2>
+        <p class="home-cta-subtitle">Únete gratis y empieza a construir tu recetario hoy.</p>
+        <a class="btn btn-primary btn-lg" routerLink="/register">Crear mi cuenta</a>
+      } @else {
+        <h2 class="home-cta-title">
+          ¿Tienes una receta<br>para <em>compartir</em>?
+        </h2>
+        <p class="home-cta-subtitle">Publica tu receta y compártela con la comunidad Cookee.</p>
+        <a class="btn btn-primary btn-lg" routerLink="/create-recipe">+ Nueva receta</a>
+      }
     </div>
   </div>
 </section>

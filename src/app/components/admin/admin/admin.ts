@@ -1,9 +1,22 @@
-import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
+import {
+  inject,
+  Component,
+  signal,
+  WritableSignal,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  ElementRef,
+  ViewChild
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/adminService';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-admin',
@@ -12,13 +25,20 @@ import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
   templateUrl: './admin.html',
   styleUrl: './admin.css'
 })
-export class AdminComponent implements OnInit {
+export class AdminComponent implements OnInit, OnDestroy {
   private readonly adminService: AdminService = inject(AdminService);
 
   activeTab: 'dashboard' | 'users' = 'dashboard';
 
   stats: any = null;
   loadingStats: WritableSignal<boolean> = signal<boolean>(true);
+  loadingCharts: WritableSignal<boolean> = signal<boolean>(false);
+  chartPeriod: string = 'week';
+
+  private usersChart: Chart | null = null;
+  private publicationsChart: Chart | null = null;
+  private activityChart: Chart | null = null;
+  private hashtagsChart: Chart | null = null;
 
   users: WritableSignal<any[]> = signal<any[]>([]);
   loadingUsers: WritableSignal<boolean> = signal<boolean>(false);
@@ -41,13 +61,39 @@ export class AdminComponent implements OnInit {
     { value: 'ROLE_ADMIN', label: 'Admin' }
   ];
 
+  readonly periods = [
+    { value: 'day', label: 'Últimos 30 días' },
+    { value: 'week', label: 'Últimas 12 semanas' },
+    { value: 'month', label: 'Último año' }
+  ];
+
   ngOnInit(): void {
     this.loadStats();
     this.loadUsers();
+    this.loadCharts();
+  }
+
+  ngOnDestroy(): void {
+    this.destroyCharts();
+  }
+
+  private destroyCharts(): void {
+    this.usersChart?.destroy();
+    this.publicationsChart?.destroy();
+    this.activityChart?.destroy();
+    this.hashtagsChart?.destroy();
   }
 
   setTab(tab: 'dashboard' | 'users'): void {
     this.activeTab = tab;
+    if (tab === 'dashboard') {
+      setTimeout(() => this.renderCharts(), 100);
+    }
+  }
+
+  setPeriod(period: string): void {
+    this.chartPeriod = period;
+    this.loadCharts();
   }
 
   loadStats(): void {
@@ -61,6 +107,188 @@ export class AdminComponent implements OnInit {
         this.loadingStats.set(false);
       }
     });
+  }
+
+  loadCharts(): void {
+    this.loadingCharts.set(true);
+    this.adminService.getChartData(this.chartPeriod).subscribe({
+      next: (response: any) => {
+        this.loadingCharts.set(false);
+        setTimeout(() => this.renderCharts(response), 100);
+      },
+      error: () => {
+        this.loadingCharts.set(false);
+      }
+    });
+  }
+
+  private renderCharts(data?: any): void {
+    if (!data) return;
+    this.destroyCharts();
+
+    const primary = '#c4636d';
+    const primaryLight = 'rgba(196, 99, 109, 0.15)';
+    const secondary = '#8b9dc3';
+    const secondaryLight = 'rgba(139, 157, 195, 0.15)';
+    const gridColor = 'rgba(0,0,0,0.06)';
+    const font = 'Inter, Arial, sans-serif';
+
+    const baseOptions: any = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1a1a1a',
+          titleFont: { family: font, size: 12 },
+          bodyFont: { family: font, size: 12 },
+          padding: 10,
+          cornerRadius: 8
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: gridColor },
+          ticks: { font: { family: font, size: 11 }, color: '#8a8480' }
+        },
+        y: {
+          grid: { color: gridColor },
+          ticks: { font: { family: font, size: 11 }, color: '#8a8480', precision: 0 },
+          beginAtZero: true
+        }
+      }
+    };
+
+    const formatLabel = (label: string): string => {
+      if (!label) return '';
+      // formato día: 2026-04-24
+      if (label.length === 10) {
+        const [y, m, d] = label.split('-');
+        return `${d}/${m}/${y}`;
+      }
+      // formato semana: 2026-16 o mes: 2026-04
+      if (label.length === 7 && label.includes('-')) {
+        const [y, suffix] = label.split('-');
+        const num = parseInt(suffix);
+        // si el número es <= 12 es un mes, si no es una semana
+        if (num <= 12) {
+          return `${suffix}/${y}`;
+        } else {
+          return `Sem ${num}/${y}`;
+        }
+      }
+      return label;
+    };
+
+    // Gráfica usuarios
+    const usersCanvas = document.getElementById('usersChart') as HTMLCanvasElement;
+    if (usersCanvas) {
+      this.usersChart = new Chart(usersCanvas, {
+        type: 'line',
+        data: {
+          labels: data.users.map((d: any) => formatLabel(d._id)),
+          datasets: [{
+            data: data.users.map((d: any) => d.count),
+            borderColor: primary,
+            backgroundColor: primaryLight,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: primary,
+            pointRadius: 4
+          }]
+        },
+        options: { ...baseOptions }
+      });
+    }
+
+    // Gráfica publicaciones
+    const pubCanvas = document.getElementById('publicationsChart') as HTMLCanvasElement;
+    if (pubCanvas) {
+      this.publicationsChart = new Chart(pubCanvas, {
+        type: 'bar',
+        data: {
+          labels: data.publications.map((d: any) => formatLabel(d._id)),
+          datasets: [{
+            data: data.publications.map((d: any) => d.count),
+            backgroundColor: primaryLight,
+            borderColor: primary,
+            borderWidth: 2,
+            borderRadius: 6
+          }]
+        },
+        options: { ...baseOptions }
+      });
+    }
+
+    // Gráfica actividad por día de la semana
+    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const activityData = Array(7).fill(0);
+    data.activityByDay.forEach((d: any) => {
+      activityData[d._id - 1] = d.count;
+    });
+
+    const actCanvas = document.getElementById('activityChart') as HTMLCanvasElement;
+    if (actCanvas) {
+      this.activityChart = new Chart(actCanvas, {
+        type: 'bar',
+        data: {
+          labels: days,
+          datasets: [{
+            data: activityData,
+            backgroundColor: activityData.map(v =>
+              v === Math.max(...activityData) ? primary : primaryLight
+            ),
+            borderColor: primary,
+            borderWidth: 2,
+            borderRadius: 6
+          }]
+        },
+        options: { ...baseOptions }
+      });
+    }
+
+    // Gráfica hashtags
+    const hashCanvas = document.getElementById('hashtagsChart') as HTMLCanvasElement;
+    if (hashCanvas) {
+      this.hashtagsChart = new Chart(hashCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: data.topHashtags.map((d: any) => `#${d._id}`),
+          datasets: [{
+            data: data.topHashtags.map((d: any) => d.count),
+            backgroundColor: [
+              '#c4636d', '#d4838c', '#e0a0a8', '#8b9dc3', '#a0b0d0',
+              '#6b8cb8', '#b8c4d8', '#e8b4b8', '#f0c8cc', '#c8d4e8'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'bottom',
+              labels: {
+                font: { family: font, size: 11 },
+                color: '#4a4a4a',
+                padding: 12,
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              backgroundColor: '#1a1a1a',
+              titleFont: { family: font, size: 12 },
+              bodyFont: { family: font, size: 12 },
+              padding: 10,
+              cornerRadius: 8
+            }
+          }
+        }
+      });
+    }
   }
 
   loadUsers(): void {
@@ -129,7 +357,7 @@ export class AdminComponent implements OnInit {
 
   updateRole(userId: string, role: string): void {
     this.adminService.updateRole(userId, role).subscribe({
-      next: (response: any) => {
+      next: () => {
         this.users.update(current =>
           current.map(u => u._id === userId ? { ...u, role } : u)
         );

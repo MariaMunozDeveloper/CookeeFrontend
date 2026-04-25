@@ -2,7 +2,7 @@
 
   <div class="explore-header">
     <h1 class="title-section">
-      Explorar <span class="title-highlight">recetas</span>
+      Para <span class="title-highlight">ti</span>
     </h1>
     <p class="subtitle">Descubre recetas de toda la comunidad Cookee</p>
   </div>
@@ -10,16 +10,16 @@
   <div class="explore-controls">
 
     <div class="explore-search">
-      <label>
+      <div class="nick-input-wrap">
         <input
-          class="input-base explore-search-input"
+          class="input-base nick-input explore-search-input"
           [(ngModel)]="hashtagInput"
-          placeholder="Buscar por #hashtag..."
+          placeholder=" Buscar recetas o #hashtags..."
           (keyup.enter)="buscarHashtag()"/>
-      </label>
+      </div>
       <button class="btn btn-primary" (click)="buscarHashtag()">Buscar</button>
-      @if (searchHashtag) {
-        <button class="btn btn-ghost" (click)="clearHashtag()">✕ {{ searchHashtag }}</button>
+      @if (searchHashtag || search) {
+        <button class="btn btn-ghost" (click)="clearHashtag()">✕ {{ searchHashtag || search }}</button>
       }
     </div>
 
@@ -88,7 +88,6 @@
               }
             </div>
           </div>
-
           <div class="explore-card-stats">
             @if (isLoggedIn) {
               <button class="explore-like-btn" [class.explore-like-btn--active]="isLiked(pub)"
@@ -99,26 +98,32 @@
               </button>
             } @else {
               <span class="recipe-stat">
-            <img src="icons/corazon.svg" class="recipe-stat-icon" alt="likes"/>
+                <img src="icons/corazon.svg" class="recipe-stat-icon" alt="likes"/>
                 {{ pub.likes.length }}
-          </span>
+              </span>
             }
+            <a class="recipe-stat feed-comment-link"
+               [routerLink]="['/publication', pub._id]"
+               fragment="comentarios"
+               (click)="$event.stopPropagation()">
+              <img src="icons/chat-de-burbujas.svg" class="recipe-stat-icon" alt="comentarios"/>
+              {{ (pub | asAny).commentsCount ?? 0 }}
+            </a>
 
-            @if (pub.raciones) {
+            <!--@if (pub.raciones) {
               <span class="recipe-stat">
-            <img src="icons/usuarios.svg" class="recipe-stat-icon" alt="raciones"/>
+                <img src="icons/usuarios.svg" class="recipe-stat-icon" alt="raciones"/>
                 {{ pub.raciones }}
-          </span>
-            }
+              </span>
+            } -->
             @if (pub.tiempoHorno) {
               <span class="recipe-stat">
-            <img src="icons/reloj.svg" class="recipe-stat-icon" alt="tiempo"/>
+                <img src="icons/reloj.svg" class="recipe-stat-icon" alt="tiempo"/>
                 {{ pub.tiempoHorno }} min
-          </span>
+              </span>
             }
           </div>
         </div>
-
       </article>
     }
   </div>

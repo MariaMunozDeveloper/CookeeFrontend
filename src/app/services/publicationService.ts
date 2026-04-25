@@ -51,9 +51,12 @@ export class PublicationService {
     return this.http.get(`${this.apiUrl}/count`);
   }
 
-  explore(page: number = 1, sort: string = 'recent', hashtag: string = ''): Observable<{ publications: Publication[], totalPages: number }> {
+  explore(page: number = 1, sort: string = 'recent', hashtag: string = '', search: string = ''): Observable<{
+    publications: Publication[],
+    totalPages: number
+  }> {
     return this.http.get<any>(
-      `${this.apiUrl}/explore?page=${page}&sort=${sort}&hashtag=${hashtag}`
+      `${this.apiUrl}/explore?page=${page}&sort=${sort}&hashtag=${hashtag}&search=${search}`
     ).pipe(
       map(data => ({ publications: data.publications, totalPages: data.totalPages }))
     );

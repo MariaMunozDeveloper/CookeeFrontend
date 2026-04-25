@@ -18,6 +18,10 @@ export class CommentService {
   save(publicationId: string, text: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/${publicationId}`, { text });
   }
+  
+  reply(commentId: string, text: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reply/${commentId}`, { text });
+  }
 
   remove(commentId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${commentId}`);

@@ -11,7 +11,6 @@ import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal'
 import { FavoriteService } from '../../../services/favoriteService';
 import { FORBIDDEN_WORDS } from '../../../validators/forbidden-words';
 
-
 @Component({
   selector: 'app-publication-detail',
   standalone: true,
@@ -31,6 +30,7 @@ export class PublicationDetailComponent implements OnInit {
   isLoggedIn: boolean = !!this.authService.getToken();
 
   publication: WritableSignal<Publication | null> = signal<Publication | null>(null);
+  commentToDeleteParent: string | undefined = undefined;
   loading: WritableSignal<boolean> = signal<boolean>(true);
 
   hasLike: WritableSignal<boolean> = signal<boolean>(false);
@@ -40,10 +40,19 @@ export class PublicationDetailComponent implements OnInit {
   commentText: string = '';
   sendingComment: boolean = false;
   commentError: string = '';
+
+  replyingTo: string | null = null;
+  replyText: string = '';
+  sendingReply: boolean = false;
+  replyError: string = '';
+  commentToDelete: string = '';
+  hasReplies: boolean = false;
+
   introError: string = '';
   recommendationsError: string = '';
 
   showDeleteModal: WritableSignal<boolean> = signal<boolean>(false);
+  showDeleteCommentModal: WritableSignal<boolean> = signal<boolean>(false);
 
   recommendations: WritableSignal<string[]> = signal<string[]>([]);
   editingRecommendations: WritableSignal<boolean> = signal<boolean>(false);
@@ -119,6 +128,13 @@ export class PublicationDetailComponent implements OnInit {
     return author?._id === this.identity?._id || author === this.identity?._id;
   }
 
+  isPublicationAuthor(userId: string): boolean {
+    const pub = this.publication();
+    if (!pub) return false;
+    const author = pub.user as any;
+    return author?._id === userId || author === userId;
+  }
+
   getTimeAgo(date: string | undefined): string {
     if (!date) return '';
     const now = new Date();
@@ -143,9 +159,8 @@ export class PublicationDetailComponent implements OnInit {
   saveComment(): void {
     if (!this.commentText.trim()) return;
 
-    const lowerText = this.commentText.toLowerCase();
     const found = FORBIDDEN_WORDS.find(word =>
-      new RegExp(`\\b${word.toLowerCase()}\\b`, 'i').test(lowerText)
+      new RegExp(`\\b${word.toLowerCase()}\\b`, 'i').test(this.commentText.toLowerCase())
     );
 
     if (found) {
@@ -158,7 +173,7 @@ export class PublicationDetailComponent implements OnInit {
 
     this.commentService.save(this.publication()!._id, this.commentText.trim()).subscribe({
       next: (response: any) => {
-        this.comments.update(current => [response.comment, ...current]);
+        this.comments.update(current => [{ ...response.comment, replies: [] }, ...current]);
         this.commentText = '';
         this.sendingComment = false;
       },
@@ -168,14 +183,80 @@ export class PublicationDetailComponent implements OnInit {
     });
   }
 
-  deleteComment(commentId: string): void {
-    this.commentService.remove(commentId).subscribe({
+  startReply(commentId: string, nick?: string): void {
+    this.replyingTo = commentId;
+    this.replyText = nick ? `@${nick} ` : '';
+    this.replyError = '';
+  }
+
+  cancelReply(): void {
+    this.replyingTo = null;
+    this.replyText = '';
+    this.replyError = '';
+  }
+
+  saveReply(commentId: string): void {
+    if (!this.replyText.trim()) return;
+
+    const found = FORBIDDEN_WORDS.find(word =>
+      new RegExp(`\\b${word.toLowerCase()}\\b`, 'i').test(this.replyText.toLowerCase())
+    );
+
+    if (found) {
+      this.replyError = `La palabra "${found}" infringe las normas de la comunidad`;
+      return;
+    }
+
+    this.replyError = '';
+    this.sendingReply = true;
+
+    this.commentService.reply(commentId, this.replyText.trim()).subscribe({
+      next: (response: any) => {
+        this.comments.update(current =>
+          current.map(c => c._id === commentId
+            ? { ...c, replies: [...(c.replies || []), response.comment] }
+            : c
+          )
+        );
+        this.replyingTo = null;
+        this.replyText = '';
+        this.sendingReply = false;
+      },
+      error: () => {
+        this.sendingReply = false;
+      }
+    });
+  }
+
+  confirmDeleteComment(commentId: string, parentId?: string, replies?: any[]): void {
+    this.commentToDelete = commentId;
+    this.commentToDeleteParent = parentId;
+    this.hasReplies = !parentId && (replies?.length ?? 0) > 0;
+    this.showDeleteCommentModal.set(true);
+  }
+
+  deleteComment(): void {
+    this.showDeleteCommentModal.set(false);
+    this.commentService.remove(this.commentToDelete).subscribe({
       next: () => {
-        this.comments.update(current => current.filter(c => c._id !== commentId));
+        if (this.commentToDeleteParent) {
+          this.comments.update(current =>
+            current.map(c => c._id === this.commentToDeleteParent
+              ? { ...c, replies: c.replies.filter((r: any) => r._id !== this.commentToDelete) }
+              : c
+            )
+          );
+        } else {
+          this.comments.update(current => current.filter(c => c._id !== this.commentToDelete));
+        }
       },
       error: () => {
       }
     });
+  }
+
+  canDelete(comment: any): boolean {
+    return comment.user?._id === this.identity?._id || this.isMyPublication();
   }
 
   isMyComment(comment: any): boolean {
@@ -244,11 +325,9 @@ export class PublicationDetailComponent implements OnInit {
     }
 
     this.recommendationsError = '';
-
     if (clean.length === 0 && this.recommendations().length > 0) return;
 
     this.savingRecommendations = true;
-
     const data = { recommendations: clean.join('\n') };
 
     this.publicationService.updatePublication(this.publication()!._id, data).subscribe({
@@ -277,9 +356,8 @@ export class PublicationDetailComponent implements OnInit {
   }
 
   saveIntro(): void {
-    const lowerText = this.introInput.toLowerCase();
     const found = FORBIDDEN_WORDS.find(word =>
-      new RegExp(`\\b${word.toLowerCase()}\\b`, 'i').test(lowerText)
+      new RegExp(`\\b${word.toLowerCase()}\\b`, 'i').test(this.introInput.toLowerCase())
     );
 
     if (found) {
@@ -301,8 +379,6 @@ export class PublicationDetailComponent implements OnInit {
       }
     });
   }
-
-  // ---- drag & drop ----
 
   onDragStart(index: number): void {
     this.dragIndex = index;

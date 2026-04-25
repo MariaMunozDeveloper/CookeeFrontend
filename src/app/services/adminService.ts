@@ -29,4 +29,8 @@ export class AdminService {
   deleteUser(userId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/users/${userId}`);
   }
+
+  getChartData(period: string = 'week'): Observable<any> {
+    return this.http.get(`${this.apiUrl}/charts?period=${period}`);
+  }
 }

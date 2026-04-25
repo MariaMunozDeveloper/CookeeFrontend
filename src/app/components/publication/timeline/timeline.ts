@@ -8,11 +8,12 @@ import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
 import { FavoriteService } from '../../../services/favoriteService';
 import { UserService } from '../../../services/userService';
+import { AsAnyPipe } from '../../../pipes/as-any.pipe';
 
 @Component({
   selector: 'app-timeline',
   standalone: true,
-  imports: [UserCardComponent, RouterLink, LoadingSpinner, ConfirmModalComponent],
+  imports: [UserCardComponent, RouterLink, LoadingSpinner, ConfirmModalComponent, AsAnyPipe],
   templateUrl: './timeline.html',
   styleUrl: './timeline.css'
 })

@@ -4,7 +4,7 @@
 
 .home-hero {
   background-color: #1f1a16;
-  padding: var(--space-xxl) 0;
+  padding: 20px;
   overflow: hidden;
 }
 
@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-xl);
-  min-height: 460px;
+  min-height: 430px;
 }
 
 .home-hero-text {
@@ -73,7 +73,7 @@
 .home-hero-circles {
   position: relative;
   flex-shrink: 0;
-  width: 300px;
+  width: 570px;
   height: 400px;
 }
 
@@ -85,26 +85,79 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
-.home-hero-circle-wrap--top {
+.home-hero-circle-wrap--1 {
   width: 180px;
   height: 180px;
   top: 0;
-  right: 10px;
+  left: 150px;
 }
 
-.home-hero-circle-wrap--mid {
-  width: 150px;
-  height: 150px;
-  top: 130px;
-  left: 0;
+.home-hero-circle-wrap--2 {
+  width: 160px;
+  height: 160px;
+  top: 30px;
+  right: 0px;
+}
+
+.home-hero-circle-wrap--3 {
+  width: 70px;
+  height: 70px;
+  top: 110px;
+  left: 50px;
   border-color: var(--color-primary);
 }
 
-.home-hero-circle-wrap--bot {
+.home-hero-circle-wrap--4 {
+  width: 130px;
+  height: 130px;
+  top: 160px;
+  left: 160px;
+  border-color: var(--color-primary);
+}
+
+.home-hero-circle-wrap--5 {
+  width: 90px;
+  height: 90px;
+  top: 170px;
+  right: 150px;
+  border-color: var(--color-primary);
+}
+
+.home-hero-circle-wrap--6 {
   width: 120px;
   height: 120px;
+  bottom: 60px;
+  left: 60px;
+}
+
+.home-hero-circle-wrap--7 {
+  width: 80px;
+  height: 80px;
   bottom: 10px;
-  right: 20px;
+  left: 210px;
+  border-color: var(--color-primary);
+}
+
+.home-hero-circle-wrap--8 {
+  width: 190px;
+  height: 190px;
+  bottom: 0;
+  right: 0;
+}
+
+.home-hero-circle-wrap--9 {
+  width: 90px;
+  height: 90px;
+  top: 5px;
+  right: 135px;
+}
+
+.home-hero-circle-wrap--10 {
+  width: 75px;
+  height: 75px;
+  bottom: 15px;
+  left: 35px;
+  border-color: var(--color-primary);
 }
 
 .home-hero-circle-img {
@@ -117,9 +170,7 @@
   background-color: #3a3028;
 }
 
-/* =====================
-   CABECERAS DE SECCIÓN
-   ===================== */
+/*CABECERAS DE SECCIÓN */
 
 .home-section-header {
   display: flex;

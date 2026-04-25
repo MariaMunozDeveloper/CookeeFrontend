@@ -7,11 +7,12 @@ import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 import { UpperCasePipe } from '@angular/common';
 import { FavoriteService } from '../../../services/favoriteService';
 import { AuthService } from '../../../services/authService';
+import { AsAnyPipe } from '../../../pipes/as-any.pipe';
 
 @Component({
   selector: 'app-explore',
   standalone: true,
-  imports: [RouterLink, FormsModule, LoadingSpinner, UpperCasePipe],
+  imports: [RouterLink, FormsModule, LoadingSpinner, UpperCasePipe, AsAnyPipe],
   templateUrl: './explore.html',
   styleUrl: './explore.css'
 })
@@ -34,6 +35,7 @@ export class ExploreComponent implements OnInit {
   sortBy: string = 'recent';
   searchHashtag: string = '';
   hashtagInput: string = '';
+  search: string = '';
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -47,16 +49,13 @@ export class ExploreComponent implements OnInit {
 
   loadRecetas(reset: boolean = false): void {
     if (this.loading() || (!this.hasMore && !reset)) return;
-
     if (reset) {
       this.page = 1;
       this.publications.set([]);
       this.hasMore = true;
     }
-
     this.loading.set(true);
-
-    this.publicationService.explore(this.page, this.sortBy, this.searchHashtag).subscribe({
+    this.publicationService.explore(this.page, this.sortBy, this.searchHashtag, this.search).subscribe({
       next: (response) => {
         this.publications.update(current => [...current, ...response.publications]);
         this.totalPages = response.totalPages;
@@ -76,7 +75,14 @@ export class ExploreComponent implements OnInit {
   }
 
   buscarHashtag(): void {
-    this.searchHashtag = this.hashtagInput.trim().toLowerCase();
+    const input = this.hashtagInput.trim().toLowerCase();
+    if (input.startsWith('#')) {
+      this.searchHashtag = input.slice(1);
+      this.search = '';
+    } else {
+      this.search = input;
+      this.searchHashtag = '';
+    }
     this.router.navigate([], {
       queryParams: this.searchHashtag ? { hashtag: this.searchHashtag } : {},
       queryParamsHandling: 'replace'
@@ -87,6 +93,7 @@ export class ExploreComponent implements OnInit {
   clearHashtag(): void {
     this.searchHashtag = '';
     this.hashtagInput = '';
+    this.search = '';
     this.router.navigate([], { queryParams: {} });
     this.loadRecetas(true);
   }

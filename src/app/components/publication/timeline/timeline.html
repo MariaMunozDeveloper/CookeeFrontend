@@ -18,7 +18,7 @@
   <main class="feed-main">
 
     <div class="feed-header">
-      <h1 class="feed-title">Tu <em>feed</em></h1>
+      <h1 class="feed-title">Ini<em>cio</em></h1>
       <p class="feed-subtitle">Las últimas recetas de la gente que sigues</p>
     </div>
 
@@ -115,14 +115,24 @@
             }
 
             <div class="feed-recipe-footer">
-              <button class="feed-like-btn" (click)="toggleLike(publication._id, $event)">
-                <img
-                  [src]="isLiked(publication) ? 'icons/corazon.svg' : 'icons/corazon_line.svg'"
-                  class="recipe-stat-icon feed-like-icon"
-                  alt="like"
-                />
-                {{ publication.likes.length }}
-              </button>
+              <div class="feed-recipe-footer-icons">
+                <button class="feed-like-btn" (click)="toggleLike(publication._id, $event)">
+                  <img
+                    [src]="isLiked(publication) ? 'icons/corazon.svg' : 'icons/corazon_line.svg'"
+                    class="recipe-stat-icon feed-like-icon"
+                    alt="like"
+                  />
+                  {{ publication.likes.length }}
+                </button>
+
+                <a class="feed-comment-link"
+                   [routerLink]="['/publication', publication._id]"
+                   fragment="comentarios"
+                   (click)="$event.stopPropagation()">
+                  <img src="icons/chat-de-burbujas.svg" class="recipe-stat-icon" alt="comentarios"/>
+                  {{ (publication | asAny).commentsCount ?? 0 }}
+                </a>
+              </div>
 
               <div class="feed-recipe-actions">
                 @if (isMyPublication(publication)) {
