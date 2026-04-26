@@ -203,10 +203,12 @@
   margin-top: auto;
   padding-top: var(--space-sm);
   position: relative;
+
 }
 
 .feed-recipe-footer-icons {
-
+  display: flex;
+  flex-wrap: nowrap;
 }
 
 .feed-like-btn {
@@ -218,7 +220,7 @@
   cursor: pointer;
   font-size: 12px;
   color: var(--color-muted);
-  padding: 0;
+  padding: 8px;
   transition: color 0.2s;
   font-family: var(--font-body);
 }
@@ -347,6 +349,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding: 6px;
   font-size: 12px;
   color: var(--color-muted);
   transition: color 0.2s;

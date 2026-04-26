@@ -15,6 +15,9 @@ import { AdminService } from '../../../services/adminService';
 import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
 import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
 import { Chart, registerables } from 'chart.js';
+import { interval, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 Chart.register(...registerables);
 
@@ -34,6 +37,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   loadingStats: WritableSignal<boolean> = signal<boolean>(true);
   loadingCharts: WritableSignal<boolean> = signal<boolean>(false);
   chartPeriod: string = 'week';
+  private destroy$ = new Subject<void>();
 
   private usersChart: Chart | null = null;
   private publicationsChart: Chart | null = null;
@@ -71,10 +75,20 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.loadStats();
     this.loadUsers();
     this.loadCharts();
+    interval(30000).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      if (this.activeTab === 'dashboard') {
+        this.loadStats();
+        this.loadCharts();
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this.destroyCharts();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private destroyCharts(): void {
@@ -383,6 +397,8 @@ export class AdminComponent implements OnInit, OnDestroy {
         if (this.selectedUser?._id === this.userToDelete) {
           this.closeUserPanel();
         }
+        this.loadStats();
+        this.loadCharts();
       },
       error: () => {
       }
