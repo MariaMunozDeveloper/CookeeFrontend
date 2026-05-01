@@ -1,9 +1,9 @@
-import { inject, Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
-import { AuthService } from '../../../services/authService';
-import { UserService } from '../../../services/userService';
-import { FormValidators } from '../../../validators/formValidators';
+import {inject, Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Router, RouterLink, ActivatedRoute} from '@angular/router';
+import {AuthService} from '../../../services/authService';
+import {UserService} from '../../../services/userService';
+import {FormValidators} from '../../../validators/formValidators';
 
 @Component({
   selector: 'app-login',

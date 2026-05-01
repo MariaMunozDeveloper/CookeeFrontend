@@ -1,10 +1,10 @@
-import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { PublicationService } from '../../services/publicationService';
-import { AuthService } from '../../services/authService';
-import { UserService } from '../../services/userService';
-import { Publication } from '../../common/interfaces/publication';
-import { AsAnyPipe } from '../../pipes/as-any.pipe';
+import {inject, Component, signal, WritableSignal, OnInit} from '@angular/core';
+import {Router, RouterLink} from '@angular/router';
+import {PublicationService} from '../../services/publicationService';
+import {AuthService} from '../../services/authService';
+import {UserService} from '../../services/userService';
+import {Publication} from '../../common/interfaces/publication';
+import {AsAnyPipe} from '../../pipes/as-any.pipe';
 
 interface HashtagSection {
   tag: string;
@@ -35,9 +35,9 @@ export class HomeComponent implements OnInit {
   identity: any = this.authService.getIdentity();
 
   private readonly featuredHashtags: { tag: string; icon: string }[] = [
-    { tag: 'tradicional', icon: 'icons/miton_one_color.svg' },
-    { tag: 'saludable', icon: 'icons/verduras.svg' },
-    { tag: 'postre', icon: 'icons/pastel.svg' },
+    {tag: 'tradicional', icon: 'icons/miton_one_color.svg'},
+    {tag: 'saludable', icon: 'icons/verduras.svg'},
+    {tag: 'postre', icon: 'icons/pastel.svg'},
   ];
 
   ngOnInit(): void {
@@ -72,14 +72,14 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    this.featuredHashtags.forEach(({ tag, icon }) => {
+    this.featuredHashtags.forEach(({tag, icon}) => {
       this.publicationService.explore(1, 'likes', tag).subscribe({
         next: (response) => {
           const recipes = response.publications.slice(0, 5);
           if (recipes.length > 0) {
             this.hashtagSections.update(current => [
               ...current,
-              { tag, icon, recipes }
+              {tag, icon, recipes}
             ]);
           }
         },
@@ -110,10 +110,10 @@ export class HomeComponent implements OnInit {
   }
 
   get heroCircles(): { type: 'recipe' | 'user', src: string }[] {
-    const recipes = this.heroImages().map(src => ({ type: 'recipe' as const, src }));
+    const recipes = this.heroImages().map(src => ({type: 'recipe' as const, src}));
     const users = this.heroUsers()
       .filter(u => u?.image)
-      .map(u => ({ type: 'user' as const, src: u.image }));
+      .map(u => ({type: 'user' as const, src: u.image}));
 
     const result: { type: 'recipe' | 'user', src: string }[] = [];
     let ri = 0, ui = 0;

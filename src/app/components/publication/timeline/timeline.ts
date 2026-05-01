@@ -1,14 +1,14 @@
-import { inject, Component, OnInit, signal, WritableSignal, HostListener } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { AuthService } from '../../../services/authService';
-import { PublicationService } from '../../../services/publicationService';
-import { UserCardComponent } from '../../shared/user-card/user-card';
-import { Publication } from '../../../common/interfaces/publication';
-import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
-import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
-import { FavoriteService } from '../../../services/favoriteService';
-import { UserService } from '../../../services/userService';
-import { AsAnyPipe } from '../../../pipes/as-any.pipe';
+import {inject, Component, OnInit, signal, WritableSignal, HostListener} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {AuthService} from '../../../services/authService';
+import {PublicationService} from '../../../services/publicationService';
+import {UserCardComponent} from '../../shared/user-card/user-card';
+import {Publication} from '../../../common/interfaces/publication';
+import {LoadingSpinner} from '../../shared/loading-spinner/loading-spinner';
+import {ConfirmModalComponent} from '../../shared/confirm-modal/confirm-modal';
+import {FavoriteService} from '../../../services/favoriteService';
+import {UserService} from '../../../services/userService';
+import {AsAnyPipe} from '../../../pipes/as-any.pipe';
 
 @Component({
   selector: 'app-timeline',
@@ -103,7 +103,7 @@ export class TimelineComponent implements OnInit {
     if (diff < 3600) return `hace ${Math.floor(diff / 60)} min`;
     if (diff < 86400) return `hace ${Math.floor(diff / 3600)} h`;
     if (diff < 604800) return `hace ${Math.floor(diff / 86400)} días`;
-    return created.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+    return created.toLocaleDateString('es-ES', {day: 'numeric', month: 'long'});
   }
 
   toggleLike(id: string, event: Event): void {

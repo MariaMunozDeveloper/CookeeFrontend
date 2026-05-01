@@ -1,15 +1,15 @@
-import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink, Router } from '@angular/router';
-import { PublicationService } from '../../../services/publicationService';
-import { AuthService } from '../../../services/authService';
-import { Publication } from '../../../common/interfaces/publication';
-import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
-import { AsAnyPipe } from '../../../pipes/as-any.pipe';
-import { CommentService } from '../../../services/commentService';
-import { FormsModule } from '@angular/forms';
-import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
-import { FavoriteService } from '../../../services/favoriteService';
-import { FORBIDDEN_WORDS } from '../../../validators/forbidden-words';
+import {inject, Component, signal, WritableSignal, OnInit} from '@angular/core';
+import {ActivatedRoute, RouterLink, Router} from '@angular/router';
+import {PublicationService} from '../../../services/publicationService';
+import {AuthService} from '../../../services/authService';
+import {Publication} from '../../../common/interfaces/publication';
+import {LoadingSpinner} from '../../shared/loading-spinner/loading-spinner';
+import {AsAnyPipe} from '../../../pipes/as-any.pipe';
+import {CommentService} from '../../../services/commentService';
+import {FormsModule} from '@angular/forms';
+import {ConfirmModalComponent} from '../../shared/confirm-modal/confirm-modal';
+import {FavoriteService} from '../../../services/favoriteService';
+import {FORBIDDEN_WORDS} from '../../../validators/forbidden-words';
 
 @Component({
   selector: 'app-publication-detail',
@@ -73,7 +73,7 @@ export class PublicationDetailComponent implements OnInit {
       if (fragment === 'comentarios') {
         setTimeout(() => {
           const el = document.getElementById('comentarios');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
+          if (el) el.scrollIntoView({behavior: 'smooth'});
         }, 800);
       }
     });
@@ -145,7 +145,7 @@ export class PublicationDetailComponent implements OnInit {
     if (diff < 3600) return `hace ${Math.floor(diff / 60)} min`;
     if (diff < 86400) return `hace ${Math.floor(diff / 3600)} h`;
     if (diff < 604800) return `hace ${Math.floor(diff / 86400)} días`;
-    return created.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+    return created.toLocaleDateString('es-ES', {day: 'numeric', month: 'long'});
   }
 
   private loadComments(publicationId: string): void {
@@ -173,7 +173,7 @@ export class PublicationDetailComponent implements OnInit {
 
     this.commentService.save(this.publication()!._id, this.commentText.trim()).subscribe({
       next: (response: any) => {
-        this.comments.update(current => [{ ...response.comment, replies: [] }, ...current]);
+        this.comments.update(current => [{...response.comment, replies: []}, ...current]);
         this.commentText = '';
         this.sendingComment = false;
       },
@@ -214,7 +214,7 @@ export class PublicationDetailComponent implements OnInit {
       next: (response: any) => {
         this.comments.update(current =>
           current.map(c => c._id === commentId
-            ? { ...c, replies: [...(c.replies || []), response.comment] }
+            ? {...c, replies: [...(c.replies || []), response.comment]}
             : c
           )
         );
@@ -242,7 +242,7 @@ export class PublicationDetailComponent implements OnInit {
         if (this.commentToDeleteParent) {
           this.comments.update(current =>
             current.map(c => c._id === this.commentToDeleteParent
-              ? { ...c, replies: c.replies.filter((r: any) => r._id !== this.commentToDelete) }
+              ? {...c, replies: c.replies.filter((r: any) => r._id !== this.commentToDelete)}
               : c
             )
           );
@@ -328,14 +328,14 @@ export class PublicationDetailComponent implements OnInit {
     if (clean.length === 0 && this.recommendations().length > 0) return;
 
     this.savingRecommendations = true;
-    const data = { recommendations: clean.join('\n') };
+    const data = {recommendations: clean.join('\n')};
 
     this.publicationService.updatePublication(this.publication()!._id, data).subscribe({
       next: () => {
         this.recommendations.set(clean);
         this.publication.update(pub => {
           if (!pub) return pub;
-          return { ...pub, recommendations: clean.join('\n') };
+          return {...pub, recommendations: clean.join('\n')};
         });
         this.editingRecommendations.set(false);
         this.savingRecommendations = false;
@@ -367,10 +367,10 @@ export class PublicationDetailComponent implements OnInit {
 
     this.introError = '';
     this.savingIntro = true;
-    this.publicationService.updatePublication(this.publication()!._id, { text: this.introInput }).subscribe({
+    this.publicationService.updatePublication(this.publication()!._id, {text: this.introInput}).subscribe({
       next: () => {
         this.introText.set(this.introInput);
-        this.publication.update(pub => pub ? { ...pub, text: this.introInput } : pub);
+        this.publication.update(pub => pub ? {...pub, text: this.introInput} : pub);
         this.editingIntro.set(false);
         this.savingIntro = false;
       },

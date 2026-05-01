@@ -1,9 +1,9 @@
-import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { MessageService } from '../../../services/messageService';
-import { AuthService } from '../../../services/authService';
-import { Message } from '../../../common/interfaces/message';
-import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
+import {inject, Component, signal, WritableSignal, OnInit} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {MessageService} from '../../../services/messageService';
+import {AuthService} from '../../../services/authService';
+import {Message} from '../../../common/interfaces/message';
+import {LoadingSpinner} from '../../shared/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-messages',
@@ -79,7 +79,7 @@ export class MessagesComponent implements OnInit {
     if (diff < 60) return 'hace un momento';
     if (diff < 3600) return `hace ${Math.floor(diff / 60)} min`;
     if (diff < 86400) return `hace ${Math.floor(diff / 3600)} h`;
-    return created.toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+    return created.toLocaleDateString('es-ES', {day: 'numeric', month: 'long'});
   }
 
   deleteMessage(id: string): void {

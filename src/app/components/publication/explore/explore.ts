@@ -1,13 +1,13 @@
-import { inject, Component, signal, WritableSignal, OnInit, HostListener } from '@angular/core';
-import { RouterLink, ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { PublicationService } from '../../../services/publicationService';
-import { Publication } from '../../../common/interfaces/publication';
-import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
-import { UpperCasePipe } from '@angular/common';
-import { FavoriteService } from '../../../services/favoriteService';
-import { AuthService } from '../../../services/authService';
-import { AsAnyPipe } from '../../../pipes/as-any.pipe';
+import {inject, Component, signal, WritableSignal, OnInit, HostListener} from '@angular/core';
+import {RouterLink, ActivatedRoute, Router} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {PublicationService} from '../../../services/publicationService';
+import {Publication} from '../../../common/interfaces/publication';
+import {LoadingSpinner} from '../../shared/loading-spinner/loading-spinner';
+import {UpperCasePipe} from '@angular/common';
+import {FavoriteService} from '../../../services/favoriteService';
+import {AuthService} from '../../../services/authService';
+import {AsAnyPipe} from '../../../pipes/as-any.pipe';
 
 @Component({
   selector: 'app-explore',
@@ -84,7 +84,7 @@ export class ExploreComponent implements OnInit {
       this.searchHashtag = '';
     }
     this.router.navigate([], {
-      queryParams: this.searchHashtag ? { hashtag: this.searchHashtag } : {},
+      queryParams: this.searchHashtag ? {hashtag: this.searchHashtag} : {},
       queryParamsHandling: 'replace'
     });
     this.loadRecetas(true);
@@ -94,7 +94,7 @@ export class ExploreComponent implements OnInit {
     this.searchHashtag = '';
     this.hashtagInput = '';
     this.search = '';
-    this.router.navigate([], { queryParams: {} });
+    this.router.navigate([], {queryParams: {}});
     this.loadRecetas(true);
   }
 

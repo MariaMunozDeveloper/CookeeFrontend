@@ -1,8 +1,8 @@
-import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { FollowService } from '../../../services/followService';
-import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
-import { AuthService } from '../../../services/authService';
+import {inject, Component, signal, WritableSignal, OnInit} from '@angular/core';
+import {ActivatedRoute, RouterLink} from '@angular/router';
+import {FollowService} from '../../../services/followService';
+import {LoadingSpinner} from '../../shared/loading-spinner/loading-spinner';
+import {AuthService} from '../../../services/authService';
 
 
 @Component({

@@ -1,7 +1,3 @@
-/* =====================
-   HERO
-   ===================== */
-
 .home-hero {
   background-color: #1f1a16;
   padding: 20px;
@@ -170,8 +166,6 @@
   background-color: #3a3028;
 }
 
-/*CABECERAS DE SECCIÓN */
-
 .home-section-header {
   display: flex;
   align-items: center;
@@ -203,10 +197,6 @@
   font-style: italic;
 }
 
-/* =====================
-   LIKE BUTTON
-   ===================== */
-
 .home-trending-like-btn {
   display: inline-flex;
   align-items: center;
@@ -229,10 +219,6 @@
   color: var(--color-primary);
   font-weight: 600;
 }
-
-/* =====================
-   TRENDING
-   ===================== */
 
 .home-trending {
   padding: var(--space-xxl) 0;
@@ -415,10 +401,6 @@
 .home-trending-like-btn--sm {
   font-size: 12px;
 }
-
-/* =====================
-   HASHTAG SECTIONS
-   ===================== */
 
 .home-hashtags-section {
   padding: var(--space-xxl) 0;
@@ -616,10 +598,6 @@
   flex-shrink: 0;
 }
 
-/* =====================
-   CTA FINAL
-   ===================== */
-
 .home-cta {
   padding: var(--space-md) 0;
   background-color: #1f1a16;
@@ -654,10 +632,6 @@
   color: #a09890;
   margin: 0;
 }
-
-/* =====================
-   RESPONSIVE
-   ===================== */
 
 @media (max-width: 960px) {
   .home-hero-circles {

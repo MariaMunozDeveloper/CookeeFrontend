@@ -1,8 +1,8 @@
-import { inject, Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormValidators } from '../../../validators/formValidators';
-import { AuthService } from '../../../services/authService';
-import { UserService } from '../../../services/userService';
+import {inject, Component} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormValidators} from '../../../validators/formValidators';
+import {AuthService} from '../../../services/authService';
+import {UserService} from '../../../services/userService';
 
 @Component({
   selector: 'app-my-data',

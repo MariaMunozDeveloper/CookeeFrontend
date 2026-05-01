@@ -7,7 +7,6 @@
   margin-bottom: var(--space-xl);
 }
 
-/* tabs */
 .admin-tabs {
   display: flex;
   border-bottom: 2px solid var(--color-border);
@@ -38,7 +37,6 @@
   border-bottom-color: var(--color-primary);
 }
 
-/* stats grid */
 .admin-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -87,7 +85,6 @@
   letter-spacing: 0.5px;
 }
 
-/* search */
 .admin-search {
   display: flex;
   align-items: center;
@@ -102,7 +99,6 @@
   max-width: 480px;
 }
 
-/* users list */
 .admin-users-list {
   display: flex;
   flex-direction: column;
@@ -244,7 +240,6 @@
   opacity: 1;
 }
 
-/* pagination */
 .admin-pagination {
   display: flex;
   justify-content: center;
@@ -260,14 +255,12 @@
   text-align: center;
 }
 
-/* empty */
 .admin-empty {
   text-align: center;
   color: var(--color-muted);
   padding: var(--space-xl);
 }
 
-/* panel lateral */
 .admin-panel-backdrop {
   position: fixed;
   top: 0;

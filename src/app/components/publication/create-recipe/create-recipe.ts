@@ -1,10 +1,10 @@
-import { inject, Component, signal, WritableSignal } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { PublicationService } from '../../../services/publicationService';
-import { FORBIDDEN_WORDS } from '../../../validators/forbidden-words';
-import { FormValidators } from '../../../validators/formValidators';
-import { Observable } from 'rxjs';
+import {inject, Component, signal, WritableSignal} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Router, RouterLink} from '@angular/router';
+import {PublicationService} from '../../../services/publicationService';
+import {FORBIDDEN_WORDS} from '../../../validators/forbidden-words';
+import {FormValidators} from '../../../validators/formValidators';
+import {Observable} from 'rxjs';
 
 type CreateTab = 'info' | 'ingredients' | 'steps' | 'photos';
 
@@ -59,16 +59,16 @@ export class CreateRecipeComponent {
   }
 
   readonly tabs: { id: CreateTab; label: string }[] = [
-    { id: 'info', label: 'Información' },
-    { id: 'ingredients', label: 'Ingredientes' },
-    { id: 'steps', label: 'Pasos' },
-    { id: 'photos', label: 'Fotos' }
+    {id: 'info', label: 'Información'},
+    {id: 'ingredients', label: 'Ingredientes'},
+    {id: 'steps', label: 'Pasos'},
+    {id: 'photos', label: 'Fotos'}
   ];
 
   setTab(tab: CreateTab): void {
     this.activeTab.set(tab);
     this.errorMessage = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({top: 0, behavior: 'smooth'});
   }
 
   isTabValid(tab: CreateTab): boolean {

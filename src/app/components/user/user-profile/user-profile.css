@@ -265,9 +265,6 @@
   transform: scale(1.1);
 }
 
-/* añadir al final de user-profile.css */
-
-/* tabs */
 .profile-tabs {
   display: flex;
   gap: 0;
@@ -312,7 +309,6 @@
   opacity: 1;
 }
 
-/* botón quitar favorito superpuesto en la card */
 .profile-favorite-remove {
   position: absolute;
   top: var(--space-sm);
@@ -341,7 +337,6 @@
   object-fit: contain;
 }
 
-/* estado vacío */
 .profile-empty {
   text-align: center;
   color: var(--color-muted);

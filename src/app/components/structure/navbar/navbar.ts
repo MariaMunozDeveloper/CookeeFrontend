@@ -1,9 +1,9 @@
-import { inject, Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../../services/authService';
-import { MessageService } from '../../../services/messageService';
-import { Subscription } from 'rxjs';
-import { FavoriteService } from '../../../services/favoriteService';
+import {inject, Component, OnInit, OnDestroy, HostListener} from '@angular/core';
+import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {AuthService} from '../../../services/authService';
+import {MessageService} from '../../../services/messageService';
+import {Subscription} from 'rxjs';
+import {FavoriteService} from '../../../services/favoriteService';
 
 @Component({
   selector: 'app-navbar',

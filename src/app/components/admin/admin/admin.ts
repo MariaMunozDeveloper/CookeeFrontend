@@ -9,15 +9,15 @@ import {
   ElementRef,
   ViewChild
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { AdminService } from '../../../services/adminService';
-import { ConfirmModalComponent } from '../../shared/confirm-modal/confirm-modal';
-import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
-import { Chart, registerables } from 'chart.js';
-import { interval, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import {RouterLink} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {AdminService} from '../../../services/adminService';
+import {ConfirmModalComponent} from '../../shared/confirm-modal/confirm-modal';
+import {LoadingSpinner} from '../../shared/loading-spinner/loading-spinner';
+import {Chart, registerables} from 'chart.js';
+import {interval, Subscription} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 Chart.register(...registerables);
 
@@ -60,15 +60,15 @@ export class AdminComponent implements OnInit, OnDestroy {
   userToDelete: string = '';
 
   readonly roles = [
-    { value: 'ROLE_USER', label: 'Usuario' },
-    { value: 'ROLE_VERIFIED', label: 'Verificado' },
-    { value: 'ROLE_ADMIN', label: 'Admin' }
+    {value: 'ROLE_USER', label: 'Usuario'},
+    {value: 'ROLE_VERIFIED', label: 'Verificado'},
+    {value: 'ROLE_ADMIN', label: 'Admin'}
   ];
 
   readonly periods = [
-    { value: 'day', label: 'Últimos 30 días' },
-    { value: 'week', label: 'Últimas 12 semanas' },
-    { value: 'month', label: 'Último año' }
+    {value: 'day', label: 'Últimos 30 días'},
+    {value: 'week', label: 'Últimas 12 semanas'},
+    {value: 'month', label: 'Último año'}
   ];
 
   ngOnInit(): void {
@@ -151,23 +151,23 @@ export class AdminComponent implements OnInit, OnDestroy {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { display: false },
+        legend: {display: false},
         tooltip: {
           backgroundColor: '#1a1a1a',
-          titleFont: { family: font, size: 12 },
-          bodyFont: { family: font, size: 12 },
+          titleFont: {family: font, size: 12},
+          bodyFont: {family: font, size: 12},
           padding: 10,
           cornerRadius: 8
         }
       },
       scales: {
         x: {
-          grid: { color: gridColor },
-          ticks: { font: { family: font, size: 11 }, color: '#8a8480' }
+          grid: {color: gridColor},
+          ticks: {font: {family: font, size: 11}, color: '#8a8480'}
         },
         y: {
-          grid: { color: gridColor },
-          ticks: { font: { family: font, size: 11 }, color: '#8a8480', precision: 0 },
+          grid: {color: gridColor},
+          ticks: {font: {family: font, size: 11}, color: '#8a8480', precision: 0},
           beginAtZero: true
         }
       }
@@ -184,7 +184,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       if (label.length === 7 && label.includes('-')) {
         const [y, suffix] = label.split('-');
         const num = parseInt(suffix);
-        // si el número es <= 12 es un mes, si no es una semana
+        // si ell número es <= 12 es un mes, si no es una sem
         if (num <= 12) {
           return `${suffix}/${y}`;
         } else {
@@ -194,7 +194,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       return label;
     };
 
-    // Gráfica usuarios
+    // Gráfica de usus
     const usersCanvas = document.getElementById('usersChart') as HTMLCanvasElement;
     if (usersCanvas) {
       this.usersChart = new Chart(usersCanvas, {
@@ -212,11 +212,11 @@ export class AdminComponent implements OnInit, OnDestroy {
             pointRadius: 4
           }]
         },
-        options: { ...baseOptions }
+        options: {...baseOptions}
       });
     }
 
-    // Gráfica publicaciones
+    // Grafica publicaciones
     const pubCanvas = document.getElementById('publicationsChart') as HTMLCanvasElement;
     if (pubCanvas) {
       this.publicationsChart = new Chart(pubCanvas, {
@@ -231,11 +231,11 @@ export class AdminComponent implements OnInit, OnDestroy {
             borderRadius: 6
           }]
         },
-        options: { ...baseOptions }
+        options: {...baseOptions}
       });
     }
 
-    // Gráfica actividad por día de la semana
+    // gráfica actividad x día de la semana
     const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
     const activityData = Array(7).fill(0);
     data.activityByDay.forEach((d: any) => {
@@ -258,11 +258,11 @@ export class AdminComponent implements OnInit, OnDestroy {
             borderRadius: 6
           }]
         },
-        options: { ...baseOptions }
+        options: {...baseOptions}
       });
     }
 
-    // Gráfica hashtags
+    // grafica #
     const hashCanvas = document.getElementById('hashtagsChart') as HTMLCanvasElement;
     if (hashCanvas) {
       this.hashtagsChart = new Chart(hashCanvas, {
@@ -286,7 +286,7 @@ export class AdminComponent implements OnInit, OnDestroy {
               display: true,
               position: 'bottom',
               labels: {
-                font: { family: font, size: 11 },
+                font: {family: font, size: 11},
                 color: '#4a4a4a',
                 padding: 12,
                 usePointStyle: true
@@ -294,8 +294,8 @@ export class AdminComponent implements OnInit, OnDestroy {
             },
             tooltip: {
               backgroundColor: '#1a1a1a',
-              titleFont: { family: font, size: 12 },
-              bodyFont: { family: font, size: 12 },
+              titleFont: {family: font, size: 12},
+              bodyFont: {family: font, size: 12},
               padding: 10,
               cornerRadius: 8
             }
@@ -373,10 +373,10 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.adminService.updateRole(userId, role).subscribe({
       next: () => {
         this.users.update(current =>
-          current.map(u => u._id === userId ? { ...u, role } : u)
+          current.map(u => u._id === userId ? {...u, role} : u)
         );
         if (this.selectedUser?._id === userId) {
-          this.selectedUser = { ...this.selectedUser, role };
+          this.selectedUser = {...this.selectedUser, role};
         }
       },
       error: () => {

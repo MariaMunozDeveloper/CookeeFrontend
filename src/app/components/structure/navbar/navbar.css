@@ -198,7 +198,6 @@
   color: #a93226;
 }
 
-/* hamburguesa */
 .navbar-hamburger {
   display: none;
   flex-direction: column;
@@ -234,7 +233,6 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* menú móvil desplegable */
 .navbar-mobile-menu {
   display: flex;
   flex-direction: column;
@@ -294,7 +292,6 @@
   background-color: #2e2820;
 }
 
-/* responsive */
 @media (max-width: 768px) {
   .navbar-menu {
     display: none;

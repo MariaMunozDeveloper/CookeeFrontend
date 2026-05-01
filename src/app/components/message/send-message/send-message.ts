@@ -1,8 +1,8 @@
-import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from '../../../services/messageService';
-import { UserService } from '../../../services/userService';
+import {inject, Component, signal, WritableSignal, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {FormsModule} from '@angular/forms';
+import {MessageService} from '../../../services/messageService';
+import {UserService} from '../../../services/userService';
 
 @Component({
   selector: 'app-send-message',

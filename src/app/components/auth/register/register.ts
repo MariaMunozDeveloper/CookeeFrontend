@@ -1,10 +1,10 @@
-import { inject, Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../services/authService';
-import { UserService } from '../../../services/userService';
-import { FormValidators } from '../../../validators/formValidators';
-import { User } from '../../../common/interfaces/user';
+import {inject, Component} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Router, RouterLink} from '@angular/router';
+import {AuthService} from '../../../services/authService';
+import {UserService} from '../../../services/userService';
+import {FormValidators} from '../../../validators/formValidators';
+import {User} from '../../../common/interfaces/user';
 
 @Component({
   selector: 'app-register',

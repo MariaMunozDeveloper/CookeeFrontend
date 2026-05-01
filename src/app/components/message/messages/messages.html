@@ -24,64 +24,63 @@
   </div>
 
   @if (loading()) {
-    <app-loading-spinner/>
+  <app-loading-spinner/>
   }
 
   @if (!loading() && messages().length === 0) {
-    <div class="card-base messages-empty">
-      <p>{{ activeTab === 'received' ? 'No tienes mensajes recibidos.' : 'No has enviado ningún mensaje.' }}</p>
-    </div>
+  <div class="card-base messages-empty">
+    <p>{{ activeTab === 'received' ? 'No tienes mensajes recibidos.' : 'No has enviado ningún mensaje.' }}</p>
+  </div>
   }
 
   @if (!loading() && messages().length > 0) {
-    <div class="messages-list">
-      @for (msg of messages(); track msg._id) {
-        <div class="card-base message-item" [class.message-unread]="activeTab === 'received' && !msg.viewed">
+  <div class="messages-list">
+    @for (msg of messages(); track msg._id) {
+    <div class="card-base message-item" [class.message-unread]="activeTab === 'received' && !msg.viewed">
 
-          <div class="message-user">
-            <a [routerLink]="['/profile', getOtherUser(msg)?._id]" class="message-user-link">
-              @if (getOtherUser(msg)?.image) {
-                <img [src]="getOtherUser(msg).image" class="message-avatar" alt="avatar"/>
-              } @else {
-                <div class="message-avatar message-avatar-placeholder"></div>
+      <div class="message-user">
+        <a [routerLink]="['/profile', getOtherUser(msg)?._id]" class="message-user-link">
+          @if (getOtherUser(msg)?.image) {
+          <img [src]="getOtherUser(msg).image" class="message-avatar" alt="avatar"/>
+          } @else {
+          <div class="message-avatar message-avatar-placeholder"></div>
+          }
+          <div class="message-user-info">
+            <span class="message-user-name">{{ getOtherUser(msg)?.name }} {{ getOtherUser(msg)?.surname }}</span>
+            <div class="people-nick-wrap">
+              <span class="message-user-nick">&#64;{{ getOtherUser(msg)?.nick }}</span>
+              @if (getOtherUser(msg)?.role === 'ROLE_VERIFIED' || getOtherUser(msg)?.role === 'ROLE_ADMIN') {
+              <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
               }
-              <div class="message-user-info">
-                <span class="message-user-name">{{ getOtherUser(msg)?.name }} {{ getOtherUser(msg)?.surname }}</span>
-                <div class="people-nick-wrap">
-                  <span class="message-user-nick">&#64;{{ getOtherUser(msg)?.nick }}</span>
-                  @if (getOtherUser(msg)?.role === 'ROLE_VERIFIED' || getOtherUser(msg)?.role === 'ROLE_ADMIN') {
-                    <img src="icons/verificar.svg" class="verified-icon" alt="verificado"/>
-                  }
-                </div>
-              </div>
-            </a>
-            <button class="message-delete-btn" (click)="deleteMessage(msg._id)" title="Eliminar">✕</button>
+            </div>
           </div>
+        </a>
+        <button class="message-delete-btn" (click)="deleteMessage(msg._id)" title="Eliminar">✕</button>
+      </div>
 
-          <p class="message-text">{{ msg.text }}</p>
+      <p class="message-text">{{ msg.text }}</p>
 
-          <div class="message-footer">
-            <span class="message-date">{{ getTimeAgo(msg.createdAt) }}</span>
-            @if (activeTab === 'received' && !msg.viewed) {
-              <span class="message-badge">Nuevo</span>
-            }
-            @if (activeTab === 'received') {
-              <button class="btn btn-outline message-reply-btn"
-                      [routerLink]="['/messages/send', getOtherUser(msg)?._id]">
-                Responder
-              </button>
-            }
-          </div>
-
-        </div>
-      }
+      <div class="message-footer">
+        <span class="message-date">{{ getTimeAgo(msg.createdAt) }}</span>
+        @if (activeTab === 'received' && !msg.viewed) {
+        <span class="message-badge">Nuevo</span>
+        }
+        @if (activeTab === 'received') {
+        <button class="btn btn-outline message-reply-btn"
+                [routerLink]="['/messages/send', getOtherUser(msg)?._id]">
+          Responder
+        </button>
+        }
+      </div>
     </div>
+    }
+  </div>
 
-    <div class="messages-pagination">
-      <button class="btn btn-outline btn-sm" (click)="prevPage()" [disabled]="page === 1">← Anterior</button>
-      <span class="messages-page-indicator">{{ page }} / {{ totalPages }}</span>
-      <button class="btn btn-outline btn-sm" (click)="nextPage()" [disabled]="page === totalPages">Siguiente →</button>
-    </div>
+  <div class="messages-pagination">
+    <button class="btn btn-outline btn-sm" (click)="prevPage()" [disabled]="page === 1">← Anterior</button>
+    <span class="messages-page-indicator">{{ page }} / {{ totalPages }}</span>
+    <button class="btn btn-outline btn-sm" (click)="nextPage()" [disabled]="page === totalPages">Siguiente →</button>
+  </div>
   }
 
 </div>

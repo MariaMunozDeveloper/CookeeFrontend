@@ -243,7 +243,6 @@
     font-family: var(--font-body);
     transition: color 0.2s;
   }
-
 }
 
 @media (max-width: 1024px) {

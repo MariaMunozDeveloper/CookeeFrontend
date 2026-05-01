@@ -1,11 +1,11 @@
-import { inject, Component, signal, WritableSignal, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
-import { LoadingSpinner } from '../../shared/loading-spinner/loading-spinner';
-import { PublicationService } from '../../../services/publicationService';
-import { FormValidators } from '../../../validators/formValidators';
-import { Observable } from 'rxjs';
-import { FORBIDDEN_WORDS } from '../../../validators/forbidden-words';
+import {inject, Component, signal, WritableSignal, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Router, ActivatedRoute, RouterLink} from '@angular/router';
+import {LoadingSpinner} from '../../shared/loading-spinner/loading-spinner';
+import {PublicationService} from '../../../services/publicationService';
+import {FormValidators} from '../../../validators/formValidators';
+import {Observable} from 'rxjs';
+import {FORBIDDEN_WORDS} from '../../../validators/forbidden-words';
 
 type EditTab = 'info' | 'ingredients' | 'steps' | 'photos';
 
@@ -68,10 +68,10 @@ export class EditRecipeComponent implements OnInit {
   }
 
   readonly tabs: { id: EditTab; label: string }[] = [
-    { id: 'info', label: 'Información' },
-    { id: 'ingredients', label: 'Ingredientes' },
-    { id: 'steps', label: 'Pasos' },
-    { id: 'photos', label: 'Fotos' }
+    {id: 'info', label: 'Información'},
+    {id: 'ingredients', label: 'Ingredientes'},
+    {id: 'steps', label: 'Pasos'},
+    {id: 'photos', label: 'Fotos'}
   ];
 
   ngOnInit(): void {
@@ -85,7 +85,7 @@ export class EditRecipeComponent implements OnInit {
     this.activeTab.set(tab);
     this.errorMessage = '';
     this.successMessage = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({top: 0, behavior: 'smooth'});
   }
 
   private loadPublication(): void {
@@ -192,7 +192,7 @@ export class EditRecipeComponent implements OnInit {
   removeStepImage(index: number): void {
     this.stepImages[index] = null;
     this.stepImagePreviews[index] = null;
-    this.steps.at(index).patchValue({ image: null });
+    this.steps.at(index).patchValue({image: null});
   }
 
   onResultImageSelected(event: Event): void {
@@ -327,7 +327,7 @@ export class EditRecipeComponent implements OnInit {
 
     if (uploads.length === 0) {
       this.sending = false;
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
         this.router.navigate(['/publication', publicationId]);
       });
       return;
@@ -339,7 +339,7 @@ export class EditRecipeComponent implements OnInit {
   private uploadNext(publicationId: string, uploads: Observable<any>[], index: number): void {
     if (index >= uploads.length) {
       this.sending = false;
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
         this.router.navigate(['/publication', publicationId]);
       });
       return;

@@ -11,7 +11,6 @@
   gap: var(--space-lg);
 }
 
-/* header */
 .edit-header {
   display: flex;
   align-items: flex-start;
@@ -46,7 +45,6 @@
   align-self: center;
 }
 
-/* alerta */
 .edit-alert {
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md);
@@ -60,7 +58,6 @@
   border: 1px solid #f5c6cb;
 }
 
-/* tabs */
 .edit-tabs {
   display: flex;
   border-bottom: 2px solid var(--color-border);
@@ -102,7 +99,6 @@
   background-color: #e74c3c;
 }
 
-/* form */
 .edit-form {
   min-height: 300px;
 }
@@ -137,7 +133,6 @@
   gap: var(--space-md);
 }
 
-/* footer */
 .edit-footer {
   display: flex;
   justify-content: space-between;
@@ -146,7 +141,6 @@
   border-top: 1px solid var(--color-border);
 }
 
-/* ingredientes */
 .ingredient-row {
   display: flex;
   align-items: flex-start;
@@ -181,7 +175,6 @@
   color: #e74c3c;
 }
 
-/* pasos */
 .step-row {
   display: flex;
   align-items: flex-start;
@@ -247,7 +240,6 @@
   border: 1px solid var(--color-border);
 }
 
-/* fotos */
 .recipe-upload-btn {
   cursor: pointer;
   align-self: flex-start;
@@ -304,7 +296,6 @@
   border: 1px solid var(--color-border);
 }
 
-/* misc */
 .recipe-textarea {
   resize: vertical;
   min-height: 80px;

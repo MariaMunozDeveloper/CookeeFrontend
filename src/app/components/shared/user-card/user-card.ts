@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component, Input} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {inject} from '@angular/core';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-user-card',

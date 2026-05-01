@@ -722,7 +722,6 @@
   color: var(--color-primary);
 }
 
-/* recomendaciones — modo edición */
 .detail-rec-editor {
   display: flex;
   flex-direction: column;
