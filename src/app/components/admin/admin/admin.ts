@@ -101,7 +101,8 @@ export class AdminComponent implements OnInit, OnDestroy {
   setTab(tab: 'dashboard' | 'users'): void {
     this.activeTab = tab;
     if (tab === 'dashboard') {
-      setTimeout(() => this.renderCharts(), 100);
+      this.loadStats();
+      this.loadCharts();
     }
   }
 
@@ -128,11 +129,9 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.adminService.getChartData(this.chartPeriod).subscribe({
       next: (response: any) => {
         this.loadingCharts.set(false);
-        setTimeout(() => this.renderCharts(response), 100);
+        setTimeout(() => this.renderCharts(response), 300);
       },
-      error: () => {
-        this.loadingCharts.set(false);
-      }
+      error: () => { this.loadingCharts.set(false); }
     });
   }
 
@@ -194,7 +193,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       return label;
     };
 
-    // Gráfica de usus
+    // usuarios
     const usersCanvas = document.getElementById('usersChart') as HTMLCanvasElement;
     if (usersCanvas) {
       this.usersChart = new Chart(usersCanvas, {
