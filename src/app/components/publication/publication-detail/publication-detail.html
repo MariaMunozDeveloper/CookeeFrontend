@@ -11,7 +11,9 @@
       @if (publication()!.images.length > 0) {
         <img [src]="publication()!.images[0]" [alt]="publication()!.title" class="detail-cover-img"/>
       } @else {
-        <div class="detail-cover-placeholder">🍳</div>
+      <div class="detail-cover-placeholder">
+        <img src="icons/libro-de-cocina.svg" class="detail-placeholder-icon" alt="receta"/>
+      </div>
       }
       <div class="detail-cover-overlay"></div>
     </div>
