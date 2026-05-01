@@ -82,6 +82,12 @@
   gap: 2px;
 }
 
+.people-nick-wrap{
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .message-user-name {
   font-size: 14px;
   font-weight: 600;
