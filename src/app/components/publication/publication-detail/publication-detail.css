@@ -17,8 +17,8 @@
 }
 
 .detail-placeholder-icon {
-  width: 80px;
-  height: 80px;
+  width: 180px;
+  height: 180px;
   object-fit: contain;
   opacity: 0.3;
 }
@@ -609,8 +609,8 @@
 }
 
 .recipe-stat-icon {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -819,8 +819,8 @@
 }
 
 .detail-favorite-icon {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   flex-shrink: 0;
 }
